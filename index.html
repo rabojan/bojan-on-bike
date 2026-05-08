@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bojan on Bike</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;max-width:100%}
 :root{--bg:#0c0c0c;--bg2:#151515;--bg3:#1e1e1e;--bg4:#272727;--acc:#e8622a;--acc2:#f07832;--tx:#f2f2f2;--tx2:#999;--tx3:#555;--r:12px;--rs:8px}
 html,body{height:100%;overflow-x:hidden;width:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
 nav{position:sticky;top:0;z-index:100;height:56px;padding:0 .8rem;display:flex;align-items:center;justify-content:space-between;background:rgba(12,12,12,0.97);border-bottom:.5px solid rgba(255,255,255,.07);width:100%}
 .logo{font-size:1rem;font-weight:800;color:var(--acc);cursor:pointer;letter-spacing:-.5px;white-space:nowrap;flex-shrink:0}
 .logo span{color:var(--tx)}
@@ -17,7 +16,7 @@ nav{position:sticky;top:0;z-index:100;height:56px;padding:0 .8rem;display:flex;a
 .nav-btn{padding:6px 8px;border-radius:20px;font-size:.75rem;cursor:pointer;background:transparent;color:var(--tx2);border:none;transition:all .2s;white-space:nowrap}
 .nav-btn:hover{color:var(--tx);background:var(--bg3)}
 .nav-btn.on{background:var(--acc);color:#fff}
-.nav-admin{padding:5px 10px;border-radius:6px;background:rgba(232,98,42,.15);border:.5px solid rgba(232,98,42,.3);color:var(--acc);font-size:.72rem;cursor:pointer;transition:all .2s;margin-left:.3rem;white-space:nowrap;flex-shrink:0}
+.nav-admin{padding:5px 10px;border-radius:6px;background:rgba(232,98,42,.15);border:.5px solid rgba(232,98,42,.3);color:var(--acc);font-size:.72rem;cursor:pointer;margin-left:.3rem;white-space:nowrap;flex-shrink:0}
 .page{display:none;animation:fadein .3s ease}
 .page.on{display:block}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -42,7 +41,7 @@ nav{position:sticky;top:0;z-index:100;height:56px;padding:0 .8rem;display:flex;a
 .sec-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;letter-spacing:-1px;margin-bottom:2rem}
 .page-back{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;background:var(--bg3);border:.5px solid rgba(255,255,255,.1);color:var(--tx2);font-size:.85rem;cursor:pointer;margin-bottom:1.5rem;font-weight:600}
 .featured{border-radius:16px;overflow:hidden;background:var(--bg2);border:.5px solid rgba(255,255,255,.07);display:grid;grid-template-columns:1fr 1fr;min-height:320px;margin-bottom:3rem;cursor:pointer}
-.featured-img{min-height:250px;position:relative;overflow:hidden}
+.featured-img{min-height:250px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0f1f0f 0%,#0a140a 100%)}
 .featured-body{padding:2rem;display:flex;flex-direction:column;justify-content:center}
 .feat-tag{color:var(--acc);font-size:.7rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:.4rem}
 .feat-title{font-size:1.7rem;font-weight:800;letter-spacing:-1px;margin-bottom:.7rem;line-height:1.1}
@@ -59,7 +58,7 @@ nav{position:sticky;top:0;z-index:100;height:56px;padding:0 .8rem;display:flex;a
 .tcard:hover{transform:translateY(-4px);border-color:rgba(232,98,42,.3)}
 .tcard-img{height:180px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0f1f0f 0%,#0a140a 100%)}
 .tcard-img img{width:100%;height:100%;object-fit:cover}
-.tcard-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.55) 100%);z-index:1}
+.tcard-img::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.55) 100%);z-index:1}
 .dbadge{position:absolute;top:10px;right:10px;z-index:2;padding:3px 9px;border-radius:10px;font-size:.66rem;font-weight:700;text-transform:uppercase}
 .d-z{background:rgba(39,174,96,.85);color:#fff}
 .d-m{background:rgba(41,128,185,.82);color:#fff}
@@ -96,9 +95,9 @@ nav{position:sticky;top:0;z-index:100;height:56px;padding:0 .8rem;display:flex;a
 .mclose{position:fixed;top:.8rem;right:1rem;z-index:210;width:38px;height:38px;border-radius:50%;background:var(--bg3);border:.5px solid rgba(255,255,255,.1);color:var(--tx);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .mback{position:fixed;top:.8rem;left:1rem;z-index:210;padding:7px 16px;border-radius:20px;background:rgba(30,30,30,.95);border:.5px solid rgba(255,255,255,.15);color:var(--tx);font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:600}
 .mhero{height:42vh;min-height:250px;position:relative;display:flex;align-items:flex-end}
-.mhero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(0,0,0,.25) 0%,transparent 35%,rgba(0,0,0,.75) 100%)}
+.mhero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(0,0,0,.25) 0%,transparent 35%,rgba(0,0,0,.75) 100%)}
 .mhero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.mhero-bg{position:absolute;inset:0}
+.mhero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0f1f0f 0%,#0a140a 100%)}
 .mhero-cnt{position:relative;z-index:2;padding:1.5rem;width:100%}
 .mtitle{font-size:clamp(1.8rem,5vw,3rem);font-weight:800;letter-spacing:-1.5px;margin-bottom:.25rem}
 .mbody{max-width:860px;margin:0 auto;padding:2rem 1.2rem 5rem;width:100%}
@@ -170,13 +169,9 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
 .foot-logo{font-size:1.3rem;font-weight:800;color:var(--acc);margin-bottom:.3rem}
 .foot-logo span{color:var(--tx)}
 .foot-txt{color:var(--tx3);font-size:.8rem;margin-top:.5rem}
-.bg-forest{background:linear-gradient(135deg,#0f1f0f 0%,#0a140a 100%)}
-.bg-dawn{background:linear-gradient(135deg,#200d08 0%,#140808 100%)}
-.bg-alpine{background:linear-gradient(135deg,#0a0f1a 0%,#080d15 100%)}
 </style>
 </head>
 <body>
-
 <nav>
   <div class="logo" onclick="showPage('home')">Bojan <span>on Bike</span></div>
   <div style="display:flex;align-items:center">
@@ -186,19 +181,18 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
       <button class="nav-btn" id="nb-ponudniki" onclick="showPage('ponudniki')">Ponudniki</button>
       <button class="nav-btn" id="nb-omeni" onclick="showPage('omeni')">O meni</button>
     </div>
-    <button class="nav-admin" onclick="openAdmin()">⚙ Admin</button>
+    <button class="nav-admin" onclick="openAdmin()">Admin</button>
   </div>
 </nav>
 
-<!-- HOME -->
 <div class="page on" id="page-home">
   <div class="hero">
     <div class="hero-content">
-      <div class="hero-pill">🚵 MTB · Slovenija · Pohorje</div>
-      <h1>Življenje<br>na dveh <em>kolesih</em></h1>
-      <p>Sem človek, ki najde mir in energijo nekje med pohorskimi gozdovi, razgledi in dolgimi klanci. Kolesarjenje zame ni samo šport — je svoboda, raziskovanje in način življenja.</p>
+      <div class="hero-pill">MTB &middot; Slovenija &middot; Pohorje</div>
+      <h1>&#x17D;ivljenje<br>na dveh <em>kolesih</em></h1>
+      <p id="hero-txt">Sem &#x10D;lovek, ki najde mir in energijo nekje med pohorskimi gozdovi, razgledi in dolgimi klanci. Kolesarjenje zame ni samo &#x161;port &mdash; je svoboda, raziskovanje in na&#x10D;in &#x17E;ivljenja.</p>
       <div class="hero-btns">
-        <button class="btn btn-p" onclick="showPage('traili')">🗺 Razišči traile</button>
+        <button class="btn btn-p" onclick="showPage('traili')">Razi&#x161;&#x10D;i traile</button>
         <button class="btn btn-o" onclick="showPage('omeni')">Spoznaj me</button>
       </div>
     </div>
@@ -208,727 +202,731 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
   </div>
   <div class="stats">
     <div><div class="stat-n">1.240+</div><div class="stat-l">Skupaj km</div></div>
-    <div><div class="stat-n">18.400+</div><div class="stat-l">Višinskih m</div></div>
-    <div><div class="stat-n" id="stat-traili">—</div><div class="stat-l">Trailov</div></div>
+    <div><div class="stat-n">18.400+</div><div class="stat-l">Visinskih m</div></div>
+    <div><div class="stat-n" id="stat-traili">0</div><div class="stat-l">Trailov</div></div>
     <div><div class="stat-n">8 let</div><div class="stat-l">Kolesarjenja</div></div>
   </div>
   <div class="sec">
-    <div class="sec-tag">⭐ Trail meseca</div>
+    <div class="sec-tag">Trail meseca</div>
     <div class="sec-title">Izbrani trail</div>
-    <div id="featured-wrap">
-      <div class="loading"><div class="spinner"></div>Nalagam...</div>
-    </div>
+    <div id="featured-wrap"><div class="loading"><div class="spinner"></div>Nalagam...</div></div>
   </div>
   <footer>
     <div class="foot-logo">Bojan <span>on Bike</span></div>
-    <div class="foot-txt">© 2025 Bojan on Bike · Pohorje, Slovenija</div>
+    <div class="foot-txt">2025 Bojan on Bike - Pohorje, Slovenija</div>
   </footer>
 </div>
 
-<!-- TRAILI -->
 <div class="page" id="page-traili">
   <div class="sec">
-    <button class="page-back" onclick="showPage('home')">← Nazaj</button>
-    <div class="sec-tag">🚵 Traili & Poti</div>
+    <button class="page-back" onclick="showPage('home')">&#x2190; Nazaj</button>
+    <div class="sec-tag">Traili in Poti</div>
     <div class="sec-title">Moji traili</div>
     <div class="filter-row">
       <div class="ftab on" onclick="filterTrails('vse',this)">Vsi</div>
-      <div class="ftab" onclick="filterTrails('gorski',this)">⛰ Gorski</div>
-      <div class="ftab" onclick="filterTrails('kolesarska',this)">🚴 Kolesarska pot</div>
-      <div class="ftab" onclick="filterTrails('mesani',this)">🌲 Mešan</div>
-      <div class="ftab" onclick="filterTrails('zelena',this)">🟢 Lahka</div>
-      <div class="ftab" onclick="filterTrails('modra',this)">🔵 Srednja</div>
-      <div class="ftab" onclick="filterTrails('rdeca',this)">🔴 Težka</div>
-      <div class="ftab" onclick="filterTrails('crna',this)">⚫ Ekstrem</div>
+      <div class="ftab" onclick="filterTrails('gorski',this)">&#x26F0; Gorski</div>
+      <div class="ftab" onclick="filterTrails('kolesarska',this)">&#x1F6B4; Kolesarska pot</div>
+      <div class="ftab" onclick="filterTrails('mesani',this)">&#x1F332; Me&#x161;an</div>
+      <div class="ftab" onclick="filterTrails('zelena',this)">&#x1F7E2; Lahka</div>
+      <div class="ftab" onclick="filterTrails('modra',this)">&#x1F535; Srednja</div>
+      <div class="ftab" onclick="filterTrails('rdeca',this)">&#x1F534; Te&#x17E;ka</div>
+      <div class="ftab" onclick="filterTrails('crna',this)">&#x26AB; Ekstrem</div>
     </div>
     <div class="tgrid" id="trail-grid"><div class="loading"><div class="spinner"></div>Nalagam traile...</div></div>
   </div>
 </div>
 
-<!-- PONUDNIKI -->
 <div class="page" id="page-ponudniki">
   <div class="sec">
-    <button class="page-back" onclick="showPage('home')">← Nazaj</button>
-    <div class="sec-tag">🍷 Ob poti</div>
+    <button class="page-back" onclick="showPage('home')">&#x2190; Nazaj</button>
+    <div class="sec-tag">Ob poti</div>
     <div class="sec-title">Ponudniki ob trailih</div>
     <div class="filter-row" id="pon-filters">
       <div class="ftab on" onclick="filterPon('vse',this)">Vsi</div>
-      <div class="ftab" onclick="filterPon('kulinarika',this)">🍽 Kulinarika</div>
-      <div class="ftab" onclick="filterPon('vino',this)">🍷 Vino</div>
-      <div class="ftab" onclick="filterPon('prenocitev',this)">🛏 Prenočitve</div>
+      <div class="ftab" onclick="filterPon('kulinarika',this)">&#x1F37D; Kulinarika</div>
+      <div class="ftab" onclick="filterPon('vino',this)">&#x1F377; Vino</div>
+      <div class="ftab" onclick="filterPon('prenocitev',this)">&#x1F6CF; Preno&#x10D;itve</div>
     </div>
     <div class="pgrid" id="pon-grid"><div class="loading"><div class="spinner"></div>Nalagam...</div></div>
   </div>
 </div>
 
-<!-- O MENI -->
 <div class="page" id="page-omeni">
   <div class="sec">
-    <button class="page-back" onclick="showPage('home')">← Nazaj</button>
-    <div class="sec-tag">👤 O meni</div>
+    <button class="page-back" onclick="showPage('home')">Nazaj</button>
+    <div class="sec-tag">O meni</div>
     <div class="sec-title">Moja zgodba</div>
     <div class="about-grid">
-      <div class="about-img" id="about-img-wrap">🚵</div>
+      <div class="about-img" id="about-img-wrap">&#x1F6B5;</div>
       <div>
         <div class="about-name" id="about-name">Bojan Jager</div>
         <div class="about-handle" id="about-handle">@bojan_on_bike</div>
-        <div class="about-txt" id="about-t1">Sem človek, ki najde mir in energijo na dveh kolesih, nekje med pohorskimi gozdovi, razgledi in dolgimi klanci.</div>
-        <div class="about-txt" id="about-t2">S svojim črnim eBikeom raziskujem poti, lovim trenutke skozi objektiv in skušam ljudem pokazati, kako čudovita zna biti narava.</div>
-        <div class="about-txt" id="about-t3">Kolesarjenje zame ni samo šport — je svoboda, raziskovanje in način življenja.</div>
+        <div class="about-txt" id="about-t1">Sem &#x10D;lovek, ki najde mir in energijo na dveh kolesih, nekje med pohorskimi gozdovi, razgledi in dolgimi klanci.</div>
+        <div class="about-txt" id="about-t2">S svojim &#x10D;rnim eBikeom raziskujem poti, lovim trenutke skozi objektiv in sku&#x161;am ljudem pokazati, kako &#x10D;udovita zna biti narava.</div>
+        <div class="about-txt" id="about-t3">Kolesarjenje zame ni samo &#x161;port &mdash; je svoboda, raziskovanje in na&#x10D;in &#x17E;ivljenja.</div>
         <div class="about-tags" id="about-tags">
-          <span class="atag">⚡ eBike</span><span class="atag">📸 Fotograf</span><span class="atag">🌲 Pohorje</span><span class="atag">🏔 Gorski traili</span>
+          <span class="atag">eBike</span><span class="atag">Fotograf</span><span class="atag">Pohorje</span><span class="atag">Gorski traili</span><span class="atag">Enduro</span>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TRAIL MODAL -->
 <div class="modal" id="trail-modal">
-  <button class="mback" onclick="closeModal('trail-modal')">← Nazaj</button>
-  <button class="mclose" onclick="closeModal('trail-modal')">✕</button>
+  <button class="mback" onclick="closeModal('trail-modal')">Nazaj</button>
+  <button class="mclose" onclick="closeModal('trail-modal')">x</button>
   <div id="modal-content"></div>
 </div>
 
-<!-- ADMIN MODAL -->
 <div class="admin-modal" id="admin-modal">
-  <button class="aclose" onclick="closeModal('admin-modal')">✕</button>
+  <button class="aclose" onclick="closeModal('admin-modal')">x</button>
   <div class="admin-wrap" id="admin-wrap-inner"></div>
 </div>
 
 <script>
-// ===== SUPABASE CONFIG =====
-const SB_URL = 'https://kbtydyjaemlcwsmoghoj.supabase.co';
-const SB_KEY = 'sb_publishable_nYEfb4kHGO1G--RYUMoemw_cxHpnERu';
-const headers = {'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json'};
+var SB_URL = "https://kbtydyjaemlcwsmoghoj.supabase.co";
+var SB_KEY = "sb_publishable_nYEfb4kHGO1G--RYUMoemw_cxHpnERu";
+var ADMIN_PASS = "bojan2025";
+var adminLoggedIn = false;
+var allTrails = [];
+var allPon = [];
 
-async function sbGet(table, query=''){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?${query}`, {headers});
-  return r.json();
+var demoTrails = [
+  {id:1001, name:"Pohorska divjina", region:"Pohorje", type:"gorski", diff:"rdeca", km:24, vm:850, stars:4, seasonal:"Maj-Oktober", surface:"Zemlja, korenine", novo:false, main_image:null, comment:"Moj absolutni favorit po dezju. Potrebujes dobre zavore in mir v rokah."},
+  {id:1002, name:"Golovec Flow", region:"Ljubljana", type:"gorski", diff:"modra", km:8, vm:280, stars:3, seasonal:"Vse leto", surface:"Zemlja, gramoz", novo:false, main_image:null, comment:"Odlicna opcija za hitro voznju po sluzbi."},
+  {id:1003, name:"Mariborski grebeni", region:"Maribor", type:"mesani", diff:"rdeca", km:18, vm:620, stars:4, seasonal:"Apr-Nov", surface:"Kamen, zemlja", novo:true, main_image:null, comment:"Grebeni nad Mariborom ti dajo obcutek kot da si na Alpah."},
+  {id:1004, name:"Krvavec Black", region:"Krvavec", type:"gorski", diff:"crna", km:5, vm:480, stars:5, seasonal:"Jun-Sep", surface:"Kamen, skale", novo:false, main_image:null, comment:"Ne saliti se z Krvavcem. Zavore moras imeti top."},
+  {id:1005, name:"Pohorje Grand Tour", region:"Pohorje", type:"mesani", diff:"rdeca", km:42, vm:1400, stars:5, seasonal:"Maj-Okt", surface:"Mesano", novo:false, main_image:null, comment:"En dan, 42 km, 1400 vm. Vzemi polno baterijo."},
+  {id:1006, name:"Smarna pot", region:"Ljubljana", type:"kolesarska", diff:"zelena", km:12, vm:450, stars:3, seasonal:"Vse leto", surface:"Asfalt, gramoz", novo:false, main_image:null, comment:"Dobra uvajalna pot za zacetnike."}
+];
+
+var demoPon = [
+  {id:2001, name:"Turisticna kmetija Kovac", type:"kulinarika", map_num:1, tel:"041 123 456", description:"Domaca hrana in zeliscni caj ob poti.", image:null},
+  {id:2002, name:"Vinska klet Puklavec", type:"vino", map_num:2, tel:"02 555 1234", description:"Domaca vina z razgledom.", image:null},
+  {id:2003, name:"Planinska koca Pohorje", type:"prenocitev", map_num:3, tel:"040 987 654", description:"Prenocitev tik ob trailih.", image:null},
+  {id:2004, name:"Pr Lipovcu", type:"kulinarika", map_num:4, tel:"041 222 333", description:"Bograc in domaci kruh po Pohorski divjini.", image:null},
+  {id:2005, name:"Eko kmetija Zelnik", type:"prenocitev", map_num:5, tel:"040 444 111", description:"Mirno prenocisce z garago za kolesa.", image:null},
+  {id:2006, name:"Vinska tocka Stajerska", type:"vino", map_num:6, tel:"02 333 4567", description:"Buticni vinar ob poti.", image:null}
+];
+
+function sbHeaders() {
+  return {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json"};
 }
-async function sbPost(table, data){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {method:'POST', headers:{...headers,'Prefer':'return=representation'}, body:JSON.stringify(data)});
-  return r.json();
+
+function sbGet(table, query) {
+  var q = query || "";
+  return fetch(SB_URL + "/rest/v1/" + table + "?" + q, {headers: sbHeaders()}).then(function(r){return r.json();});
 }
-async function sbPatch(table, id, data){
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {method:'PATCH', headers:{...headers,'Prefer':'return=representation'}, body:JSON.stringify(data)});
-  return r.json();
+
+function sbPost(table, data) {
+  return fetch(SB_URL + "/rest/v1/" + table, {
+    method:"POST", headers: Object.assign({}, sbHeaders(), {"Prefer":"return=representation"}), body: JSON.stringify(data)
+  }).then(function(r){return r.json();});
 }
-async function sbDelete(table, id){
-  return fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {method:'DELETE', headers});
+
+function sbPatch(table, id, data) {
+  return fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {
+    method:"PATCH", headers: Object.assign({}, sbHeaders(), {"Prefer":"return=representation"}), body: JSON.stringify(data)
+  }).then(function(r){return r.json();});
 }
-async function uploadFile(bucket, path, file){
-  const r = await fetch(`${SB_URL}/storage/v1/object/${bucket}/${path}`, {
-    method:'POST', headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type}, body:file
+
+function sbDelete(table, id) {
+  return fetch(SB_URL + "/rest/v1/" + table + "?id=eq." + id, {method:"DELETE", headers: sbHeaders()});
+}
+
+function uploadFileToStorage(file, path) {
+  return fetch(SB_URL + "/storage/v1/object/slike/" + path, {
+    method:"POST",
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": file.type},
+    body: file
+  }).then(function(r) {
+    if (!r.ok) throw new Error("Nalaganje slike ni uspelo");
+    return path;
   });
-  const data = await r.json();
-  return `${SB_URL}/storage/v1/object/public/${bucket}/${path}`;
-}
-function imgUrl(path){ return path ? `${SB_URL}/storage/v1/object/public/slike/${path}` : null; }
-
-// ===== STATE =====
-const ADMIN_PASS = 'bojan2025';
-let adminLoggedIn = false;
-let allTrails = [];
-let allPon = [];
-
-// ===== HELPERS =====
-function diffC(d){return{zelena:'d-z',modra:'d-m',rdeca:'d-r',crna:'d-c'}[d]||'d-m'}
-function diffL(d){return{zelena:'🟢 Zelena',modra:'🔵 Modra',rdeca:'🔴 Rdeča',crna:'⚫ Črna'}[d]||d}
-function starsHtml(n){return'★'.repeat(n)+'☆'.repeat(5-n)}
-function showMsg(parentEl, msg, type='success'){
-  const d=document.createElement('div');
-  d.className=type==='success'?'success-msg':'error-msg';
-  d.textContent=msg;
-  parentEl.appendChild(d);
-  setTimeout(()=>d.remove(), 4000);
 }
 
-// ===== NAVIGATION =====
-function showPage(p){
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('on'));
-  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('on'));
-  document.getElementById('page-'+p).classList.add('on');
-  const nb=document.getElementById('nb-'+p);
-  if(nb) nb.classList.add('on');
-  window.scrollTo(0,0);
-  if(p==='traili') loadTrails();
-  if(p==='ponudniki') loadPon();
+function imgUrl(path) {
+  return path ? SB_URL + "/storage/v1/object/public/slike/" + path : null;
 }
 
-// ===== TRAILS =====
-async function loadTrails(){
-  document.getElementById('trail-grid').innerHTML='<div class="loading"><div class="spinner"></div>Nalagam traile...</div>';
-  allTrails = await sbGet('traili','order=created_at.desc');
-  renderTrails(allTrails);
-  // Featured
-  if(allTrails.length>0) renderFeatured(allTrails[0]);
-  document.getElementById('stat-traili').textContent=allTrails.length;
+function diffC(d) {
+  var m = {zelena:"d-z", modra:"d-m", rdeca:"d-r", crna:"d-c"};
+  return m[d] || "d-m";
 }
 
-function renderFeatured(t){
-  const img = t.main_image ? `<img src="${imgUrl(t.main_image)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">` : '<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.25" viewBox="0 0 600 350"><path d="M0,350 L0,210 L80,160 L160,200 L260,100 L340,150 L430,70 L510,120 L600,60 L600,350 Z" fill="rgba(255,255,255,.15)"/></svg>';
-  document.getElementById('featured-wrap').innerHTML=`
-    <div class="featured" onclick="openTrail(${t.id})">
-      <div class="featured-img bg-forest" style="position:relative">${img}</div>
-      <div class="featured-body">
-        <div class="feat-tag">🏔 ${t.type||'Gorski trail'} · ${t.region||''}</div>
-        <div class="feat-title">${t.name}</div>
-        <div class="feat-desc">${t.comment||''}</div>
-        <div class="feat-stats">
-          <div class="feat-stat"><div class="n">${t.km||0} km</div><div class="l">Razdalja</div></div>
-          <div class="feat-stat"><div class="n">${t.vm||0} m</div><div class="l">Vzpon</div></div>
-          <div class="feat-stat"><div class="n">${diffL(t.diff)}</div><div class="l">Težavnost</div></div>
-        </div>
-        <button class="btn btn-p">Poglej trail →</button>
-      </div>
-    </div>`;
+function diffL(d) {
+  var m = {zelena:"Zelena", modra:"Modra", rdeca:"Rdeca", crna:"Crna"};
+  return m[d] || d;
 }
 
-function renderTrails(list){
-  if(!list||!list.length){document.getElementById('trail-grid').innerHTML='<p style="color:var(--tx2);padding:2rem 0">Še ni trailov. Dodaj prvega v Admin panelu!</p>';return;}
-  document.getElementById('trail-grid').innerHTML=list.map(t=>`
-    <div class="tcard" onclick="openTrail(${t.id})">
-      <div class="tcard-img">
-        ${t.main_image?`<img src="${imgUrl(t.main_image)}" style="width:100%;height:100%;object-fit:cover">`:
-        '<svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.2" viewBox="0 0 400 180"><path d="M0,180 L0,100 L80,65 L160,95 L240,40 L320,75 L400,35 L400,180 Z" fill="rgba(255,255,255,.2)"/></svg>'}
-        <div class="dbadge ${diffC(t.diff)}">${diffL(t.diff)}</div>
-        ${t.novo?'<div class="nbadge">NOVO</div>':''}
-      </div>
-      <div class="tcard-body">
-        <div class="tcard-name">${t.name}</div>
-        <div class="tcard-region">📍 ${t.region||''}</div>
-        <div class="tmeta">
-          <div class="tmeta-i">🛣 <strong>${t.km||0} km</strong></div>
-          <div class="tmeta-i">⛰ <strong>${t.vm||0} m</strong></div>
-          <div class="tmeta-i"><span style="color:var(--acc);font-size:.78rem">${starsHtml(t.stars||3)}</span></div>
-        </div>
-      </div>
-    </div>`).join('');
+function starsHtml(n) {
+  var s = "";
+  for (var i = 0; i < n; i++) s += "&#9733;";
+  for (var j = n; j < 5; j++) s += "&#9734;";
+  return s;
 }
 
-function filterTrails(f,el){
-  document.querySelectorAll('#page-traili .filter-row .ftab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  const filtered = f==='vse'?allTrails:allTrails.filter(t=>t.type===f||t.diff===f);
+function showPage(p) {
+  var pages = document.querySelectorAll(".page");
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove("on");
+  var btns = document.querySelectorAll(".nav-btn");
+  for (var j = 0; j < btns.length; j++) btns[j].classList.remove("on");
+  document.getElementById("page-" + p).classList.add("on");
+  var nb = document.getElementById("nb-" + p);
+  if (nb) nb.classList.add("on");
+  window.scrollTo(0, 0);
+  if (p === "traili") loadTrails();
+  if (p === "ponudniki") loadPon();
+}
+
+function loadTrails() {
+  document.getElementById("trail-grid").innerHTML = "<div class='loading'><div class='spinner'></div>Nalagam traile...</div>";
+  sbGet("traili", "order=created_at.desc").then(function(data) {
+    allTrails = (data && data.length > 0) ? data : demoTrails;
+    renderTrails(allTrails);
+    if (allTrails.length > 0) renderFeatured(allTrails[0]);
+    document.getElementById("stat-traili").textContent = allTrails.length;
+  }).catch(function() {
+    allTrails = demoTrails;
+    renderTrails(allTrails);
+    if (allTrails.length > 0) renderFeatured(allTrails[0]);
+    document.getElementById("stat-traili").textContent = allTrails.length;
+  });
+}
+
+function renderFeatured(t) {
+  var img = t.main_image ? "<img src='" + imgUrl(t.main_image) + "' style='position:absolute;inset:0;width:100%;height:100%;object-fit:cover'>" : "";
+  document.getElementById("featured-wrap").innerHTML =
+    "<div class='featured' onclick='openTrail(" + t.id + ")'>" +
+    "<div class='featured-img' style='position:relative'>" + img + "</div>" +
+    "<div class='featured-body'>" +
+    "<div class='feat-tag'>" + (t.type || "trail") + " - " + (t.region || "") + "</div>" +
+    "<div class='feat-title'>" + t.name + "</div>" +
+    "<div class='feat-desc'>" + (t.comment || "") + "</div>" +
+    "<div class='feat-stats'>" +
+    "<div class='feat-stat'><div class='n'>" + (t.km || 0) + " km</div><div class='l'>Razdalja</div></div>" +
+    "<div class='feat-stat'><div class='n'>" + (t.vm || 0) + " m</div><div class='l'>Vzpon</div></div>" +
+    "<div class='feat-stat'><div class='n'>" + diffL(t.diff) + "</div><div class='l'>Tezavnost</div></div>" +
+    "</div>" +
+    "<button class='btn btn-p'>Poglej trail</button>" +
+    "</div></div>";
+}
+
+function renderTrails(list) {
+  if (!list || !list.length) {
+    document.getElementById("trail-grid").innerHTML = "<p style='color:var(--tx2);padding:2rem 0'>Ni trailov.</p>";
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < list.length; i++) {
+    var t = list[i];
+    var imgHtml = t.main_image ? "<img src='" + imgUrl(t.main_image) + "' style='width:100%;height:100%;object-fit:cover'>" : "";
+    html += "<div class='tcard' onclick='openTrail(" + t.id + ")'>" +
+      "<div class='tcard-img'>" + imgHtml +
+      "<div class='dbadge " + diffC(t.diff) + "'>" + diffL(t.diff) + "</div>" +
+      (t.novo ? "<div class='nbadge'>NOVO</div>" : "") +
+      "</div>" +
+      "<div class='tcard-body'>" +
+      "<div class='tcard-name'>" + t.name + "</div>" +
+      "<div class='tcard-region'>" + (t.region || "") + "</div>" +
+      "<div class='tmeta'>" +
+      "<div class='tmeta-i'><strong>" + (t.km || 0) + " km</strong></div>" +
+      "<div class='tmeta-i'><strong>" + (t.vm || 0) + " m</strong></div>" +
+      "<div class='tmeta-i'><span style='color:var(--acc)'>" + starsHtml(t.stars || 3) + "</span></div>" +
+      "</div></div></div>";
+  }
+  document.getElementById("trail-grid").innerHTML = html;
+}
+
+function filterTrails(f, el) {
+  var tabs = document.querySelectorAll("#page-traili .filter-row .ftab");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("on");
+  el.classList.add("on");
+  var filtered = f === "vse" ? allTrails : allTrails.filter(function(t) { return t.type === f || t.diff === f; });
   renderTrails(filtered);
 }
 
-async function openTrail(id){
-  const t = allTrails.find(x=>x.id===id);
-  if(!t) return;
-  const komentarji = await sbGet('komentarji',`trail_id=eq.${id}&approved=eq.true&order=created_at.desc`);
-  const heroImg = t.main_image ? `<img class="mhero-img" src="${imgUrl(t.main_image)}">` : `<div class="mhero-bg bg-forest"></div>`;
-  const stravaImg = t.strava_image ? `<img src="${imgUrl(t.strava_image)}" style="width:100%;height:100%;object-fit:cover">` : `<span style="font-size:1.4rem">🗺</span><span>Strava zemljevid (admin naloži)</span>`;
-  // Galerija
-  let galerija = '';
-  if(t.photos && t.photos.length){
-    galerija = t.photos.map((p,i)=>`
-      <div class="fc" onclick="this.classList.toggle('flipped')">
-        <div class="fc-inner">
-          <div class="fc-f"><img src="${imgUrl(p.url)}"></div>
-          <div class="fc-b"><strong>Fotografija ${i+1}</strong><p>${p.desc||''}</p></div>
-        </div>
-        <div class="fc-hint">klikni ↺</div>
-      </div>`).join('');
-  } else {
-    galerija = '<p style="color:var(--tx2);font-size:.85rem">Fotografije bodo dodane kmalu.</p>';
+function loadPon() {
+  document.getElementById("pon-grid").innerHTML = "<div class='loading'><div class='spinner'></div>Nalagam...</div>";
+  sbGet("ponudniki", "order=map_num.asc").then(function(data) {
+    allPon = (data && data.length > 0) ? data : demoPon;
+    renderPon(allPon);
+  }).catch(function() {
+    allPon = demoPon;
+    renderPon(allPon);
+  });
+}
+
+function renderPon(list) {
+  var icons = {kulinarika:"&#x1F37D;", vino:"&#x1F377;", prenocitev:"&#x1F6CF;"};
+  var labels = {kulinarika:"Kulinarika", vino:"Vino", prenocitev:"Prenocitev"};
+  if (!list || !list.length) {
+    document.getElementById("pon-grid").innerHTML = "<p style='color:var(--tx2);padding:2rem 0'>Ni ponudnikov.</p>";
+    return;
   }
-  document.getElementById('modal-content').innerHTML=`
-    <div class="mhero">${heroImg}
-      <div class="mhero-cnt">
-        <div class="dbadge ${diffC(t.diff)}" style="display:inline-block;margin-bottom:.4rem">${diffL(t.diff)}</div>
-        <div class="mtitle">${t.name}</div>
-        <div style="color:rgba(255,255,255,.55);font-size:.82rem">📍 ${t.region||''} &nbsp;·&nbsp; <span style="color:var(--acc)">${starsHtml(t.stars||3)}</span></div>
-      </div>
-    </div>
-    <div class="mbody">
-      <div class="mgrid">
-        <div>
-          <div class="sec-h2">Moj komentar</div>
-          <p style="color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem">${t.comment||''}</p>
-          <div class="sec-h2">Galerija — klikni za opis</div>
-          <div class="fgrid">${galerija}</div>
-          <div class="sec-h2">Strava zemljevid</div>
-          <div class="strava-map">${stravaImg}</div>
-          <div class="sec-h2">Prenos & navigacija</div>
-          <div class="gpx-row">
-            ${t.gpx_file?`<a href="${imgUrl(t.gpx_file)}" download class="gpx-btn gpx-dl">⬇ Prenesi GPX</a>`:'<button class="gpx-btn gpx-dl" onclick="alert(\'GPX bo dodan kmalu\')">⬇ Prenesi GPX</button>'}
-            <button class="gpx-btn gpx-km" onclick="window.open('https://www.komoot.com','_blank')">Komoot ↗</button>
-            <button class="gpx-btn gpx-km" onclick="window.open('https://www.strava.com','_blank')">Strava ↗</button>
-          </div>
-          <div class="sec-h2">Komentarji</div>
-          <div class="cform">
-            <h3>Pusti komentar</h3>
-            <input type="text" placeholder="Tvoje ime" id="cn${id}">
-            <textarea placeholder="Tvoje izkušnje..." id="ct${id}"></textarea>
-            <button class="btn btn-p" onclick="addCmt(${id})" style="width:100%;justify-content:center">Pošlji</button>
-          </div>
-          <div id="cl${id}">${komentarji.map(c=>`
-            <div class="cmt"><div class="cmt-av">${c.name[0]}</div>
-            <div><div class="cmt-name">${c.name}</div><div class="cmt-txt">${c.text}</div>
-            <div class="cmt-date">${new Date(c.created_at).toLocaleDateString('sl-SI')}</div></div></div>`).join('')}</div>
-        </div>
-        <div>
-          <div class="stats-panel">
-            <div class="sec-h2">Podatki</div>
-            <div class="srow"><span>Razdalja</span><span>${t.km||0} km</span></div>
-            <div class="srow"><span>Vzpon</span><span>↑ ${t.vm||0} m</span></div>
-            <div class="srow"><span>Težavnost</span><span>${diffL(t.diff)}</span></div>
-            <div class="srow"><span>Ocena</span><span class="stars-c">${starsHtml(t.stars||3)}</span></div>
-            <div class="srow"><span>Sezona</span><span>${t.seasonal||'—'}</span></div>
-            <div class="srow"><span>Podlaga</span><span>${t.surface||'—'}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  document.getElementById('trail-modal').classList.add('open');
-  document.body.style.overflow='hidden';
+  var html = "";
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i];
+    var imgHtml = p.image ? "<img src='" + imgUrl(p.image) + "'>" : (icons[p.type] || "");
+    html += "<div class='pcard'>" +
+      "<div class='pcard-img'>" + imgHtml + "</div>" +
+      "<div class='pcard-body'>" +
+      "<div class='ptype'>" + (labels[p.type] || p.type) + "</div>" +
+      "<div class='pname'><span class='pnum'>" + (p.map_num || "") + "</span>" + p.name + "</div>" +
+      "<div style='font-size:.8rem;color:var(--tx2);margin:.25rem 0'>" + (p.description || "") + "</div>" +
+      "<div class='ptel'>" + (p.tel || "") + "</div>" +
+      "</div></div>";
+  }
+  document.getElementById("pon-grid").innerHTML = html;
 }
 
-async function addCmt(id){
-  const n=document.getElementById('cn'+id).value.trim();
-  const t=document.getElementById('ct'+id).value.trim();
-  if(!n||!t){alert('Prosim vnesi ime in komentar.');return;}
-  await sbPost('komentarji',{trail_id:id,name:n,text:t,approved:false});
-  document.getElementById('cn'+id).value='';
-  document.getElementById('ct'+id).value='';
-  const info=document.createElement('div');
-  info.className='success-msg';
-  info.textContent='✓ Komentar poslan! Videl bo po odobritvi.';
-  document.getElementById('cl'+id).before(info);
-  setTimeout(()=>info.remove(),4000);
+function filterPon(f, el) {
+  var tabs = document.querySelectorAll("#pon-filters .ftab");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("on");
+  el.classList.add("on");
+  renderPon(f === "vse" ? allPon : allPon.filter(function(p) { return p.type === f; }));
 }
 
-// ===== PONUDNIKI =====
-async function loadPon(){
-  document.getElementById('pon-grid').innerHTML='<div class="loading"><div class="spinner"></div>Nalagam...</div>';
-  allPon = await sbGet('ponudniki','order=map_num.asc');
-  renderPon(allPon);
+function openTrail(id) {
+  var t = null;
+  for (var i = 0; i < allTrails.length; i++) {
+    if (allTrails[i].id === id) { t = allTrails[i]; break; }
+  }
+  if (!t) return;
+  var heroImg = t.main_image ? "<img class='mhero-img' src='" + imgUrl(t.main_image) + "'>" : "<div class='mhero-bg'></div>";
+  var stravaImg = t.strava_image ? "<img src='" + imgUrl(t.strava_image) + "' style='width:100%;height:100%;object-fit:cover'>" : "<span>Strava zemljevid (admin nalozi)</span>";
+  document.getElementById("modal-content").innerHTML =
+    "<div class='mhero'>" + heroImg +
+    "<div class='mhero-cnt'>" +
+    "<div class='dbadge " + diffC(t.diff) + "' style='display:inline-block;margin-bottom:.4rem'>" + diffL(t.diff) + "</div>" +
+    "<div class='mtitle'>" + t.name + "</div>" +
+    "<div style='color:rgba(255,255,255,.55);font-size:.82rem'>" + (t.region || "") + " - <span style='color:var(--acc)'>" + starsHtml(t.stars || 3) + "</span></div>" +
+    "</div></div>" +
+    "<div class='mbody'><div class='mgrid'><div>" +
+    "<div class='sec-h2'>Moj komentar</div>" +
+    "<p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>" + (t.comment || "") + "</p>" +
+    "<div class='sec-h2'>Strava zemljevid</div>" +
+    "<div class='strava-map'>" + stravaImg + "</div>" +
+    "<div class='sec-h2'>Prenos</div>" +
+    "<div class='gpx-row'>" +
+    (t.gpx_file ? "<a href='" + imgUrl(t.gpx_file) + "' download class='gpx-btn gpx-dl'>Prenesi GPX</a>" : "<button class='gpx-btn gpx-dl' onclick='alert(\"GPX bo dodan kmalu\")'>Prenesi GPX</button>") +
+    "<button class='gpx-btn gpx-km' onclick='window.open(\"https://www.komoot.com\",\"_blank\")'>Komoot</button>" +
+    "<button class='gpx-btn gpx-km' onclick='window.open(\"https://www.strava.com\",\"_blank\")'>Strava</button>" +
+    "</div>" +
+    "<div class='sec-h2'>Komentarji</div>" +
+    "<div class='cform'><h3>Pusti komentar</h3>" +
+    "<input type='text' placeholder='Tvoje ime' id='cn" + id + "'>" +
+    "<textarea placeholder='Tvoje izkusnje...' id='ct" + id + "'></textarea>" +
+    "<button class='btn btn-p' onclick='addCmt(" + id + ")' style='width:100%;justify-content:center'>Poslji</button>" +
+    "</div><div id='cl" + id + "'></div>" +
+    "</div><div>" +
+    "<div class='stats-panel'><div class='sec-h2'>Podatki</div>" +
+    "<div class='srow'><span>Razdalja</span><span>" + (t.km || 0) + " km</span></div>" +
+    "<div class='srow'><span>Vzpon</span><span>" + (t.vm || 0) + " m</span></div>" +
+    "<div class='srow'><span>Tezavnost</span><span>" + diffL(t.diff) + "</span></div>" +
+    "<div class='srow'><span>Ocena</span><span class='stars-c'>" + starsHtml(t.stars || 3) + "</span></div>" +
+    "<div class='srow'><span>Sezona</span><span>" + (t.seasonal || "-") + "</span></div>" +
+    "<div class='srow'><span>Podlaga</span><span>" + (t.surface || "-") + "</span></div>" +
+    "</div></div></div></div>";
+
+  sbGet("komentarji", "trail_id=eq." + id + "&approved=eq.true&order=created_at.desc").then(function(cmts) {
+    if (!cmts || !cmts.length) return;
+    var html = "";
+    for (var i = 0; i < cmts.length; i++) {
+      var c = cmts[i];
+      html += "<div class='cmt'><div class='cmt-av'>" + c.name[0] + "</div>" +
+        "<div><div class='cmt-name'>" + c.name + "</div>" +
+        "<div class='cmt-txt'>" + c.text + "</div></div></div>";
+    }
+    var cl = document.getElementById("cl" + id);
+    if (cl) cl.innerHTML = html;
+  });
+
+  document.getElementById("trail-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
-function renderPon(list){
-  const icons={kulinarika:'🍽',vino:'🍷',prenocitev:'🛏'};
-  const labels={kulinarika:'Kulinarika',vino:'Vino',prenocitev:'Prenočitev'};
-  if(!list||!list.length){document.getElementById('pon-grid').innerHTML='<p style="color:var(--tx2);padding:2rem 0">Še ni ponudnikov.</p>';return;}
-  document.getElementById('pon-grid').innerHTML=list.map(p=>`
-    <div class="pcard">
-      <div class="pcard-img">
-        ${p.image?`<img src="${imgUrl(p.image)}">`:(icons[p.type]||'📍')}
-      </div>
-      <div class="pcard-body">
-        <div class="ptype">${labels[p.type]||p.type}</div>
-        <div class="pname"><span class="pnum">${p.map_num||'?'}</span>${p.name}</div>
-        <div style="font-size:.8rem;color:var(--tx2);margin:.25rem 0">${p.description||''}</div>
-        <div class="ptel">📞 ${p.tel||''}</div>
-      </div>
-    </div>`).join('');
+function addCmt(id) {
+  var n = document.getElementById("cn" + id).value.trim();
+  var t = document.getElementById("ct" + id).value.trim();
+  if (!n || !t) { alert("Prosim vnesi ime in komentar."); return; }
+  sbPost("komentarji", {trail_id: id, name: n, text: t, approved: false}).then(function() {
+    document.getElementById("cn" + id).value = "";
+    document.getElementById("ct" + id).value = "";
+    var info = document.createElement("div");
+    info.className = "success-msg";
+    info.textContent = "Komentar poslan! Prikazan bo po odobritvi.";
+    document.getElementById("cl" + id).before(info);
+    setTimeout(function() { info.remove(); }, 4000);
+  });
 }
 
-function filterPon(f,el){
-  document.querySelectorAll('#pon-filters .ftab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  renderPon(f==='vse'?allPon:allPon.filter(p=>p.type===f));
+function closeModal(id) {
+  document.getElementById(id).classList.remove("open");
+  document.body.style.overflow = "";
 }
 
-// ===== MODAL =====
-function closeModal(id){
-  document.getElementById(id).classList.remove('open');
-  document.body.style.overflow='';
-}
-
-// ===== ADMIN =====
-function openAdmin(){
-  document.getElementById('admin-modal').classList.add('open');
-  document.body.style.overflow='hidden';
-  if(!adminLoggedIn) showLoginScreen();
+function openAdmin() {
+  document.getElementById("admin-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  if (!adminLoggedIn) showLoginScreen();
   else showAdminPanel();
 }
 
-function showLoginScreen(){
-  document.getElementById('admin-wrap-inner').innerHTML=`
-    <div style="max-width:360px;margin:4rem auto 0;text-align:center">
-      <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
-      <div style="font-size:1.4rem;font-weight:800;margin-bottom:.3rem">Admin prijava</div>
-      <div class="admin-form" style="text-align:left;margin-top:1.5rem">
-        <div class="form-group"><label class="form-label">Geslo</label>
-          <input class="form-input" type="password" id="admin-pass-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
-        </div>
-        <div id="login-error" style="color:#e74c3c;font-size:.8rem;margin-bottom:.8rem;display:none">❌ Napačno geslo.</div>
-        <button class="btn btn-p" onclick="checkLogin()" style="width:100%;justify-content:center">Prijava →</button>
-      </div>
-    </div>`;
+function showLoginScreen() {
+  document.getElementById("admin-wrap-inner").innerHTML =
+    "<div style='max-width:360px;margin:4rem auto 0;text-align:center'>" +
+    "<div style='font-size:2.5rem;margin-bottom:1rem'>&#x1F512;</div>" +
+    "<div style='font-size:1.4rem;font-weight:800;margin-bottom:.3rem'>Admin prijava</div>" +
+    "<div class='admin-form' style='text-align:left;margin-top:1.5rem'>" +
+    "<div class='form-group'><label class='form-label'>Geslo</label>" +
+    "<input class='form-input' type='password' id='admin-pass-input' placeholder='........' onkeydown='if(event.key===\"Enter\")checkLogin()'></div>" +
+    "<div id='login-error' style='color:#e74c3c;font-size:.8rem;margin-bottom:.8rem;display:none'>Napacno geslo.</div>" +
+    "<button class='btn btn-p' onclick='checkLogin()' style='width:100%;justify-content:center'>Prijava</button>" +
+    "</div></div>";
 }
 
-function checkLogin(){
-  if(document.getElementById('admin-pass-input').value===ADMIN_PASS){
-    adminLoggedIn=true; showAdminPanel();
-  } else {
-    document.getElementById('login-error').style.display='block';
-    document.getElementById('admin-pass-input').value='';
+function checkLogin() {
+  var v = document.getElementById("admin-pass-input").value;
+  if (v === ADMIN_PASS) { adminLoggedIn = true; showAdminPanel(); }
+  else { document.getElementById("login-error").style.display = "block"; document.getElementById("admin-pass-input").value = ""; }
+}
+
+function adminLogout() { adminLoggedIn = false; closeModal("admin-modal"); }
+
+function showAdminPanel() {
+  document.getElementById("admin-wrap-inner").innerHTML =
+    "<div style='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem'>" +
+    "<div><div class='admin-title'>Admin panel</div><div class='admin-sub'>Upravljaj vsebino</div></div>" +
+    "<button onclick='adminLogout()' style='padding:6px 14px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.78rem;cursor:pointer'>Odjava</button>" +
+    "</div>" +
+    "<div class='anav' id='admin-nav'>" +
+    "<div class='anav-tab on' onclick='adminTab(\"dodaj\",this)'>Dodaj trail</div>" +
+    "<div class='anav-tab' onclick='adminTab(\"uredi\",this)'>Uredi traile</div>" +
+    "<div class='anav-tab' onclick='adminTab(\"ponudnik\",this)'>Ponudniki</div>" +
+    "<div class='anav-tab' onclick='adminTab(\"omeni\",this)'>O meni</div>" +
+    "<div class='anav-tab' onclick='adminTab(\"komentarji\",this)'>Komentarji</div>" +
+    "</div>" +
+    "<div id='admin-content'></div>";
+  adminTab("dodaj", document.querySelector("#admin-nav .anav-tab"));
+}
+
+function adminTab(tab, el) {
+  var tabs = document.querySelectorAll("#admin-nav .anav-tab");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("on");
+  el.classList.add("on");
+  var c = document.getElementById("admin-content");
+
+  if (tab === "dodaj") {
+    c.innerHTML = "<div class='admin-form'>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Ime traila</label><input class='form-input' id='new-name' placeholder='npr. Pohorska divjina'></div>" +
+      "<div class='form-group'><label class='form-label'>Regija</label><input class='form-input' id='new-region' placeholder='npr. Pohorje'></div>" +
+      "</div>" +
+      "<div class='form-group'><label class='form-label'>Komentar</label><textarea class='form-textarea' id='new-comment' placeholder='Tvoj osebni komentar...'></textarea></div>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Razdalja (km)</label><input class='form-input' type='number' id='new-km' placeholder='24'></div>" +
+      "<div class='form-group'><label class='form-label'>Vzpon (m)</label><input class='form-input' type='number' id='new-vm' placeholder='850'></div>" +
+      "</div>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Tezavnost</label><select class='form-select' id='new-diff'><option value='zelena'>Zelena</option><option value='modra'>Modra</option><option value='rdeca' selected>Rdeca</option><option value='crna'>Crna</option></select></div>" +
+      "<div class='form-group'><label class='form-label'>Tip</label><select class='form-select' id='new-type'><option value='gorski'>Gorski trail</option><option value='kolesarska'>Kolesarska pot</option><option value='mesani'>Mesan</option></select></div>" +
+      "</div>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Sezona</label><input class='form-input' id='new-seasonal' placeholder='Maj-Oktober'></div>" +
+      "<div class='form-group'><label class='form-label'>Podlaga</label><input class='form-input' id='new-surface' placeholder='Zemlja, korenine'></div>" +
+      "</div>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Ocena (1-5)</label><select class='form-select' id='new-stars'><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>" +
+      "<div class='form-group'><label class='form-label'>Novo?</label><select class='form-select' id='new-novo'><option value='false'>Ne</option><option value='true'>Da</option></select></div>" +
+      "</div>" +
+      "<div class='form-group'><label class='form-label'>Glavna fotografija</label>" +
+      "<div class='upload-area' id='ua-main'><input type='file' accept='image/*' onchange='previewUpload(this,\"prev-main\",\"single\")'><span class='upload-icon'>&#x1F4F8;</span><span>Nalozi sliko</span></div>" +
+      "<div id='prev-main'></div></div>" +
+      "<div class='form-group'><label class='form-label'>Strava zemljevid</label>" +
+      "<div class='upload-area' id='ua-strava'><input type='file' accept='image/*' onchange='previewUpload(this,\"prev-strava\",\"single\")'><span class='upload-icon'>&#x1F5FA;</span><span>Nalozi sliko</span></div>" +
+      "<div id='prev-strava'></div></div>" +
+      "<div class='form-group'><label class='form-label'>GPX datoteka</label>" +
+      "<div class='upload-area' id='ua-gpx'><input type='file' accept='.gpx' onchange='previewUpload(this,\"prev-gpx\",\"gpx\")'><span class='upload-icon'>&#x1F4C1;</span><span>Nalozi .gpx</span></div>" +
+      "<div id='prev-gpx'></div></div>" +
+      "<div class='admin-actions'>" +
+      "<button class='btn btn-o' onclick='closeModal(\"admin-modal\")'>Preklic</button>" +
+      "<button class='btn btn-p' id='btn-save-trail' onclick='saveNewTrail()'>Shrani trail</button>" +
+      "</div></div>";
+
+  } else if (tab === "uredi") {
+    if (!allTrails.length) { c.innerHTML = "<p style='color:var(--tx2)'>Najprej dodaj traile.</p>"; return; }
+    var html = "<div><p style='color:var(--tx2);font-size:.85rem;margin-bottom:1rem'>Klikni na trail za urejanje:</p>";
+    for (var i = 0; i < allTrails.length; i++) {
+      var t = allTrails[i];
+      html += "<div onclick='editTrail(" + t.id + ")' style='display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-radius:var(--rs);padding:.9rem 1.1rem;margin-bottom:.6rem;border:.5px solid rgba(255,255,255,.07);cursor:pointer'>" +
+        "<div style='display:flex;align-items:center;gap:.8rem'>" +
+        "<div class='dbadge " + diffC(t.diff) + "' style='position:static'>" + diffL(t.diff) + "</div>" +
+        "<div><div style='font-size:.92rem;font-weight:700'>" + t.name + "</div>" +
+        "<div style='font-size:.75rem;color:var(--tx2)'>" + (t.region || "") + " - " + (t.km || 0) + " km</div></div>" +
+        "</div><span style='color:var(--acc);font-size:.82rem'>Uredi</span></div>";
+    }
+    html += "<div id='edit-form-wrap'></div></div>";
+    c.innerHTML = html;
+
+  } else if (tab === "ponudnik") {
+    c.innerHTML = "<div class='admin-form'>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Ime ponudnika</label><input class='form-input' id='pon-name' placeholder='Turisticna kmetija...'></div>" +
+      "<div class='form-group'><label class='form-label'>Kategorija</label><select class='form-select' id='pon-type'><option value='kulinarika'>Kulinarika</option><option value='vino'>Vino</option><option value='prenocitev'>Prenocitve</option></select></div>" +
+      "</div>" +
+      "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='pon-desc' placeholder='Kratek opis...'></textarea></div>" +
+      "<div class='form-row'>" +
+      "<div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='pon-tel' placeholder='041 123 456'></div>" +
+      "<div class='form-group'><label class='form-label'>Stevilka na mapi</label><input class='form-input' type='number' id='pon-num' placeholder='1'></div>" +
+      "</div>" +
+      "<div class='form-group'><label class='form-label'>Fotografija</label>" +
+      "<div class='upload-area' id='ua-pon'><input type='file' accept='image/*' onchange='previewUpload(this,\"prev-pon\",\"single\")'><span class='upload-icon'>&#x1F4F8;</span><span>Nalozi fotografijo</span></div>" +
+      "<div id='prev-pon'></div></div>" +
+      "<div class='admin-actions'>" +
+      "<button class='btn btn-o' onclick='closeModal(\"admin-modal\")'>Preklic</button>" +
+      "<button class='btn btn-p' onclick='savePonudnik()'>Shrani ponudnika</button>" +
+      "</div></div>";
+
+  } else if (tab === "omeni") {
+    c.innerHTML = "<div class='admin-form'>" +
+      "<div class='form-group'><label class='form-label'>Ime in priimek</label><input class='form-input' id='om-name' value='" + document.getElementById("about-name").textContent + "'></div>" +
+      "<div class='form-group'><label class='form-label'>Instagram handle</label><input class='form-input' id='om-handle' value='" + document.getElementById("about-handle").textContent + "'></div>" +
+      "<div class='form-group'><label class='form-label'>Besedilo 1</label><textarea class='form-textarea' id='om-t1'>" + document.getElementById("about-t1").textContent + "</textarea></div>" +
+      "<div class='form-group'><label class='form-label'>Besedilo 2</label><textarea class='form-textarea' id='om-t2'>" + document.getElementById("about-t2").textContent + "</textarea></div>" +
+      "<div class='form-group'><label class='form-label'>Besedilo 3</label><textarea class='form-textarea' id='om-t3'>" + document.getElementById("about-t3").textContent + "</textarea></div>" +
+      "<div class='form-group'><label class='form-label'>Znacke (locene z vejico)</label><input class='form-input' id='om-tags' value='eBike, Fotograf, Pohorje, Gorski traili, Enduro'></div>" +
+      "<div class='form-group'><label class='form-label'>Profilna fotografija</label>" +
+      "<div class='upload-area' id='ua-profile'><input type='file' accept='image/*' onchange='previewUpload(this,\"about-img-wrap\",\"profile\")'><span class='upload-icon'>&#x1F6B5;</span><span>Nalozi svojo fotografijo</span></div></div>" +
+      "<div class='admin-actions'>" +
+      "<button class='btn btn-o' onclick='closeModal(\"admin-modal\")'>Preklic</button>" +
+      "<button class='btn btn-p' onclick='saveOmeni()'>Shrani</button>" +
+      "</div></div>";
+
+  } else if (tab === "komentarji") {
+    c.innerHTML = "<div class='loading'><div class='spinner'></div>Nalagam...</div>";
+    sbGet("komentarji", "order=created_at.desc&approved=eq.false").then(function(all) {
+      if (!all || !all.length) { c.innerHTML = "<div class='admin-form'><p style='color:var(--tx2)'>Ni novih komentarjev.</p></div>"; return; }
+      var html = "<div class='admin-form'>";
+      for (var i = 0; i < all.length; i++) {
+        var cm = all[i];
+        html += "<div id='cmt-" + cm.id + "' style='background:var(--bg3);border-radius:var(--rs);padding:1rem;margin-bottom:.7rem;border:.5px solid rgba(255,255,255,.06)'>" +
+          "<div style='font-size:.72rem;color:var(--acc);margin-bottom:.25rem'>Trail " + cm.trail_id + "</div>" +
+          "<div style='font-size:.85rem;font-weight:600;margin-bottom:.15rem'>" + cm.name + "</div>" +
+          "<div style='font-size:.82rem;color:var(--tx2)'>" + cm.text + "</div>" +
+          "<div style='display:flex;gap:.5rem;margin-top:.7rem'>" +
+          "<button class='btn btn-p' style='padding:5px 12px;font-size:.76rem' onclick='approveCmt(" + cm.id + ")'>Objavi</button>" +
+          "<button class='btn btn-o' style='padding:5px 12px;font-size:.76rem' onclick='deleteCmt(" + cm.id + ")'>Izbrisi</button>" +
+          "</div></div>";
+      }
+      c.innerHTML = html + "</div>";
+    });
   }
 }
 
-function adminLogout(){adminLoggedIn=false;closeModal('admin-modal');}
-
-function showAdminPanel(){
-  document.getElementById('admin-wrap-inner').innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem">
-      <div><div class="admin-title">⚙ Admin panel</div><div class="admin-sub">Upravljaj vsebino</div></div>
-      <button onclick="adminLogout()" style="padding:6px 14px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.78rem;cursor:pointer">Odjava</button>
-    </div>
-    <div class="anav" id="admin-nav">
-      <div class="anav-tab on" onclick="adminTab('dodaj',this)">➕ Dodaj trail</div>
-      <div class="anav-tab" onclick="adminTab('uredi',this)">✏️ Uredi traile</div>
-      <div class="anav-tab" onclick="adminTab('ponudnik',this)">🍷 Ponudniki</div>
-      <div class="anav-tab" onclick="adminTab('omeni',this)">👤 O meni</div>
-      <div class="anav-tab" onclick="adminTab('komentarji',this)">💬 Komentarji</div>
-    </div>
-    <div id="admin-content"></div>`;
-  adminTab('dodaj', document.querySelector('#admin-nav .anav-tab'));
-}
-
-function adminTab(tab, el){
-  document.querySelectorAll('#admin-nav .anav-tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  const c = document.getElementById('admin-content');
-
-  if(tab==='dodaj'){
-    c.innerHTML=`<div class="admin-form">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Ime traila</label><input class="form-input" id="new-name" placeholder="npr. Pohorska divjina"></div>
-        <div class="form-group"><label class="form-label">Regija</label><input class="form-input" id="new-region" placeholder="npr. Pohorje"></div>
-      </div>
-      <div class="form-group"><label class="form-label">Komentar</label><textarea class="form-textarea" id="new-comment" placeholder="Tvoj osebni komentar..."></textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Razdalja (km)</label><input class="form-input" type="number" id="new-km" placeholder="24"></div>
-        <div class="form-group"><label class="form-label">Vzpon (m)</label><input class="form-input" type="number" id="new-vm" placeholder="850"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Težavnost</label>
-          <select class="form-select" id="new-diff"><option value="zelena">Zelena</option><option value="modra">Modra</option><option value="rdeca" selected>Rdeča</option><option value="crna">Črna</option></select></div>
-        <div class="form-group"><label class="form-label">Tip</label>
-          <select class="form-select" id="new-type"><option value="gorski">Gorski trail</option><option value="kolesarska">Kolesarska pot</option><option value="mesani">Mešan</option></select></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Sezona</label><input class="form-input" id="new-seasonal" placeholder="Maj–Oktober"></div>
-        <div class="form-group"><label class="form-label">Podlaga</label><input class="form-input" id="new-surface" placeholder="Zemlja, korenine"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Ocena (1-5)</label>
-          <select class="form-select" id="new-stars"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-        <div class="form-group"><label class="form-label">Novo?</label>
-          <select class="form-select" id="new-novo"><option value="false">Ne</option><option value="true">Da</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Glavna fotografija</label>
-        <div class="upload-area" id="ua-main"><input type="file" accept="image/*" onchange="previewUpload(this,'prev-main','single')"><span class="upload-icon">📸</span><span>Naloži glavno sliko</span></div>
-        <div id="prev-main"></div></div>
-      <div class="form-group"><label class="form-label">Strava zemljevid</label>
-        <div class="upload-area" id="ua-strava"><input type="file" accept="image/*" onchange="previewUpload(this,'prev-strava','single')"><span class="upload-icon">🗺</span><span>Naloži Strava sliko</span></div>
-        <div id="prev-strava"></div></div>
-      <div class="form-group"><label class="form-label">GPX datoteka</label>
-        <div class="upload-area" id="ua-gpx"><input type="file" accept=".gpx" onchange="previewUpload(this,'prev-gpx','gpx')"><span class="upload-icon">📁</span><span>Naloži .gpx datoteko</span></div>
-        <div id="prev-gpx"></div></div>
-      <div class="admin-actions">
-        <button class="btn btn-o" onclick="closeModal('admin-modal')">Prekliči</button>
-        <button class="btn btn-p" id="btn-save-trail" onclick="saveNewTrail()">💾 Shrani trail</button>
-      </div>
-    </div>`;
-
-  } else if(tab==='uredi'){
-    if(!allTrails.length){c.innerHTML='<p style="color:var(--tx2)">Najprej dodaj traile.</p>';return;}
-    c.innerHTML=`<div>
-      <p style="color:var(--tx2);font-size:.85rem;margin-bottom:1rem">Klikni na trail za urejanje:</p>
-      ${allTrails.map(t=>`
-        <div onclick="editTrail(${t.id})" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-radius:var(--rs);padding:.9rem 1.1rem;margin-bottom:.6rem;border:.5px solid rgba(255,255,255,.07);cursor:pointer">
-          <div style="display:flex;align-items:center;gap:.8rem">
-            <div class="dbadge ${diffC(t.diff)}" style="position:static">${diffL(t.diff)}</div>
-            <div><div style="font-size:.92rem;font-weight:700">${t.name}</div>
-            <div style="font-size:.75rem;color:var(--tx2)">📍 ${t.region||''} · ${t.km||0} km</div></div>
-          </div>
-          <span style="color:var(--acc);font-size:.82rem">✏️</span>
-        </div>`).join('')}
-      <div id="edit-form-wrap"></div>
-    </div>`;
-
-  } else if(tab==='ponudnik'){
-    c.innerHTML=`<div class="admin-form">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Ime ponudnika</label><input class="form-input" id="pon-name" placeholder="Turistična kmetija..."></div>
-        <div class="form-group"><label class="form-label">Kategorija</label>
-          <select class="form-select" id="pon-type"><option value="kulinarika">Kulinarika</option><option value="vino">Vino</option><option value="prenocitev">Prenočitve</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Opis</label><textarea class="form-textarea" id="pon-desc" placeholder="Kratek opis..."></textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Telefonska</label><input class="form-input" id="pon-tel" placeholder="041 123 456"></div>
-        <div class="form-group"><label class="form-label">Številka na mapi</label><input class="form-input" type="number" id="pon-num" placeholder="1"></div>
-      </div>
-      <div class="form-group"><label class="form-label">Fotografija</label>
-        <div class="upload-area" id="ua-pon"><input type="file" accept="image/*" onchange="previewUpload(this,'prev-pon','single')"><span class="upload-icon">📸</span><span>Naloži fotografijo</span></div>
-        <div id="prev-pon"></div></div>
-      <div class="admin-actions">
-        <button class="btn btn-o" onclick="closeModal('admin-modal')">Prekliči</button>
-        <button class="btn btn-p" onclick="savePonudnik()">💾 Shrani ponudnika</button>
-      </div>
-    </div>`;
-
-  } else if(tab==='omeni'){
-    c.innerHTML=`<div class="admin-form">
-      <div class="form-group"><label class="form-label">Ime in priimek</label>
-        <input class="form-input" id="om-name" value="${document.getElementById('about-name').textContent}"></div>
-      <div class="form-group"><label class="form-label">Instagram handle</label>
-        <input class="form-input" id="om-handle" value="${document.getElementById('about-handle').textContent}"></div>
-      <div class="form-group"><label class="form-label">Besedilo 1</label>
-        <textarea class="form-textarea" id="om-t1">${document.getElementById('about-t1').textContent}</textarea></div>
-      <div class="form-group"><label class="form-label">Besedilo 2</label>
-        <textarea class="form-textarea" id="om-t2">${document.getElementById('about-t2').textContent}</textarea></div>
-      <div class="form-group"><label class="form-label">Besedilo 3</label>
-        <textarea class="form-textarea" id="om-t3">${document.getElementById('about-t3').textContent}</textarea></div>
-      <div class="form-group"><label class="form-label">Značke (ločene z vejico)</label>
-        <input class="form-input" id="om-tags" value="⚡ eBike, 📸 Fotograf, 🌲 Pohorje, 🏔 Gorski traili, Enduro"></div>
-      <div class="form-group"><label class="form-label">Profilna fotografija</label>
-        <div class="upload-area" id="ua-profile"><input type="file" accept="image/*" onchange="previewUpload(this,'prev-profile','single')"><span class="upload-icon">🚵</span><span>Naloži svojo fotografijo</span></div>
-        <div id="prev-profile"></div></div>
-      <div class="admin-actions">
-        <button class="btn btn-o" onclick="closeModal('admin-modal')">Prekliči</button>
-        <button class="btn btn-p" onclick="saveOmeni()">💾 Shrani</button>
-      </div>
-    </div>`;
-
-  } else if(tab==='komentarji'){
-    loadKomentarjiAdmin(c);
-  }
-}
-
-async function loadKomentarjiAdmin(c){
-  c.innerHTML='<div class="loading"><div class="spinner"></div>Nalagam komentarje...</div>';
-  const all = await sbGet('komentarji','order=created_at.desc&approved=eq.false');
-  if(!all||!all.length){c.innerHTML='<div class="admin-form"><p style="color:var(--tx2)">Ni novih komentarjev za pregled. ✓</p></div>';return;}
-  c.innerHTML=`<div class="admin-form">${all.map(cm=>`
-    <div id="cmt-${cm.id}" style="background:var(--bg3);border-radius:var(--rs);padding:1rem;margin-bottom:.7rem;border:.5px solid rgba(255,255,255,.06)">
-      <div style="font-size:.72rem;color:var(--acc);margin-bottom:.25rem">Trail ID: ${cm.trail_id} · ${new Date(cm.created_at).toLocaleDateString('sl-SI')}</div>
-      <div style="font-size:.85rem;font-weight:600;margin-bottom:.15rem">${cm.name}</div>
-      <div style="font-size:.82rem;color:var(--tx2)">${cm.text}</div>
-      <div style="display:flex;gap:.5rem;margin-top:.7rem">
-        <button class="btn btn-p" style="padding:5px 12px;font-size:.76rem" onclick="approveCmt(${cm.id})">✓ Objavi</button>
-        <button class="btn btn-o" style="padding:5px 12px;font-size:.76rem" onclick="deleteCmt(${cm.id})">✕ Izbriši</button>
-      </div>
-    </div>`).join('')}</div>`;
-}
-
-async function approveCmt(id){
-  await sbPatch('komentarji',id,{approved:true});
-  document.getElementById('cmt-'+id)?.remove();
-}
-async function deleteCmt(id){
-  await sbDelete('komentarji',id);
-  document.getElementById('cmt-'+id)?.remove();
-}
-
-// ===== FILE PREVIEW =====
-function previewUpload(input, previewId, mode){
-  if(!input.files||!input.files.length) return;
-  const prev = document.getElementById(previewId);
-  const wrap = input.closest('.upload-area');
-  wrap.style.borderColor='var(--acc)';
-  if(mode==='gpx'){
-    prev.innerHTML=`<div style="font-size:.78rem;color:#2ecc71;margin-top:.5rem">✓ GPX: <strong>${input.files[0].name}</strong></div>`;
+function previewUpload(input, previewId, mode) {
+  if (!input.files || !input.files.length) return;
+  var wrap = input.closest(".upload-area");
+  if (wrap) wrap.style.borderColor = "var(--acc)";
+  if (mode === "gpx") {
+    var prev = document.getElementById(previewId);
+    if (prev) prev.innerHTML = "<div style='font-size:.78rem;color:#2ecc71;margin-top:.5rem'>GPX: " + input.files[0].name + "</div>";
     return;
   }
-  const r=new FileReader();
-  r.onload=e=>{
-    prev.innerHTML=`<div class="upload-preview-single"><img src="${e.target.result}"></div>`;
-    if(previewId==='prev-profile'){
-      document.getElementById('about-img-wrap').innerHTML=`<img src="${e.target.result}">`;
+  var r = new FileReader();
+  r.onload = function(e) {
+    var src = e.target.result;
+    if (mode === "profile") {
+      document.getElementById("about-img-wrap").innerHTML = "<img src='" + src + "' style='width:100%;height:100%;object-fit:cover;border-radius:16px'>";
+      return;
     }
+    var prev = document.getElementById(previewId);
+    if (prev) prev.innerHTML = "<div class='upload-preview-single'><img src='" + src + "'></div>";
   };
   r.readAsDataURL(input.files[0]);
 }
 
-// ===== SAVE TRAIL =====
-async function saveNewTrail(){
-  const name=document.getElementById('new-name').value.trim();
-  if(!name){alert('Vnesi ime traila!');return;}
-  const btn=document.getElementById('btn-save-trail');
-  btn.textContent='Shranjujem...';btn.disabled=true;
-  try{
-    const trailData={
-      name, region:document.getElementById('new-region').value,
-      comment:document.getElementById('new-comment').value,
-      km:Number(document.getElementById('new-km').value)||0,
-      vm:Number(document.getElementById('new-vm').value)||0,
-      diff:document.getElementById('new-diff').value,
-      type:document.getElementById('new-type').value,
-      seasonal:document.getElementById('new-seasonal').value,
-      surface:document.getElementById('new-surface').value,
-      stars:Number(document.getElementById('new-stars').value)||3,
-      novo:document.getElementById('new-novo').value==='true',
-    };
-    // Upload slik
-    const mainInput=document.querySelector('#ua-main input');
-    if(mainInput?.files[0]){
-      const path=`traili/${Date.now()}_main.${mainInput.files[0].name.split('.').pop()}`;
-      trailData.main_image = await uploadFileToStorage(mainInput.files[0], path);
-    }
-    const stravaInput=document.querySelector('#ua-strava input');
-    if(stravaInput?.files[0]){
-      const path=`traili/${Date.now()}_strava.${stravaInput.files[0].name.split('.').pop()}`;
-      trailData.strava_image = await uploadFileToStorage(stravaInput.files[0], path);
-    }
-    const gpxInput=document.querySelector('#ua-gpx input');
-    if(gpxInput?.files[0]){
-      const path=`traili/${Date.now()}.gpx`;
-      trailData.gpx_file = await uploadFileToStorage(gpxInput.files[0], path);
-    }
-    const result = await sbPost('traili', trailData);
-    if(result&&result[0]){
+function saveNewTrail() {
+  var name = document.getElementById("new-name").value.trim();
+  if (!name) { alert("Vnesi ime traila!"); return; }
+  var btn = document.getElementById("btn-save-trail");
+  btn.textContent = "Shranjujem..."; btn.disabled = true;
+  var trailData = {
+    name: name,
+    region: document.getElementById("new-region").value,
+    comment: document.getElementById("new-comment").value,
+    km: Number(document.getElementById("new-km").value) || 0,
+    vm: Number(document.getElementById("new-vm").value) || 0,
+    diff: document.getElementById("new-diff").value,
+    type: document.getElementById("new-type").value,
+    seasonal: document.getElementById("new-seasonal").value,
+    surface: document.getElementById("new-surface").value,
+    stars: Number(document.getElementById("new-stars").value) || 3,
+    novo: document.getElementById("new-novo").value === "true"
+  };
+  var mainInput = document.querySelector("#ua-main input");
+  var stravaInput = document.querySelector("#ua-strava input");
+  var gpxInput = document.querySelector("#ua-gpx input");
+  var p1 = mainInput && mainInput.files[0] ? uploadFileToStorage(mainInput.files[0], "traili/" + Date.now() + "_main." + mainInput.files[0].name.split(".").pop()).then(function(path){ trailData.main_image = path; }) : Promise.resolve();
+  var p2 = stravaInput && stravaInput.files[0] ? uploadFileToStorage(stravaInput.files[0], "traili/" + Date.now() + "_strava." + stravaInput.files[0].name.split(".").pop()).then(function(path){ trailData.strava_image = path; }) : Promise.resolve();
+  var p3 = gpxInput && gpxInput.files[0] ? uploadFileToStorage(gpxInput.files[0], "traili/" + Date.now() + ".gpx").then(function(path){ trailData.gpx_file = path; }) : Promise.resolve();
+  Promise.all([p1, p2, p3]).then(function() {
+    return sbPost("traili", trailData);
+  }).then(function(result) {
+    if (result && result[0]) {
       allTrails.unshift(result[0]);
       renderTrails(allTrails);
       renderFeatured(result[0]);
-      document.getElementById('stat-traili').textContent=allTrails.length;
-      showMsg(document.getElementById('admin-content'),'✓ Trail uspešno shranjen!');
-      btn.textContent='💾 Shrani trail';btn.disabled=false;
+      document.getElementById("stat-traili").textContent = allTrails.length;
+      var msg = document.createElement("div");
+      msg.className = "success-msg";
+      msg.textContent = "Trail uspesno shranjen!";
+      document.getElementById("admin-content").appendChild(msg);
     }
-  } catch(e){
-    btn.textContent='💾 Shrani trail';btn.disabled=false;
-    showMsg(document.getElementById('admin-content'),'❌ Napaka: '+e.message,'error');
-  }
-}
-
-async function uploadFileToStorage(file, path){
-  const r=await fetch(`${SB_URL}/storage/v1/object/slike/${path}`,{
-    method:'POST',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type},
-    body:file
+    btn.textContent = "Shrani trail"; btn.disabled = false;
+  }).catch(function(e) {
+    btn.textContent = "Shrani trail"; btn.disabled = false;
+    alert("Napaka: " + e.message);
   });
-  if(!r.ok) throw new Error('Nalaganje slike ni uspelo');
-  return path;
 }
 
-async function savePonudnik(){
-  const name=document.getElementById('pon-name').value.trim();
-  if(!name){alert('Vnesi ime ponudnika!');return;}
-  const data={
-    name, type:document.getElementById('pon-type').value,
-    description:document.getElementById('pon-desc').value,
-    tel:document.getElementById('pon-tel').value,
-    map_num:Number(document.getElementById('pon-num').value)||0,
+function editTrail(id) {
+  var t = null;
+  for (var i = 0; i < allTrails.length; i++) { if (allTrails[i].id === id) { t = allTrails[i]; break; } }
+  if (!t) return;
+  var w = document.getElementById("edit-form-wrap");
+  w.innerHTML = "<div class='admin-form' style='margin-top:1rem;border-color:rgba(232,98,42,.2)'>" +
+    "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem'>" +
+    "<div style='font-size:1rem;font-weight:700'>Uredi: " + t.name + "</div>" +
+    "<button onclick='document.getElementById(\"edit-form-wrap\").innerHTML=\"\"' style='background:none;border:none;color:var(--tx2);cursor:pointer'>x</button>" +
+    "</div>" +
+    "<div class='form-row'>" +
+    "<div class='form-group'><label class='form-label'>Ime</label><input class='form-input' id='e-name' value='" + t.name + "'></div>" +
+    "<div class='form-group'><label class='form-label'>Regija</label><input class='form-input' id='e-region' value='" + (t.region || "") + "'></div>" +
+    "</div>" +
+    "<div class='form-group'><label class='form-label'>Komentar</label><textarea class='form-textarea' id='e-comment'>" + (t.comment || "") + "</textarea></div>" +
+    "<div class='form-row'>" +
+    "<div class='form-group'><label class='form-label'>km</label><input class='form-input' type='number' id='e-km' value='" + (t.km || 0) + "'></div>" +
+    "<div class='form-group'><label class='form-label'>Vzpon (m)</label><input class='form-input' type='number' id='e-vm' value='" + (t.vm || 0) + "'></div>" +
+    "</div>" +
+    "<div class='form-row'>" +
+    "<div class='form-group'><label class='form-label'>Tezavnost</label><select class='form-select' id='e-diff'>" +
+    "<option value='zelena'" + (t.diff === "zelena" ? " selected" : "") + ">Zelena</option>" +
+    "<option value='modra'" + (t.diff === "modra" ? " selected" : "") + ">Modra</option>" +
+    "<option value='rdeca'" + (t.diff === "rdeca" ? " selected" : "") + ">Rdeca</option>" +
+    "<option value='crna'" + (t.diff === "crna" ? " selected" : "") + ">Crna</option>" +
+    "</select></div>" +
+    "<div class='form-group'><label class='form-label'>Sezona</label><input class='form-input' id='e-seasonal' value='" + (t.seasonal || "") + "'></div>" +
+    "</div>" +
+    "<div class='form-group'><label class='form-label'>Zamenjaj glavno sliko</label>" +
+    "<div class='upload-area' id='ua-edit-main'><input type='file' accept='image/*' onchange='previewUpload(this,\"prev-edit-main\",\"single\")'><span class='upload-icon'>&#x1F4F8;</span><span>Nalozi novo sliko</span></div>" +
+    "<div id='prev-edit-main'>" + (t.main_image ? "<div class='upload-preview-single'><img src='" + imgUrl(t.main_image) + "'></div>" : "") + "</div>" +
+    "</div>" +
+    "<div class='admin-actions'>" +
+    "<button class='btn' style='background:rgba(192,57,43,.2);color:#e74c3c;border:.5px solid rgba(192,57,43,.3);padding:9px 18px;border-radius:8px;cursor:pointer;font-size:.88rem' onclick='deleteTrail(" + id + ")'>Izbrisi</button>" +
+    "<button class='btn btn-o' onclick='document.getElementById(\"edit-form-wrap\").innerHTML=\"\"'>Preklic</button>" +
+    "<button class='btn btn-p' onclick='saveEdit(" + id + ")'>Shrani</button>" +
+    "</div></div>";
+  w.scrollIntoView({behavior: "smooth"});
+}
+
+function saveEdit(id) {
+  var btn = document.querySelector("#edit-form-wrap .btn-p");
+  if (btn) { btn.textContent = "Shranjujem..."; btn.disabled = true; }
+  var data = {
+    name: document.getElementById("e-name").value,
+    region: document.getElementById("e-region").value,
+    comment: document.getElementById("e-comment").value,
+    km: Number(document.getElementById("e-km").value),
+    vm: Number(document.getElementById("e-vm").value),
+    diff: document.getElementById("e-diff").value,
+    seasonal: document.getElementById("e-seasonal").value
   };
-  const imgInput=document.querySelector('#ua-pon input');
-  if(imgInput?.files[0]){
-    const path=`ponudniki/${Date.now()}.${imgInput.files[0].name.split('.').pop()}`;
-    data.image = await uploadFileToStorage(imgInput.files[0], path);
-  }
-  const result=await sbPost('ponudniki',data);
-  if(result&&result[0]){
-    allPon.push(result[0]);
-    renderPon(allPon);
-    showMsg(document.getElementById('admin-content'),'✓ Ponudnik shranjen!');
-  }
-}
-
-function editTrail(id){
-  const t=allTrails.find(x=>x.id===id);
-  if(!t) return;
-  const w=document.getElementById('edit-form-wrap');
-  w.innerHTML=`<div class="admin-form" style="margin-top:1rem;border-color:rgba(232,98,42,.2)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:1rem;font-weight:700">✏️ ${t.name}</div>
-      <button onclick="document.getElementById('edit-form-wrap').innerHTML=''" style="background:none;border:none;color:var(--tx2);cursor:pointer">✕</button>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Ime</label><input class="form-input" id="e-name" value="${t.name}"></div>
-      <div class="form-group"><label class="form-label">Regija</label><input class="form-input" id="e-region" value="${t.region||''}"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Komentar</label><textarea class="form-textarea" id="e-comment">${t.comment||''}</textarea></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">km</label><input class="form-input" type="number" id="e-km" value="${t.km||0}"></div>
-      <div class="form-group"><label class="form-label">Vzpon (m)</label><input class="form-input" type="number" id="e-vm" value="${t.vm||0}"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Težavnost</label>
-        <select class="form-select" id="e-diff">
-          <option value="zelena" ${t.diff==='zelena'?'selected':''}>Zelena</option>
-          <option value="modra" ${t.diff==='modra'?'selected':''}>Modra</option>
-          <option value="rdeca" ${t.diff==='rdeca'?'selected':''}>Rdeča</option>
-          <option value="crna" ${t.diff==='crna'?'selected':''}>Črna</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Sezona</label><input class="form-input" id="e-seasonal" value="${t.seasonal||''}"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Zamenjaj glavno sliko</label>
-      <div class="upload-area" id="ua-edit-main"><input type="file" accept="image/*" onchange="previewUpload(this,'prev-edit-main','single')"><span class="upload-icon">📸</span><span>Naloži novo sliko</span></div>
-      <div id="prev-edit-main">${t.main_image?`<div class="upload-preview-single"><img src="${imgUrl(t.main_image)}"></div>`:''}</div>
-    </div>
-    <div class="admin-actions">
-      <button class="btn" style="background:rgba(192,57,43,.2);color:#e74c3c;border:.5px solid rgba(192,57,43,.3);padding:9px 18px;border-radius:8px;cursor:pointer;font-size:.88rem" onclick="deleteTrail(${id})">🗑 Izbriši</button>
-      <button class="btn btn-o" onclick="document.getElementById('edit-form-wrap').innerHTML=''">Prekliči</button>
-      <button class="btn btn-p" onclick="saveEdit(${id})">💾 Shrani</button>
-    </div>
-  </div>`;
-  w.scrollIntoView({behavior:'smooth'});
-}
-
-async function saveEdit(id){
-  const btn = document.querySelector('#edit-form-wrap .btn-p');
-  if(btn){btn.textContent='Shranjujem...';btn.disabled=true;}
-  try{
-    const data={
-      name:document.getElementById('e-name').value,
-      region:document.getElementById('e-region').value,
-      comment:document.getElementById('e-comment').value,
-      km:Number(document.getElementById('e-km').value),
-      vm:Number(document.getElementById('e-vm').value),
-      diff:document.getElementById('e-diff').value,
-      seasonal:document.getElementById('e-seasonal').value,
-    };
-    // Upload slike v Supabase storage
-    const imgInput=document.querySelector('#ua-edit-main input');
-    if(imgInput?.files&&imgInput.files[0]){
-      const file=imgInput.files[0];
-      const ext=file.name.split('.').pop();
-      const path=`traili/${Date.now()}_main.${ext}`;
-      data.main_image = await uploadFileToStorage(file, path);
-    }
-    const result=await sbPatch('traili',id,data);
-    if(result&&result[0]){
-      const idx=allTrails.findIndex(x=>x.id===id);
-      if(idx>=0) allTrails[idx]=result[0];
+  var imgInput = document.querySelector("#ua-edit-main input");
+  var p = imgInput && imgInput.files && imgInput.files[0] ?
+    uploadFileToStorage(imgInput.files[0], "traili/" + Date.now() + "_main." + imgInput.files[0].name.split(".").pop()).then(function(path){ data.main_image = path; }) :
+    Promise.resolve();
+  p.then(function() { return sbPatch("traili", id, data); }).then(function(result) {
+    if (result && result[0]) {
+      for (var i = 0; i < allTrails.length; i++) { if (allTrails[i].id === id) { allTrails[i] = result[0]; break; } }
       renderTrails(allTrails);
-      if(allTrails[0]) renderFeatured(allTrails[0]);
-      document.getElementById('edit-form-wrap').innerHTML='<div class="success-msg">✓ Trail posodobljen! Slika shranjena trajno.</div>';
-    } else {
-      throw new Error('Shranjevanje ni uspelo');
+      document.getElementById("edit-form-wrap").innerHTML = "<div class='success-msg'>Trail posodobljen! Slika shranjena trajno.</div>";
     }
-  } catch(e){
-    if(btn){btn.textContent='💾 Shrani';btn.disabled=false;}
-    document.getElementById('edit-form-wrap').insertAdjacentHTML('beforeend',`<div class="error-msg">❌ Napaka: ${e.message}</div>`);
-  }
+  }).catch(function(e) {
+    if (btn) { btn.textContent = "Shrani"; btn.disabled = false; }
+    alert("Napaka: " + e.message);
+  });
 }
 
-async function deleteTrail(id){
-  if(!confirm('Res izbrisati trail?')) return;
-  await sbDelete('traili',id);
-  allTrails=allTrails.filter(x=>x.id!==id);
-  renderTrails(allTrails);
-  document.getElementById('edit-form-wrap').innerHTML='';
+function deleteTrail(id) {
+  if (!confirm("Res izbrisati trail?")) return;
+  sbDelete("traili", id).then(function() {
+    allTrails = allTrails.filter(function(x) { return x.id !== id; });
+    renderTrails(allTrails);
+    document.getElementById("edit-form-wrap").innerHTML = "";
+  });
 }
 
-function saveOmeni(){
-  document.getElementById('about-name').textContent=document.getElementById('om-name').value;
-  document.getElementById('about-handle').textContent=document.getElementById('om-handle').value;
-  document.getElementById('about-t1').textContent=document.getElementById('om-t1').value;
-  document.getElementById('about-t2').textContent=document.getElementById('om-t2').value;
-  document.getElementById('about-t3').textContent=document.getElementById('om-t3').value;
-  const tags=document.getElementById('om-tags').value;
-  document.getElementById('about-tags').innerHTML=tags.split(',').map(t=>`<span class="atag">${t.trim()}</span>`).join('');
-  showMsg(document.getElementById('admin-content'),'✓ O meni posodobljen!');
+function savePonudnik() {
+  var name = document.getElementById("pon-name").value.trim();
+  if (!name) { alert("Vnesi ime ponudnika!"); return; }
+  var data = {
+    name: name,
+    type: document.getElementById("pon-type").value,
+    description: document.getElementById("pon-desc").value,
+    tel: document.getElementById("pon-tel").value,
+    map_num: Number(document.getElementById("pon-num").value) || 0
+  };
+  var imgInput = document.querySelector("#ua-pon input");
+  var p = imgInput && imgInput.files && imgInput.files[0] ?
+    uploadFileToStorage(imgInput.files[0], "ponudniki/" + Date.now() + "." + imgInput.files[0].name.split(".").pop()).then(function(path){ data.image = path; }) :
+    Promise.resolve();
+  p.then(function() { return sbPost("ponudniki", data); }).then(function(result) {
+    if (result && result[0]) {
+      allPon.push(result[0]);
+      renderPon(allPon);
+      var msg = document.createElement("div");
+      msg.className = "success-msg";
+      msg.textContent = "Ponudnik shranjen!";
+      document.getElementById("admin-content").appendChild(msg);
+    }
+  });
 }
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal('trail-modal');closeModal('admin-modal');}
+function saveOmeni() {
+  document.getElementById("about-name").textContent = document.getElementById("om-name").value;
+  document.getElementById("about-handle").textContent = document.getElementById("om-handle").value;
+  document.getElementById("about-t1").textContent = document.getElementById("om-t1").value;
+  document.getElementById("about-t2").textContent = document.getElementById("om-t2").value;
+  document.getElementById("about-t3").textContent = document.getElementById("om-t3").value;
+  var tags = document.getElementById("om-tags").value.split(",");
+  var html = "";
+  for (var i = 0; i < tags.length; i++) html += "<span class='atag'>" + tags[i].trim() + "</span>";
+  document.getElementById("about-tags").innerHTML = html;
+  var msg = document.createElement("div");
+  msg.className = "success-msg";
+  msg.textContent = "O meni posodobljen!";
+  document.getElementById("admin-content").appendChild(msg);
+}
+
+function approveCmt(id) {
+  sbPatch("komentarji", id, {approved: true}).then(function() {
+    var el = document.getElementById("cmt-" + id);
+    if (el) el.remove();
+  });
+}
+
+function deleteCmt(id) {
+  sbDelete("komentarji", id).then(function() {
+    var el = document.getElementById("cmt-" + id);
+    if (el) el.remove();
+  });
+}
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") { closeModal("trail-modal"); closeModal("admin-modal"); }
 });
 
-// Init
 loadTrails();
 loadPon();
 </script>
