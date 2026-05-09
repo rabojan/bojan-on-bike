@@ -479,7 +479,7 @@ function renderTrails(list) {
     return "<div class='tcard' onclick='openTrail("+t.id+")'>" +
       "<div class='tcard-img'>"+iTag(t.main_image)+"<div class='dbadge "+dC(t.diff)+"'>"+dL(t.diff)+"</div>"+(t.novo?"<div class='nbadge'>NOVO</div>":"")+"</div>" +
       "<div class='tcard-body'><div class='tcard-name'>"+t.name+"</div><div class='tcard-region'>"+(t.region||"")+"</div>" +
-      "<div class='tmeta'><div class='tmeta-i'><strong>"+(t.km||0)+" km</strong></div><div class='tmeta-i'><strong>"+(t.vm||0)+" m</strong></div><div class='tmeta-i'><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div></div>" +
+      "<div class='tmeta'><div class='tmeta-i'><strong>"+(t.km||0)+" km</strong></div><div class='tmeta-i'><strong>"+(t.vm||0)+" vm</strong></div><div class='tmeta-i'><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div></div>" +
       "</div></div>";
   }).join("");
 }
