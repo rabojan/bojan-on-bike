@@ -506,13 +506,29 @@ function renderPons(list){
   }).join("");
 }
 
+var activeFilters=[];
 function fP(f,el){
-  document.querySelectorAll("#pfrow .ftab").forEach(function(t){t.classList.remove("on");});
-  el.classList.add("on");
-  if(f==="vse"){renderPons(pons);return;}
+  if(f==="vse"){
+    activeFilters=[];
+    document.querySelectorAll("#pfrow .ftab").forEach(function(t){t.classList.remove("on");});
+    el.classList.add("on");
+    renderPons(pons);
+    return;
+  }
+  // Odstrani "Vsi" označitev
+  document.querySelector("#pfrow .ftab").classList.remove("on");
+  // Toggle filter
+  var idx=activeFilters.indexOf(f);
+  if(idx>=0){activeFilters.splice(idx,1);el.classList.remove("on");}
+  else{activeFilters.push(f);el.classList.add("on");}
+  // Če ni nobenega izbranega - pokaži vse
+  if(!activeFilters.length){
+    document.querySelector("#pfrow .ftab").classList.add("on");
+    renderPons(pons);return;
+  }
   renderPons(pons.filter(function(p){
     var types=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
-    return types.indexOf(f)>=0;
+    return activeFilters.some(function(f){return types.indexOf(f)>=0;});
   }));
 }
 
