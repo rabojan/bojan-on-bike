@@ -458,7 +458,7 @@ function openT(id){
     galHtml +
     "<div class='sh2'>Strava zemljevid</div><div class='sbox'>"+(t.strava_image?iT(t.strava_image):"<span>Strava (admin nalozi)</span>")+"</div>" +
     "<div class='sh2'>Prenos</div><div class='grow'>" +
-    (t.gpx_file?"<a href='"+t.gpx_file+"' download class='gb gb-p'>&#x2B07; GPX</a>":"<button class='gb gb-p' onclick='alert(\"GPX bo dodan\")'>&#x2B07; GPX</button>") +
+    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p' onclick='gpxTip(event,\""+t.gpx_file+"\")'>&#x2B07; GPX</a>":"<button class='gb gb-p' onclick='alert(\"GPX bo dodan\")'>&#x2B07; GPX</button>") +
     "<button class='gb gb-s' onclick='window.open(\"https://www.komoot.com\",\"_blank\")'>Komoot &#x2197;</button>" +
     "<button class='gb gb-s' onclick='window.open(\"https://www.strava.com\",\"_blank\")'>Strava &#x2197;</button>" +
     "</div>" +
