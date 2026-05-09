@@ -419,20 +419,24 @@ function loadTrails() {
   dbGet("traili","order=created_at.desc").then(function(data){
     trails = data&&data.length>0 ? data : DT;
     document.getElementById("stat-traili").textContent=trails.length;
-    // Nalozi slike iz settings tabele
     dbGet("settings","").then(function(allS){
       allS.forEach(function(s){
         if(s.key.indexOf("trail_img_")===0&&s.value){
           var tid=parseInt(s.key.replace("trail_img_",""));
           for(var i=0;i<trails.length;i++){if(trails[i].id===tid){trails[i].main_image=s.value;break;}}
         }
+        if(s.key.indexOf("trail_photos_")===0&&s.value){
+          var tid=parseInt(s.key.replace("trail_photos_",""));
+          try{var ph=JSON.parse(s.value);for(var i=0;i<trails.length;i++){if(trails[i].id===tid){trails[i].photos=ph;break;}}}catch(e){}
+        }
+        if(s.key.indexOf("trail_gpx_")===0&&s.value){
+          var tid=parseInt(s.key.replace("trail_gpx_",""));
+          for(var i=0;i<trails.length;i++){if(trails[i].id===tid){trails[i].gpx_file=s.value;break;}}
+        }
       });
       renderTrails(trails);
       renderHome();
-    }).catch(function(){
-      renderTrails(trails);
-      renderHome();
-    });
+    }).catch(function(){renderTrails(trails);renderHome();});
   });
 }
 
@@ -825,6 +829,12 @@ function saveTrail() {
 function editT(id) {
   var t=null; for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
   if(!t) return;
+  var existingPhotos = t.photos||[];
+  var galHtml = "";
+  for(var gi=0;gi<6;gi++){
+    var ep=existingPhotos[gi]||{};
+    galHtml+=galSlot(gi, ep.url||null, ep.desc||"");
+  }
   var w=document.getElementById("efw");
   w.innerHTML="<div class='admin-form' style='margin-top:1rem;border-color:rgba(232,98,42,.2)'>" +
     "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem'>" +
@@ -842,9 +852,13 @@ function editT(id) {
     "<option value='crna'"+(t.diff==="crna"?" selected":"")+">Crna</option></select></div>" +
     "<div class='form-group'><label class='form-label'>Featured &#x2B50;</label><select class='form-select' id='ef'>" +
     "<option value='false'"+(t.featured?"":" selected")+">Ne</option>" +
-    "<option value='true'"+(t.featured?" selected":"")+">Da - Trail meseca</option></select></div></div>" +
-    "<div class='form-group'><label class='form-label'>Zamenjaj sliko</label><div class='upload-area'><input type='file' accept='image/*' id='ei' onchange='showPrev(this,\"ep\")'><span class='upload-icon'>&#x1F4F8;</span><span>Tapni za izbiro slike</span></div>" +
+    "<option value='true'"+(t.featured?" selected":"")+">Da</option></select></div></div>" +
+    "<div class='form-group'><label class='form-label'>Naslovna slika</label><div class='upload-area'><input type='file' accept='image/*' id='ei' onchange='showPrev(this,\"ep\")'><span class='upload-icon'>&#x1F4F8;</span><span>Tapni za zamenjavo</span></div>" +
     "<div id='ep'>"+(t.main_image?"<div class='img-preview'><img src='"+t.main_image+"'></div>":"")+"</div></div>" +
+    "<div class='form-group'><label class='form-label'>Galerija (do 6 slik)</label>" +
+    "<div style='display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem'>"+galHtml+"</div></div>" +
+    "<div class='form-group'><label class='form-label'>GPX datoteka</label><div class='upload-area'><input type='file' accept='.gpx' id='egpx' onchange='showGpx(this,\"egpxp\")'><span class='upload-icon'>&#x1F4C1;</span><span>Tapni za .gpx</span></div>" +
+    "<div id='egpxp'>"+(t.gpx_file?"<div style='color:#2ecc71;font-size:.8rem;margin-top:.4rem'>&#x2713; GPX nalozena</div>":"")+"</div></div>" +
     "<div class='admin-actions'>" +
     "<button class='btn' style='background:rgba(192,57,43,.2);color:#e74c3c;border:.5px solid rgba(192,57,43,.3);padding:9px 18px;border-radius:8px;cursor:pointer' onclick='delTrail("+id+")'>&#x1F5D1; Izbrisi</button>" +
     "<button class='btn btn-o' onclick='document.getElementById(\"efw\").innerHTML=\"\"'>Preklic</button>" +
@@ -863,19 +877,50 @@ function doEdit(id) {
     diff:document.getElementById("ed").value,
     featured:document.getElementById("ef").value==="true"
   };
+  // Zberi vse uploade
   var fi=document.getElementById("ei");
-  var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]):Promise.resolve(null);
-  p.then(function(imgUrl){
-    if(imgUrl){
-      data.main_image=imgUrl;
-      saveSetting("trail_img_"+id, imgUrl); // Shrani v settings - zanesljivo!
+  var fiGpx=document.getElementById("egpx");
+  var galFiles=[];
+  for(var gi=0;gi<6;gi++){var gf=document.getElementById("gf"+gi);if(gf)galFiles.push({file:gf.files&&gf.files[0]?gf.files[0]:null,idx:gi});}
+
+  var pMain=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]):Promise.resolve(null);
+  var pGpx=fiGpx&&fiGpx.files&&fiGpx.files[0]?uploadImg(fiGpx.files[0]):Promise.resolve(null);
+  var galPromises=galFiles.map(function(g){return g.file?uploadImg(g.file):Promise.resolve(null);});
+
+  Promise.all([pMain,pGpx].concat(galPromises)).then(function(results){
+    var imgUrl=results[0];
+    var gpxUrl=results[1];
+    var galUrls=results.slice(2);
+
+    if(imgUrl){data.main_image=imgUrl;saveSetting("trail_img_"+id,imgUrl);}
+    if(gpxUrl){data.gpx_file=gpxUrl;saveSetting("trail_gpx_"+id,gpxUrl);}
+
+    // Galerija — združi obstoječe z novimi
+    var t=null;for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
+    var existingPhotos=(t&&t.photos)||[];
+    var newPhotos=[];
+    for(var gi=0;gi<6;gi++){
+      var desc=document.getElementById("gd"+gi)?document.getElementById("gd"+gi).value:"";
+      if(galUrls[gi]){
+        newPhotos.push({url:galUrls[gi],desc:desc});
+      } else if(existingPhotos[gi]&&existingPhotos[gi].url){
+        newPhotos.push({url:existingPhotos[gi].url,desc:desc||existingPhotos[gi].desc||""});
+      }
     }
-    // Posodobi lokalno takoj
+    if(newPhotos.length>0){data.photos=newPhotos;saveSetting("trail_photos_"+id,JSON.stringify(newPhotos));}
+
+    // Posodobi lokalno
     for(var i=0;i<trails.length;i++){if(trails[i].id===id){Object.assign(trails[i],data);break;}}
-    renderTrails(trails); renderHome();
-    // Poskusi tudi PATCH v bazi (za prave traile)
+    renderTrails(trails);renderHome();
+
+    // PATCH v bazi
     dbPatch("traili",id,data).catch(function(){});
-    document.getElementById("efw").innerHTML="<div class='ok-msg'>&#x2713; Trail posodobljen! Slika shranjena trajno.</div>";
+
+    // Posodobi prikaz v formi
+    var ep=document.getElementById("ep");
+    if(ep&&data.main_image) ep.innerHTML="<div class='img-preview'><img src='"+data.main_image+"'></div>";
+
+    document.getElementById("efw").innerHTML="<div class='ok-msg'>&#x2713; Trail posodobljen! Vse shranjeno trajno.</div>";
     setBtn("esave","Shrani",false);
   }).catch(function(e){
     document.getElementById("efw").innerHTML="<div class='err-msg'>&#x274C; Napaka: "+e.message+"</div>";
