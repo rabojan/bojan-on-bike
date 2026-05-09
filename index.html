@@ -190,10 +190,10 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
     </svg>
   </div>
   <div class="stats">
-    <div><div class="stat-n">1.240+</div><div class="stat-l">Skupaj km</div></div>
-    <div><div class="stat-n">18.400+</div><div class="stat-l">Vi&#x161;inskih m</div></div>
+    <div><div class="stat-n" id="stat-km">0</div><div class="stat-l">Skupaj km</div></div>
+    <div><div class="stat-n" id="stat-vm">0</div><div class="stat-l">Vi&#x161;inskih m</div></div>
     <div><div class="stat-n" id="stat-traili">0</div><div class="stat-l">Trailov</div></div>
-    <div><div class="stat-n">8 let</div><div class="stat-l">Kolesarjenja</div></div>
+    <div><div class="stat-n">8 let</div><div class="stat-l">e-kolesarjenja</div></div>
   </div>
   <div class="sec">
     <div class="sec-tag">Izbrani traili</div>
@@ -441,12 +441,25 @@ function loadTrails() {
 }
 
 function renderHome() {
-  var featured = null;
-  for(var i=0;i<trails.length;i++){ if(trails[i].featured){featured=trails[i];break;} }
-  var latest = trails[0]||null;
+  // Seštej statistike iz pravih trailov
+  var totalKm=0, totalVm=0;
+  trails.forEach(function(t){totalKm+=Number(t.km)||0;totalVm+=Number(t.vm)||0;});
+  var kmEl=document.getElementById("stat-km");
+  var vmEl=document.getElementById("stat-vm");
+  if(kmEl) kmEl.textContent=totalKm>0?totalKm+"+":"0";
+  if(vmEl) vmEl.textContent=totalVm>0?totalVm+"+":"0";
+  document.getElementById("stat-traili").textContent=trails.length;
+
+  // Zadnji naložen trail
+  var latest=trails.length>0?trails[0]:null;
+  // Izbrani (featured) trail
+  var featured=null;
+  for(var i=0;i<trails.length;i++){if(trails[i].featured){featured=trails[i];break;}}
+
   var html="";
-  if(featured) html+=fCard(featured,"&#x2B50; Trail meseca");
-  if(latest&&(!featured||latest.id!==featured.id)) html+=fCard(latest,"&#x1F195; Zadnji trail");
+  if(latest) html+=fCard(latest,"&#x1F195; Zadnji trail");
+  if(featured&&(!latest||featured.id!==latest.id)) html+=fCard(featured,"&#x2B50; Izbrani trail");
+  else if(!featured&&trails.length>1) html+=fCard(trails[1],"&#x1F3C6; Priljubljen trail");
   if(!html) html="<p style='color:var(--tx2)'>Dodaj traile v admin panelu.</p>";
   document.getElementById("home-featured").innerHTML=html;
 }
