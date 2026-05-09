@@ -196,8 +196,8 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
     <div><div class="stat-n">8 let</div><div class="stat-l">e-kolesarjenja</div></div>
   </div>
   <div class="sec">
-    <div class="sec-tag">Izbrani traili</div>
-    <div class="sec-title">Na terenu</div>
+    <div class="sec-tag">Moji traili</div>
+    <div class="sec-title">Zadnji &amp; izbrani</div>
     <div class="home-grid" id="home-featured"><div class="loading"><div class="spinner"></div>Nalagam...</div></div>
   </div>
   <footer>
@@ -441,18 +441,19 @@ function loadTrails() {
 }
 
 function renderHome() {
-  // Seštej statistike iz pravih trailov
   var totalKm=0, totalVm=0;
-  trails.forEach(function(t){totalKm+=Number(t.km)||0;totalVm+=Number(t.vm)||0;});
+  trails.forEach(function(t){
+    totalKm+=Number(t.km)||0;
+    totalVm+=Number(t.vm)||0;
+  });
   var kmEl=document.getElementById("stat-km");
   var vmEl=document.getElementById("stat-vm");
-  if(kmEl) kmEl.textContent=totalKm>0?totalKm+"+":"0";
-  if(vmEl) vmEl.textContent=totalVm>0?totalVm+"+":"0";
-  document.getElementById("stat-traili").textContent=trails.length;
+  var trEl=document.getElementById("stat-traili");
+  if(kmEl) kmEl.textContent=Math.round(totalKm);
+  if(vmEl) vmEl.textContent=Math.round(totalVm);
+  if(trEl) trEl.textContent=trails.length;
 
-  // Zadnji naložen trail
   var latest=trails.length>0?trails[0]:null;
-  // Izbrani (featured) trail
   var featured=null;
   for(var i=0;i<trails.length;i++){if(trails[i].featured){featured=trails[i];break;}}
 
@@ -468,7 +469,7 @@ function fCard(t,label) {
   return "<div class='fcard' onclick='openTrail("+t.id+")'>" +
     "<div class='fcard-img'>"+iTag(t.main_image)+"<div class='dbadge "+dC(t.diff)+"' style='position:absolute;top:10px;right:10px;z-index:2'>"+dL(t.diff)+"</div></div>" +
     "<div class='fcard-body'><div class='fcard-label'>"+label+"</div><div class='fcard-name'>"+t.name+"</div>" +
-    "<div class='fcard-meta'><span><strong>"+(t.km||0)+"</strong> km</span><span><strong>"+(t.vm||0)+"</strong> m</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
+    "<div class='fcard-meta'><span><strong>"+(t.km||0)+"</strong> km</span><span><strong>"+(t.vm||0)+"</strong> vm</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
     "</div></div>";
 }
 
