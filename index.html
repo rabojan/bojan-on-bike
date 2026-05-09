@@ -740,14 +740,19 @@ function showPonTab(tab, el) {
 function editPon(id) {
   var p=null; for(var i=0;i<pons.length;i++){if(pons[i].id===id){p=pons[i];break;}}
   if(!p) return;
-  var selTypes=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
+  var sel=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
+  var cbHtml="<div style='display:flex;gap:1rem;flex-wrap:wrap;margin-top:.3rem'>" +
+    "<label style='display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.88rem'><input type='checkbox' id='ekul'"+(sel.indexOf("kulinarika")>=0?" checked":"")+"> &#x1F37D; Kulinarika</label>" +
+    "<label style='display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.88rem'><input type='checkbox' id='evin'"+(sel.indexOf("vino")>=0?" checked":"")+"> &#x1F377; Vino</label>" +
+    "<label style='display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.88rem'><input type='checkbox' id='epre'"+(sel.indexOf("prenocitev")>=0?" checked":"")+"> &#x1F6CF; Preno&#x10D;itve</label>" +
+    "</div>";
   var w=document.getElementById("epfw");
   w.innerHTML="<div class='admin-form' style='margin-top:1rem;border-color:rgba(232,98,42,.2)'>" +
     "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem'>" +
     "<div style='font-size:1rem;font-weight:700'>Uredi: "+p.name+"</div>" +
     "<button onclick='document.getElementById(\"epfw\").innerHTML=\"\"' style='background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.2rem'>&#x2715;</button></div>" +
     "<div class='form-group'><label class='form-label'>Ime</label><input class='form-input' id='epn' value='"+p.name+"'></div>" +
-    "<div class='form-group'><label class='form-label'>Kategorije</label>"+typeCheckboxes("e",selTypes)+"</div>" +
+    "<div class='form-group'><label class='form-label'>Kategorije</label>"+cbHtml+"</div>" +
     "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='epd'>"+(p.description||"")+"</textarea></div>" +
     "<div class='form-row'><div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='eptel' value='"+(p.tel||"")+"'></div>" +
     "<div class='form-group'><label class='form-label'>&#x160;t. na mapi</label><input class='form-input' type='number' id='epnum' value='"+(p.map_num||"")+"'></div></div>" +
@@ -762,16 +767,16 @@ function editPon(id) {
 
 function doEditPon(id) {
   setBtn("epsave","Shranjujem...",true);
-  var types=getPonTypes("e");
+  var types=[];
+  if(document.getElementById("ekul")&&document.getElementById("ekul").checked) types.push("kulinarika");
+  if(document.getElementById("evin")&&document.getElementById("evin").checked) types.push("vino");
+  if(document.getElementById("epre")&&document.getElementById("epre").checked) types.push("prenocitev");
   if(!types.length){alert("Izberi vsaj eno kategorijo!");setBtn("epsave","Shrani",false);return;}
   var data={name:document.getElementById("epn").value,types:types,type:types[0],description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0};
   var fi=document.getElementById("epi");
   var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.image=u;}):Promise.resolve();
   p.then(function(){return dbPatch("ponudniki",id,data);}).then(function(){
-    return dbGet("ponudniki","id=eq."+id);
-  }).then(function(fresh){
-    if(fresh&&fresh.length>0){for(var i=0;i<pons.length;i++){if(pons[i].id===id){pons[i]=fresh[0];break;}}}
-    else{for(var i=0;i<pons.length;i++){if(pons[i].id===id){Object.assign(pons[i],data);break;}}}
+    for(var i=0;i<pons.length;i++){if(pons[i].id===id){Object.assign(pons[i],data);break;}}
     renderPons(pons);
     document.getElementById("epfw").innerHTML="<div class='ok-msg'>&#x2713; Ponudnik posodobljen!</div>";
     setBtn("epsave","Shrani",false);
@@ -960,7 +965,10 @@ function delTrail(id) {
 function savePon() {
   var name=document.getElementById("pn").value.trim();
   if(!name){alert("Vnesi ime ponudnika!");return;}
-  var types=getPonTypes("n");
+  var types=[];
+  if(document.getElementById("nkul")&&document.getElementById("nkul").checked) types.push("kulinarika");
+  if(document.getElementById("nvin")&&document.getElementById("nvin").checked) types.push("vino");
+  if(document.getElementById("npre")&&document.getElementById("npre").checked) types.push("prenocitev");
   if(!types.length){alert("Izberi vsaj eno kategorijo!");return;}
   var data={name:name,types:types,type:types[0],description:document.getElementById("pd").value,tel:document.getElementById("ptel").value,map_num:Number(document.getElementById("pnum").value)||0};
   var fi=document.getElementById("pi");
@@ -969,6 +977,8 @@ function savePon() {
     var res=Array.isArray(r)?r[0]:r;
     if(res){pons.push(res);renderPons(pons);}
     msg("Ponudnik shranjen!","ok");
+    // Osveži seznam v admin panelu
+    aTab("pon",document.querySelector("#anav .anav-tab:nth-child(3)"));
   }).catch(function(e){msg("Napaka: "+e.message,"err");});
 }
 
