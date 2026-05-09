@@ -319,7 +319,17 @@ function uploadImg(file){
   }).catch(function(){return compressImg(file);});
 }
 
-// ===== HELPERS =====
+function uploadFile(file){
+  var path="uploads/"+Date.now()+"_"+Math.random().toString(36).substr(2,5)+".gpx";
+  return fetch(SB+"/storage/v1/object/slike/"+path,{
+    method:"POST",
+    headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/octet-stream","x-upsert":"true"},
+    body:file
+  }).then(function(r){
+    if(r.ok) return SB+"/storage/v1/object/public/slike/"+path;
+    throw new Error("GPX upload ni uspel");
+  });
+}
 function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
 function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
 function st(n){var s="";for(var i=0;i<n;i++)s+="&#9733;";for(var j=n;j<5;j++)s+="&#9734;";return s;}
@@ -712,7 +722,7 @@ function saveTrail(){
   var galF=[];for(var i=0;i<6;i++){var gf=document.getElementById("gf"+i);galF.push(gf&&gf.files&&gf.files[0]?gf.files[0]:null);}
   var p1=f1?uploadImg(f1):Promise.resolve(null);
   var p2=f2?uploadImg(f2):Promise.resolve(null);
-  var p3=f3?uploadImg(f3):Promise.resolve(null);
+  var p3=f3?uploadFile(f3):Promise.resolve(null);
   var gps=galF.map(function(f){return f?uploadImg(f):Promise.resolve(null);});
   Promise.all([p1,p2,p3].concat(gps)).then(function(res){
     if(res[0])data.main_image=res[0];
@@ -786,7 +796,7 @@ function doEditT(id){
   var fg=document.getElementById("egpx");
   var galF=[];for(var i=0;i<6;i++){var gf=document.getElementById("gf"+i);galF.push(gf&&gf.files&&gf.files[0]?gf.files[0]:null);}
   var pM=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]):Promise.resolve(null);
-  var pG=fg&&fg.files&&fg.files[0]?uploadImg(fg.files[0]):Promise.resolve(null);
+  var pG=fg&&fg.files&&fg.files[0]?uploadFile(fg.files[0]):Promise.resolve(null);
   var gps=galF.map(function(f){return f?uploadImg(f):Promise.resolve(null);});
   Promise.all([pM,pG].concat(gps)).then(function(res){
     if(res[0]){data.main_image=res[0];saveSetting("trail_img_"+id,res[0]);}
