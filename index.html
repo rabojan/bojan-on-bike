@@ -334,7 +334,12 @@ function uploadFile(file){
     throw new Error("GPX upload ni uspel");
   });
 }
-function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
+function stravaLink(url){
+  if(!url)return"";
+  var m=url.match(/activities\/(\d+)/);
+  if(m)return"strava://activities/"+m[1];
+  return url;
+}
 function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
 function st(n){var s="";for(var i=0;i<n;i++)s+="&#9733;";for(var j=n;j<5;j++)s+="&#9734;";return s;}
 function iT(url){return url?"<img src='"+url+"' onerror='this.style.display=\"none\"'>":"";}
@@ -464,7 +469,7 @@ function openT(id){
     (t.gpx_file?"<div id='map-"+id+"' class='gpx-map'></div>":"<div class='sbox'><span>GPX ni nalozena</span></div>") +
     "<div class='grow' style='margin-bottom:2rem'>" +
     (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; Prenesi GPX</a>":"") +
-    (t.strava_url?"<a href='"+t.strava_url+"' target='_blank' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
+    (t.strava_url?"<a href='"+stravaLink(t.strava_url)+"' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
     (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
     (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>Navigacija bo dodana kmalu.</p>":"") +
     "</div>" +
