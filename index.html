@@ -458,9 +458,10 @@ function openT(id){
     galHtml +
     "<div class='sh2'>Strava zemljevid</div><div class='sbox'>"+(t.strava_image?iT(t.strava_image):"<span>Strava (admin nalozi)</span>")+"</div>" +
     "<div class='sh2'>Prenos &amp; navigacija</div><div class='grow'>" +
-    (t.gpx_file?
-      "<a href='https://gpx.studio/?url="+encodeURIComponent(t.gpx_file)+"' target='_blank' class='gb gb-p'>&#x1F5FA; Oglej &amp; prenesi GPX</a>":
-      "<button class='gb gb-p' onclick='alert(\"GPX bo dodan kmalu\")'>&#x1F5FA; GPX ni se nalozena</button>") +
+    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; Prenesi GPX</a>":"") +
+    (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
+    (t.strava_url?"<a href='"+t.strava_url+"' target='_blank' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
+    (!t.gpx_file&&!t.komoot_url&&!t.strava_url?"<p style='color:var(--tx2);font-size:.85rem'>Navigacija bo dodana kmalu.</p>":"") +
     "</div>" +
     "<div class='sh2'>Komentarji</div>" +
     "<div class='cf'><h3>Pusti komentar</h3><input type='text' placeholder='Tvoje ime' id='cn"+id+"'><textarea placeholder='Tvoje izkusnje...' id='ct"+id+"'></textarea>" +
@@ -525,13 +526,13 @@ function fP(f,el){
     renderPons(pons);
     return;
   }
-  // Odstrani "Vsi" označitev
+  // Odstrani "Vsi" oznaitev
   document.querySelector("#pfrow .ftab").classList.remove("on");
   // Toggle filter
   var idx=activeFilters.indexOf(f);
   if(idx>=0){activeFilters.splice(idx,1);el.classList.remove("on");}
   else{activeFilters.push(f);el.classList.add("on");}
-  // Če ni nobenega izbranega - pokaži vse
+  // e ni nobenega izbranega - pokazii vse
   if(!activeFilters.length){
     document.querySelector("#pfrow .ftab").classList.add("on");
     renderPons(pons);return;
@@ -668,7 +669,7 @@ function aTab(tab,el){
         "<div style='margin-bottom:1.5rem'><div style='font-size:.9rem;font-weight:700;margin-bottom:.8rem'>Ponudniki:</div>"+ponList+"<div id='epfw'></div></div>" +
         "<div class='af'><div style='font-size:.9rem;font-weight:700;margin-bottom:1rem'>&#x2795; Dodaj novega ponudnika</div>" +
         "<div class='fg'><label class='fl'>Ime ponudnika</label><input class='fi' id='pn' placeholder='Turisticna kmetija...'></div>" +
-        "<div class='fg'><label class='fl'>Kategorije</label>"+cbRow("n",[])+"\n</div>" +
+        "<div class='fg'><label class='fl'>Kategorije</label>"+cbRow("n",[])+"\</div>" +
         "<div class='fg'><label class='fl'>Opis</label><textarea class='fta' id='pd' placeholder='Kratek opis...'></textarea></div>" +
         "<div class='fr'><div class='fg'><label class='fl'>Telefonska</label><input class='fi' id='ptel' placeholder='041 123 456'></div>" +
         "<div class='fg'><label class='fl'>&#x160;t. na mapi</label><input class='fi' type='number' id='pnum' placeholder='1'></div></div>" +
@@ -779,6 +780,8 @@ function editT(id){
     "<div class='fg'><label class='fl'>Galerija (do 6 slik)</label><div style='display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem'>"+gs+"</div></div>" +
     "<div class='fg'><label class='fl'>GPX datoteka</label><div class='ua'><input type='file' accept='.gpx' id='egpx' onchange='showGpx(this,\"egpxp\")'><span class='ui'>&#x1F4C1;</span><span>Tapni za .gpx</span></div>" +
     "<div id='egpxp'>"+(t.gpx_file?"<div style='color:#2ecc71;font-size:.8rem;margin-top:.4rem'>&#x2713; GPX nalozena</div>":"")+"</div></div>" +
+    "<div class='fg'><label class='fl'>&#x1F5FA; Komoot link</label><input class='fi' id='ekmt' value='"+(t.komoot_url||"")+"' placeholder='https://www.komoot.com/tour/...'></div>" +
+    "<div class='fg'><label class='fl'>&#x1F4CA; Strava link</label><input class='fi' id='estr' value='"+(t.strava_url||"")+"' placeholder='https://www.strava.com/routes/...'></div>" +
     "<div class='aa'>" +
     "<button class='btn' style='background:rgba(192,57,43,.2);color:#e74c3c;border:.5px solid rgba(192,57,43,.3);padding:9px 18px;border-radius:8px;cursor:pointer' onclick='delT("+id+")'>&#x1F5D1; Izbrisi</button>" +
     "<button class='btn btn-o' onclick='document.getElementById(\"efw\").innerHTML=\"\"'>Preklic</button>" +
@@ -792,6 +795,8 @@ function doEditT(id){
     comment:document.getElementById("ec").value,km:Number(document.getElementById("ekm").value),
     vm:Number(document.getElementById("evm").value),diff:document.getElementById("ed").value,
     featured:document.getElementById("ef").value==="true"};
+  if(document.getElementById("ekmt"))data.komoot_url=document.getElementById("ekmt").value;
+  if(document.getElementById("estr"))data.strava_url=document.getElementById("estr").value;
   var fi=document.getElementById("ei");
   var fg=document.getElementById("egpx");
   var galF=[];for(var i=0;i<6;i++){var gf=document.getElementById("gf"+i);galF.push(gf&&gf.files&&gf.files[0]?gf.files[0]:null);}
@@ -857,7 +862,7 @@ function editPon(id){
     "<div style='font-size:1rem;font-weight:700'>Uredi: "+p.name+"</div>" +
     "<button onclick='document.getElementById(\"epfw\").innerHTML=\"\"' style='background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.2rem'>&#x2715;</button></div>" +
     "<div class='fg'><label class='fl'>Ime</label><input class='fi' id='epn' value='"+p.name+"'></div>" +
-    "<div class='fg'><label class='fl'>Kategorije</label>"+cbRow("e",sel)+"\n</div>" +
+    "<div class='fg'><label class='fl'>Kategorije</label>"+cbRow("e",sel)+"\</div>" +
     "<div class='fg'><label class='fl'>Opis</label><textarea class='fta' id='epd'>"+(p.description||"")+"</textarea></div>" +
     "<div class='fr'><div class='fg'><label class='fl'>Telefonska</label><input class='fi' id='eptel' value='"+(p.tel||"")+"'></div>" +
     "<div class='fg'><label class='fl'>&#x160;t. na mapi</label><input class='fi' type='number' id='epnum' value='"+(p.map_num||"")+"'></div></div>" +
