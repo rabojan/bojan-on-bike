@@ -318,22 +318,31 @@ function dbPost(table, data) {
 function dbPatch(table, id, data) {
   return fetch(SB+"/rest/v1/"+table+"?id=eq."+id, {
     method:"PATCH",
-    headers:hdr(),
+    headers:Object.assign({},hdr(),{"Prefer":"return=representation"}),
     body:JSON.stringify(data)
-  }).catch(function(){});
+  }).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
 }
 
 function dbDelete(table, id) {
   return fetch(SB+"/rest/v1/"+table+"?id=eq."+id, {method:"DELETE",headers:hdr()}).catch(function(){});
 }
 
-// Image upload z base64 fallback
-function toBase64(file) {
-  return new Promise(function(res, rej) {
-    var r = new FileReader();
-    r.onload = function(e){ res(e.target.result); };
-    r.onerror = rej;
-    r.readAsDataURL(file);
+// Image upload z kompresijo in base64 fallback
+function compressImg(file) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      var canvas = document.createElement("canvas");
+      var maxW = 1200, w = img.width, h = img.height;
+      if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL("image/jpeg", 0.75));
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = function(){ resolve(null); };
+    img.src = url;
   });
 }
 
@@ -346,9 +355,9 @@ function uploadImg(file) {
     body:file
   }).then(function(r){
     if(r.ok) return SB+"/storage/v1/object/public/slike/"+path;
-    return toBase64(file);
+    return compressImg(file);
   }).catch(function(){
-    return toBase64(file);
+    return compressImg(file);
   });
 }
 
@@ -517,11 +526,12 @@ function renderPons(list) {
   var labels={kulinarika:"Kulinarika",vino:"Vino",prenocitev:"Preno&#x10D;itev"};
   if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>Ni ponudnikov.</p>";return;}
   document.getElementById("pgrid").innerHTML=list.map(function(p){
+    var numHtml=p.map_num?("<span class='pnum'>"+p.map_num+"</span>"):"";
     return "<div class='pcard'><div class='pcard-img'>"+(p.image?iTag(p.image):(icons[p.type]||""))+"</div>" +
       "<div class='pcard-body'><div class='ptype'>"+(labels[p.type]||p.type)+"</div>" +
-      "<div class='pname'><span class='pnum'>"+(p.map_num||"")+"</span>"+p.name+"</div>" +
+      "<div class='pname'>"+numHtml+p.name+"</div>" +
       "<div style='font-size:.8rem;color:var(--tx2);margin:.25rem 0'>"+(p.description||"")+"</div>" +
-      "<div class='ptel'>&#x1F4DE; "+(p.tel||"")+"</div></div></div>";
+      "<div class='ptel'>"+(p.tel?"&#x1F4DE; "+p.tel:"")+"</div></div></div>";
   }).join("");
 }
 
@@ -611,15 +621,11 @@ function aTab(tab,el) {
     c.innerHTML=html;
 
   } else if(tab==="pon") {
-    c.innerHTML="<div class='admin-form'>" +
-      "<div class='form-row'><div class='form-group'><label class='form-label'>Ime ponudnika</label><input class='form-input' id='pn' placeholder='Turisticna kmetija...'></div>" +
-      "<div class='form-group'><label class='form-label'>Kategorija</label><select class='form-select' id='pt'><option value='kulinarika'>Kulinarika</option><option value='vino'>Vino</option><option value='prenocitev'>Prenocitve</option></select></div></div>" +
-      "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='pd' placeholder='Kratek opis...'></textarea></div>" +
-      "<div class='form-row'><div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='ptel' placeholder='041 123 456'></div>" +
-      "<div class='form-group'><label class='form-label'>&#x160;t. na mapi</label><input class='form-input' type='number' id='pnum' placeholder='1'></div></div>" +
-      "<div class='form-group'><label class='form-label'>Fotografija</label><div class='upload-area'><input type='file' accept='image/*' id='pi' onchange='showPrev(this,\"pp\")'><span class='upload-icon'>&#x1F4F8;</span><span>Tapni za izbiro slike</span></div><div id='pp'></div></div>" +
-      "<div class='admin-actions'><button class='btn btn-o' onclick='closeM(\"admin-modal\")'>Preklic</button>" +
-      "<button class='btn btn-p' onclick='savePon()'>&#x1F4BE; Shrani ponudnika</button></div></div>";
+    c.innerHTML="<div class='anav' style='margin-bottom:1rem'>" +
+      "<div class='anav-tab on' id='pon-add-tab' onclick='showPonTab(\"add\",this)'>&#x2795; Dodaj</div>" +
+      "<div class='anav-tab' id='pon-edit-tab' onclick='showPonTab(\"edit\",this)'>&#x270F; Uredi</div>" +
+      "</div><div id='pon-tab-content'></div>";
+    showPonTab("add", document.getElementById("pon-add-tab"));
 
   } else if(tab==="omeni") {
     var curImg=document.getElementById("aimg").querySelector("img");
@@ -654,7 +660,90 @@ function aTab(tab,el) {
 }
 
 // Upload preview
-function showPrev(input,prevId) {
+function showPonTab(tab, el) {
+  document.querySelectorAll("#ac .anav-tab").forEach(function(t){t.classList.remove("on");});
+  el.classList.add("on");
+  var c = document.getElementById("pon-tab-content");
+  if(tab==="add") {
+    c.innerHTML="<div class='admin-form'>" +
+      "<div class='form-row'><div class='form-group'><label class='form-label'>Ime ponudnika</label><input class='form-input' id='pn' placeholder='Turisticna kmetija...'></div>" +
+      "<div class='form-group'><label class='form-label'>Kategorija</label><select class='form-select' id='pt'><option value='kulinarika'>Kulinarika</option><option value='vino'>Vino</option><option value='prenocitev'>Prenocitve</option></select></div></div>" +
+      "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='pd' placeholder='Kratek opis...'></textarea></div>" +
+      "<div class='form-row'><div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='ptel' placeholder='041 123 456'></div>" +
+      "<div class='form-group'><label class='form-label'>&#x160;t. na mapi</label><input class='form-input' type='number' id='pnum' placeholder='1'></div></div>" +
+      "<div class='form-group'><label class='form-label'>Fotografija</label><div class='upload-area'><input type='file' accept='image/*' id='pi' onchange='showPrev(this,\"pp\")'><span class='upload-icon'>&#x1F4F8;</span><span>Tapni za izbiro slike</span></div><div id='pp'></div></div>" +
+      "<div class='admin-actions'><button class='btn btn-o' onclick='closeM(\"admin-modal\")'>Preklic</button>" +
+      "<button class='btn btn-p' onclick='savePon()'>&#x1F4BE; Shrani ponudnika</button></div></div>";
+  } else {
+    if(!pons.length){c.innerHTML="<p style='color:var(--tx2)'>Najprej dodaj ponudnike.</p>";return;}
+    var html="<div>";
+    pons.forEach(function(p){
+      html+="<div onclick='editPon("+p.id+")' style='display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-radius:var(--rs);padding:.9rem 1.1rem;margin-bottom:.6rem;border:.5px solid rgba(255,255,255,.07);cursor:pointer'>" +
+        "<div style='display:flex;align-items:center;gap:.8rem'>" +
+        (p.image?"<img src='"+p.image+"' style='width:48px;height:48px;object-fit:cover;border-radius:6px'>":"<div style='width:48px;height:48px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center'>&#x1F4CD;</div>") +
+        "<div><div style='font-size:.92rem;font-weight:700'>"+p.name+"</div>" +
+        "<div style='font-size:.75rem;color:var(--tx2)'>"+(p.type||"")+(p.map_num?" &middot; #"+p.map_num:"")+"</div></div>" +
+        "</div><span style='color:var(--acc)'>&#x270F; Uredi</span></div>";
+    });
+    html+="<div id='epfw'></div></div>";
+    c.innerHTML=html;
+  }
+}
+
+function editPon(id) {
+  var p=null; for(var i=0;i<pons.length;i++){if(pons[i].id===id){p=pons[i];break;}}
+  if(!p) return;
+  var w=document.getElementById("epfw");
+  w.innerHTML="<div class='admin-form' style='margin-top:1rem;border-color:rgba(232,98,42,.2)'>" +
+    "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem'>" +
+    "<div style='font-size:1rem;font-weight:700'>Uredi: "+p.name+"</div>" +
+    "<button onclick='document.getElementById(\"epfw\").innerHTML=\"\"' style='background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.2rem'>&#x2715;</button></div>" +
+    "<div class='form-row'><div class='form-group'><label class='form-label'>Ime</label><input class='form-input' id='epn' value='"+p.name+"'></div>" +
+    "<div class='form-group'><label class='form-label'>Kategorija</label><select class='form-select' id='ept'>" +
+    "<option value='kulinarika'"+(p.type==="kulinarika"?" selected":"")+">Kulinarika</option>" +
+    "<option value='vino'"+(p.type==="vino"?" selected":"")+">Vino</option>" +
+    "<option value='prenocitev'"+(p.type==="prenocitev"?" selected":"")+">Prenocitve</option></select></div></div>" +
+    "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='epd'>"+(p.description||"")+"</textarea></div>" +
+    "<div class='form-row'><div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='eptel' value='"+(p.tel||"")+"'></div>" +
+    "<div class='form-group'><label class='form-label'>&#x160;t. na mapi</label><input class='form-input' type='number' id='epnum' value='"+(p.map_num||"")+"'></div></div>" +
+    "<div class='form-group'><label class='form-label'>Zamenjaj fotografijo</label><div class='upload-area'><input type='file' accept='image/*' id='epi' onchange='showPrev(this,\"epp\")'><span class='upload-icon'>&#x1F4F8;</span><span>Tapni za novo sliko</span></div>" +
+    "<div id='epp'>"+(p.image?"<div class='img-preview'><img src='"+p.image+"'></div>":"")+"</div></div>" +
+    "<div class='admin-actions'>" +
+    "<button class='btn' style='background:rgba(192,57,43,.2);color:#e74c3c;border:.5px solid rgba(192,57,43,.3);padding:9px 18px;border-radius:8px;cursor:pointer' onclick='delPon("+id+")'>&#x1F5D1; Izbrisi</button>" +
+    "<button class='btn btn-o' onclick='document.getElementById(\"epfw\").innerHTML=\"\"'>Preklic</button>" +
+    "<button class='btn btn-p' id='epsave' onclick='doEditPon("+id+")'>&#x1F4BE; Shrani</button></div></div>";
+  w.scrollIntoView({behavior:"smooth"});
+}
+
+function doEditPon(id) {
+  setBtn("epsave","Shranjujem...",true);
+  var data={name:document.getElementById("epn").value,type:document.getElementById("ept").value,description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0};
+  var fi=document.getElementById("epi");
+  var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.image=u;}):Promise.resolve();
+  p.then(function(){return dbPatch("ponudniki",id,data);}).then(function(){
+    return dbGet("ponudniki","id=eq."+id);
+  }).then(function(fresh){
+    if(fresh&&fresh.length>0){for(var i=0;i<pons.length;i++){if(pons[i].id===id){pons[i]=fresh[0];break;}}}
+    else{for(var i=0;i<pons.length;i++){if(pons[i].id===id){Object.assign(pons[i],data);break;}}}
+    renderPons(pons);
+    document.getElementById("epfw").innerHTML="<div class='ok-msg'>&#x2713; Ponudnik posodobljen!</div>";
+    setBtn("epsave","Shrani",false);
+  }).catch(function(e){
+    document.getElementById("epfw").innerHTML="<div class='err-msg'>&#x274C; Napaka: "+e.message+"</div>";
+    setBtn("epsave","Shrani",false);
+  });
+}
+
+function delPon(id) {
+  if(!confirm("Res izbrisati ponudnika?")) return;
+  dbDelete("ponudniki",id).then(function(){
+    pons=pons.filter(function(x){return x.id!==id;});
+    renderPons(pons);
+    document.getElementById("epfw").innerHTML="";
+  });
+}
+
+function showPonTab(tab, el) {
   if(!input.files||!input.files.length) return;
   var wrap=input.closest(".upload-area"); if(wrap) wrap.style.borderColor="var(--acc)";
   var r=new FileReader();
@@ -750,21 +839,24 @@ function doEdit(id) {
     featured:document.getElementById("ef").value==="true"
   };
   var fi=document.getElementById("ei");
-  var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){data.main_image=u;}):Promise.resolve();
+  var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.main_image=u;}):Promise.resolve();
   p.then(function(){
     return dbPatch("traili",id,data);
-  }).then(function(){
-    return dbGet("traili","id=eq."+id);
-  }).then(function(fresh){
-    if(fresh&&fresh.length>0){
-      for(var i=0;i<trails.length;i++){if(trails[i].id===id){trails[i]=fresh[0];break;}}
-      renderTrails(trails);
-      renderHome();
+  }).then(function(result){
+    var updated = Array.isArray(result)&&result.length>0 ? result[0] : null;
+    if(updated&&updated.id){
+      for(var i=0;i<trails.length;i++){if(trails[i].id===id){trails[i]=updated;break;}}
     } else {
+      // Posodobi lokalno in poskusi znova prebrati
       for(var i=0;i<trails.length;i++){if(trails[i].id===id){Object.assign(trails[i],data);break;}}
-      renderTrails(trails);
-      renderHome();
+      dbGet("traili","id=eq."+id).then(function(fresh){
+        if(fresh&&fresh.length>0){
+          for(var i=0;i<trails.length;i++){if(trails[i].id===id){trails[i]=fresh[0];break;}}
+          renderTrails(trails); renderHome();
+        }
+      });
     }
+    renderTrails(trails); renderHome();
     document.getElementById("efw").innerHTML="<div class='ok-msg'>&#x2713; Trail posodobljen! Slika shranjena trajno.</div>";
     setBtn("esave","Shrani",false);
   }).catch(function(e){
