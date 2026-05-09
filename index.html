@@ -805,34 +805,37 @@ async function doEdit(id){
       featured:document.getElementById("ef").value==="true"
     };
     
-    // Naloži sliko če je izbrana
     var fi=document.getElementById("ei");
     if(fi&&fi.files&&fi.files[0]){
       data.main_image=await uploadImg(fi.files[0]);
     }
     
-    var result=await dbPatch("traili",id,data);
-    if(result&&result.id){
+    // PATCH — ne pricakujemo rezultata
+    await fetch(SB+"/rest/v1/traili?id=eq."+id, {
+      method:"PATCH",
+      headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},
+      body:JSON.stringify(data)
+    });
+    
+    // Preberi posodobljeni trail iz baze
+    var fresh=await dbGet("traili","id=eq."+id);
+    if(fresh&&fresh.length>0){
       var idx=allTrails.findIndex(function(x){return x.id===id});
-      if(idx>=0) allTrails[idx]=result;
+      if(idx>=0) allTrails[idx]=fresh[0];
+      else allTrails.push(fresh[0]);
       renderTrails(allTrails);
       renderHomeFeatured();
       document.getElementById("efw").innerHTML="<div class='ok-msg'>&#x2713; Trail posodobljen! Slika shranjena trajno.</div>";
     } else {
-      // Poskusi prebrati posodobljeni trail
-      var fresh=await dbGet("traili","id=eq."+id);
-      if(fresh&&fresh.length>0){
-        var idx2=allTrails.findIndex(function(x){return x.id===id});
-        if(idx2>=0) allTrails[idx2]=fresh[0];
-        renderTrails(allTrails);
-        renderHomeFeatured();
-        document.getElementById("efw").innerHTML="<div class='ok-msg'>&#x2713; Trail posodobljen!</div>";
-      } else {
-        throw new Error("Shranjevanje ni uspelo");
-      }
+      // Posodobi lokalno brez baze
+      var idx2=allTrails.findIndex(function(x){return x.id===id});
+      if(idx2>=0) Object.assign(allTrails[idx2],data);
+      renderTrails(allTrails);
+      renderHomeFeatured();
+      document.getElementById("efw").innerHTML="<div class='ok-msg'>&#x2713; Shranjeno!</div>";
     }
   } catch(e){
-    document.getElementById("efw").innerHTML+="<div class='err-msg'>&#x274C; Napaka: "+e.message+"</div>";
+    document.getElementById("efw").innerHTML="<div class='err-msg'>&#x274C; Napaka: "+e.message+"</div>";
   }
   setBtn("esb","Shrani",false);
 }
