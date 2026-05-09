@@ -552,13 +552,14 @@ function loadPons() {
 }
 
 function renderPons(list) {
-  var icons={kulinarika:"&#x1F37D;",vino:"&#x1F377;",prenocitev:"&#x1F6CF;"};
-  var labels={kulinarika:"Kulinarika",vino:"Vino",prenocitev:"Preno&#x10D;itev"};
+  var labels={kulinarika:"&#x1F37D; Kulinarika",vino:"&#x1F377; Vino",prenocitev:"&#x1F6CF; Preno&#x10D;itev"};
   if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>Ni ponudnikov.</p>";return;}
   document.getElementById("pgrid").innerHTML=list.map(function(p){
+    var types=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
+    var typeBadges=types.map(function(t){return"<span style='font-size:.65rem;color:var(--acc);background:rgba(232,98,42,.12);padding:2px 8px;border-radius:10px;margin-right:3px'>"+( labels[t]||t)+"</span>";}).join("");
     var numHtml=p.map_num?("<span class='pnum'>"+p.map_num+"</span>"):"";
-    return "<div class='pcard'><div class='pcard-img'>"+(p.image?iTag(p.image):(icons[p.type]||""))+"</div>" +
-      "<div class='pcard-body'><div class='ptype'>"+(labels[p.type]||p.type)+"</div>" +
+    return "<div class='pcard'><div class='pcard-img'>"+(p.image?iTag(p.image):"&#x1F4CD;")+"</div>" +
+      "<div class='pcard-body'><div style='margin-bottom:.4rem'>"+typeBadges+"</div>" +
       "<div class='pname'>"+numHtml+p.name+"</div>" +
       "<div style='font-size:.8rem;color:var(--tx2);margin:.25rem 0'>"+(p.description||"")+"</div>" +
       "<div class='ptel'>"+(p.tel?"&#x1F4DE; "+p.tel:"")+"</div></div></div>";
@@ -568,7 +569,11 @@ function renderPons(list) {
 function fP(f,el) {
   document.querySelectorAll("#pf .ftab").forEach(function(t){t.classList.remove("on");});
   el.classList.add("on");
-  renderPons(f==="vse"?pons:pons.filter(function(p){return p.type===f;}));
+  if(f==="vse"){renderPons(pons);return;}
+  renderPons(pons.filter(function(p){
+    var types=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
+    return types.indexOf(f)>=0;
+  }));
 }
 
 // Admin
@@ -662,8 +667,7 @@ function aTab(tab,el) {
       "<div style='margin-bottom:1rem'><div class='sec-h2' style='font-size:.9rem;margin-bottom:.8rem'>Obstojechi ponudniki:</div>"+ponList+"<div id='epfw'></div></div>" +
       "<div class='admin-form' style='margin-top:1.5rem'>" +
       "<div class='sec-h2' style='font-size:.9rem;margin-bottom:1rem'>&#x2795; Dodaj novega ponudnika</div>" +
-      "<div class='form-row'><div class='form-group'><label class='form-label'>Ime ponudnika</label><input class='form-input' id='pn' placeholder='Turisticna kmetija...'></div>" +
-      "<div class='form-group'><label class='form-label'>Kategorija</label><select class='form-select' id='pt'><option value='kulinarika'>Kulinarika</option><option value='vino'>Vino</option><option value='prenocitev'>Prenocitve</option></select></div></div>" +
+      "<div class='form-group'><label class='form-label'>Kategorije (izberi vse ki veljajo)</label>"+typeCheckboxes("n",[])+"\n</div>" +
       "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='pd' placeholder='Kratek opis...'></textarea></div>" +
       "<div class='form-row'><div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='ptel' placeholder='041 123 456'></div>" +
       "<div class='form-group'><label class='form-label'>&#x160;t. na mapi</label><input class='form-input' type='number' id='pnum' placeholder='1'></div></div>" +
@@ -736,16 +740,14 @@ function showPonTab(tab, el) {
 function editPon(id) {
   var p=null; for(var i=0;i<pons.length;i++){if(pons[i].id===id){p=pons[i];break;}}
   if(!p) return;
+  var selTypes=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
   var w=document.getElementById("epfw");
   w.innerHTML="<div class='admin-form' style='margin-top:1rem;border-color:rgba(232,98,42,.2)'>" +
     "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem'>" +
     "<div style='font-size:1rem;font-weight:700'>Uredi: "+p.name+"</div>" +
     "<button onclick='document.getElementById(\"epfw\").innerHTML=\"\"' style='background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.2rem'>&#x2715;</button></div>" +
-    "<div class='form-row'><div class='form-group'><label class='form-label'>Ime</label><input class='form-input' id='epn' value='"+p.name+"'></div>" +
-    "<div class='form-group'><label class='form-label'>Kategorija</label><select class='form-select' id='ept'>" +
-    "<option value='kulinarika'"+(p.type==="kulinarika"?" selected":"")+">Kulinarika</option>" +
-    "<option value='vino'"+(p.type==="vino"?" selected":"")+">Vino</option>" +
-    "<option value='prenocitev'"+(p.type==="prenocitev"?" selected":"")+">Prenocitve</option></select></div></div>" +
+    "<div class='form-group'><label class='form-label'>Ime</label><input class='form-input' id='epn' value='"+p.name+"'></div>" +
+    "<div class='form-group'><label class='form-label'>Kategorije</label>"+typeCheckboxes("e",selTypes)+"</div>" +
     "<div class='form-group'><label class='form-label'>Opis</label><textarea class='form-textarea' id='epd'>"+(p.description||"")+"</textarea></div>" +
     "<div class='form-row'><div class='form-group'><label class='form-label'>Telefonska</label><input class='form-input' id='eptel' value='"+(p.tel||"")+"'></div>" +
     "<div class='form-group'><label class='form-label'>&#x160;t. na mapi</label><input class='form-input' type='number' id='epnum' value='"+(p.map_num||"")+"'></div></div>" +
@@ -760,7 +762,9 @@ function editPon(id) {
 
 function doEditPon(id) {
   setBtn("epsave","Shranjujem...",true);
-  var data={name:document.getElementById("epn").value,type:document.getElementById("ept").value,description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0};
+  var types=getPonTypes("e");
+  if(!types.length){alert("Izberi vsaj eno kategorijo!");setBtn("epsave","Shrani",false);return;}
+  var data={name:document.getElementById("epn").value,types:types,type:types[0],description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0};
   var fi=document.getElementById("epi");
   var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.image=u;}):Promise.resolve();
   p.then(function(){return dbPatch("ponudniki",id,data);}).then(function(){
@@ -956,13 +960,14 @@ function delTrail(id) {
 function savePon() {
   var name=document.getElementById("pn").value.trim();
   if(!name){alert("Vnesi ime ponudnika!");return;}
-  var data={name:name,type:document.getElementById("pt").value,description:document.getElementById("pd").value,tel:document.getElementById("ptel").value,map_num:Number(document.getElementById("pnum").value)||0};
+  var types=getPonTypes("n");
+  if(!types.length){alert("Izberi vsaj eno kategorijo!");return;}
+  var data={name:name,types:types,type:types[0],description:document.getElementById("pd").value,tel:document.getElementById("ptel").value,map_num:Number(document.getElementById("pnum").value)||0};
   var fi=document.getElementById("pi");
   var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){data.image=u;}):Promise.resolve();
   p.then(function(){return dbPost("ponudniki",data);}).then(function(r){
     var res=Array.isArray(r)?r[0]:r;
-    if(res) pons.push(res);
-    renderPons(pons);
+    if(res){pons.push(res);renderPons(pons);}
     msg("Ponudnik shranjen!","ok");
   }).catch(function(e){msg("Napaka: "+e.message,"err");});
 }
