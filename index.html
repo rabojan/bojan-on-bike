@@ -457,10 +457,10 @@ function openT(id){
     "<div class='sh2'>Moj komentar</div><p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>"+(t.comment||"")+"</p>" +
     galHtml +
     "<div class='sh2'>Strava zemljevid</div><div class='sbox'>"+(t.strava_image?iT(t.strava_image):"<span>Strava (admin nalozi)</span>")+"</div>" +
-    "<div class='sh2'>Prenos</div><div class='grow'>" +
-    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p' onclick='gpxTip(event,\""+t.gpx_file+"\")'>&#x2B07; GPX</a>":"<button class='gb gb-p' onclick='alert(\"GPX bo dodan\")'>&#x2B07; GPX</button>") +
-    "<button class='gb gb-s' onclick='window.open(\"https://www.komoot.com\",\"_blank\")'>Komoot &#x2197;</button>" +
-    "<button class='gb gb-s' onclick='window.open(\"https://www.strava.com\",\"_blank\")'>Strava &#x2197;</button>" +
+    "<div class='sh2'>Prenos &amp; navigacija</div><div class='grow'>" +
+    (t.gpx_file?
+      "<a href='https://gpx.studio/?url="+encodeURIComponent(t.gpx_file)+"' target='_blank' class='gb gb-p'>&#x1F5FA; Oglej &amp; prenesi GPX</a>":
+      "<button class='gb gb-p' onclick='alert(\"GPX bo dodan kmalu\")'>&#x1F5FA; GPX ni se nalozena</button>") +
     "</div>" +
     "<div class='sh2'>Komentarji</div>" +
     "<div class='cf'><h3>Pusti komentar</h3><input type='text' placeholder='Tvoje ime' id='cn"+id+"'><textarea placeholder='Tvoje izkusnje...' id='ct"+id+"'></textarea>" +
