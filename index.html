@@ -469,7 +469,7 @@ function openT(id){
     (t.gpx_file?"<div id='map-"+id+"' class='gpx-map'></div>":"<div class='sbox'><span>GPX ni nalozena</span></div>") +
     "<div class='grow' style='margin-bottom:2rem'>" +
     (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; Prenesi GPX</a>":"") +
-    (t.strava_url?"<a href='"+stravaLink(t.strava_url)+"' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
+    (t.strava_url?"<a href='"+t.strava_url+"' target='_blank' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
     (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
     (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>Navigacija bo dodana kmalu.</p>":"") +
     "</div>" +
