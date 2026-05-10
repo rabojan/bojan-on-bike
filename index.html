@@ -552,7 +552,7 @@ function renderPons(list){
       "<div class='pcard-body'><div class='pcard-types'>"+typeBadges+"</div>" +
       "<div class='pcard-name'>"+(p.map_num?"<span class='pnum'>"+p.map_num+"</span>":"")+p.name+"</div>" +
       "<div style='font-size:.8rem;color:var(--tx2);margin:.25rem 0'>"+(p.description||"")+"</div>" +
-      "<div class='pcard-tel'>"+(p.tel?"&#x1F4DE; "+p.tel:"")+"</div>" +
+      "<div class='pcard-tel'>"+(p.tel?"<a href='tel:"+p.tel+"' style='color:var(--tx2);text-decoration:none'>&#x1F4DE; "+p.tel+"</a>":"")+"</div>" +
       "<div style='display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem'>" +
       (p.website?"<a href='"+p.website+"' target='_blank' style='font-size:.75rem;color:var(--acc);text-decoration:none;padding:3px 8px;border-radius:6px;background:rgba(232,98,42,.1);border:.5px solid rgba(232,98,42,.25)'>&#x1F310; Spletna stran</a>":"") +
       (p.wiki_url?"<a href='"+p.wiki_url+"' target='_blank' style='font-size:.75rem;color:var(--tx2);text-decoration:none;padding:3px 8px;border-radius:6px;background:var(--bg3);border:.5px solid rgba(255,255,255,.1)'>&#x1F4D6; Wikipedia</a>":"") +
