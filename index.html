@@ -623,18 +623,35 @@ function showPanel(){
   aTab("dodaj",document.querySelector("#anav .at"));
 }
 
-function galSlot(i,url,desc){
-  return "<div><div class='ua'><input type='file' accept='image/*' id='gf"+i+"' onchange='galPrev(this,"+i+")'>" +
-    "<span class='ui'>&#x1F4F8;</span><span style='font-size:.72rem'>Slika "+(i+1)+"</span></div>" +
-    "<div id='gp"+i+"'>"+(url?"<div class='ip'><img src='"+url+"'></div><input class='fi' id='gd"+i+"' value='"+(desc||"")+"' placeholder='Opis...' style='margin-top:.3rem'>":"")+"</div></div>";
+var galCounter=0;
+function galAdd(containerId){
+  var n=galCounter++;
+  var div=document.createElement("div");
+  div.id="gslot-"+n;
+  div.style.cssText="background:var(--bg3);border-radius:var(--rs);padding:.7rem;margin-bottom:.5rem;border:.5px solid rgba(255,255,255,.08)";
+  div.innerHTML="<div class='ua' style='padding:.8rem;margin-bottom:.4rem'><input type='file' accept='image/*' id='gf-"+n+"' onchange='galPrev(this,\"gp-"+n+"\")'><span class='ui' style='font-size:1.2rem'>&#x1F4F8;</span><span style='font-size:.76rem'>Tapni za izbiro</span></div>"+
+    "<div id='gp-"+n+"'></div>"+
+    "<input class='fi' id='gd-"+n+"' placeholder='Opis slike (neobvezno)...' style='margin-top:.4rem;font-size:.8rem'>"+
+    "<button onclick='this.parentNode.remove()' style='margin-top:.3rem;padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.12);border:.5px solid rgba(192,57,43,.25);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button>";
+  document.getElementById(containerId).appendChild(div);
 }
-
-function galPrev(inp,i){
+function galPrev(inp,pid){
   if(!inp.files||!inp.files.length)return;
   inp.closest(".ua").style.borderColor="var(--acc)";
   var r=new FileReader();
-  r.onload=function(e){document.getElementById("gp"+i).innerHTML="<div class='ip'><img src='"+e.target.result+"'></div><input class='fi' id='gd"+i+"' placeholder='Opis...' style='margin-top:.3rem'>";};
+  r.onload=function(e){document.getElementById(pid).innerHTML="<div class='ip'><img src='"+e.target.result+"'></div>";};
   r.readAsDataURL(inp.files[0]);
+}
+function galCollect(containerId){
+  var slots=document.getElementById(containerId).querySelectorAll("[id^='gslot-']");
+  var files=[],descs=[];
+  slots.forEach(function(slot){
+    var inp=slot.querySelector("input[type='file']");
+    var desc=slot.querySelector("input[type='text']")||slot.querySelector("input.fi");
+    files.push(inp&&inp.files&&inp.files[0]?inp.files[0]:null);
+    descs.push(desc?desc.value:"");
+  });
+  return{files:files,descs:descs};
 }
 
 function cbRow(prefix,sel){
@@ -660,7 +677,6 @@ function aTab(tab,el){
   var c=document.getElementById("ac-c");
 
   if(tab==="dodaj"){
-    var gs="";for(var i=0;i<6;i++)gs+=galSlot(i,null,"");
     c.innerHTML="<div class='af'>" +
       "<div class='fr'><div class='fg'><label class='fl'>Ime traila</label><input class='fi' id='nn' placeholder='Pohorska divjina'></div>" +
       "<div class='fg'><label class='fl'>Regija</label><input class='fi' id='nr' placeholder='Pohorje'></div></div>" +
@@ -674,7 +690,7 @@ function aTab(tab,el){
       "<div class='fr'><div class='fg'><label class='fl'>Ocena (1-5)</label><select class='fs' id='nst'><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>" +
       "<div class='fg'><label class='fl'>Featured &#x2B50;</label><select class='fs' id='nf'><option value='false'>Ne</option><option value='true'>Da - Trail meseca</option></select></div></div>" +
       "<div class='fg'><label class='fl'>Naslovna fotografija</label><div class='ua'><input type='file' accept='image/*' id='ni1' onchange='showPrev(this,\"np1\")'><span class='ui'>&#x1F4F8;</span><span>Tapni za izbiro</span></div><div id='np1'></div></div>" +
-      "<div class='fg'><label class='fl'>Galerija (do 6 slik)</label><div style='display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem'>"+gs+"</div></div>" +
+      "<div class='fg'><label class='fl'>Galerija</label><div id='gal-dodaj'></div><button onclick='galAdd(\"gal-dodaj\")' style='padding:6px 14px;border-radius:8px;background:var(--bg3);border:.5px solid rgba(255,255,255,.12);color:var(--tx2);font-size:.82rem;cursor:pointer;margin-top:.3rem'>&#x2B; Dodaj sliko</button></div>" +
       "<div class='fg'><label class='fl'>Strava zemljevid</label><div class='ua'><input type='file' accept='image/*' id='ni2' onchange='showPrev(this,\"np2\")'><span class='ui'>&#x1F5FA;</span><span>Tapni za izbiro</span></div><div id='np2'></div></div>" +
       "<div class='fg'><label class='fl'>GPX datoteka</label><div class='ua'><input type='file' accept='.gpx' id='ni3' onchange='showGpx(this,\"np3\")'><span class='ui'>&#x1F4C1;</span><span>Tapni za izbiro</span></div><div id='np3'></div></div>" +
       "<div class='aa'><button class='btn btn-p' id='bsave' onclick='saveTrail()'>&#x1F4BE; Shrani trail</button></div></div>";
@@ -759,18 +775,18 @@ function saveTrail(){
   var f1=document.getElementById("ni1").files[0];
   var f2=document.getElementById("ni2").files[0];
   var f3=document.getElementById("ni3").files[0];
-  var galF=[];for(var i=0;i<6;i++){var gf=document.getElementById("gf"+i);galF.push(gf&&gf.files&&gf.files[0]?gf.files[0]:null);}
+  var gal=galCollect("gal-dodaj");
   var p1=f1?uploadImg(f1):Promise.resolve(null);
   var p2=f2?uploadImg(f2):Promise.resolve(null);
   var p3=f3?uploadFile(f3):Promise.resolve(null);
-  var gps=galF.map(function(f){return f?uploadImg(f):Promise.resolve(null);});
+  var gps=gal.files.map(function(f){return f?uploadImg(f):Promise.resolve(null);});
   Promise.all([p1,p2,p3].concat(gps)).then(function(res){
     if(res[0])data.main_image=res[0];
     if(res[1])data.strava_image=res[1];
     if(res[2])data.gpx_file=res[2];
     var photos=[];
-    for(var i=0;i<6;i++){
-      if(res[3+i]){var d=document.getElementById("gd"+i);photos.push({url:res[3+i],desc:d?d.value:""});}
+    for(var i=0;i<gal.files.length;i++){
+      if(res[3+i])photos.push({url:res[3+i],desc:gal.descs[i]||""});
     }
     if(photos.length)data.photos=photos;
     return dbP("traili",data);
@@ -795,7 +811,6 @@ function editT(id){
   var t=null;for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
   if(!t)return;
   var ep=t.photos||[];
-  var gs="";for(var i=0;i<6;i++){var p=ep[i]||{};gs+=galSlot(i,p.url||null,p.desc||"");}
   var w=document.getElementById("efw");
   w.innerHTML="<div class='af' style='margin-top:1rem;border-color:rgba(232,98,42,.2)'>" +
     "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem'>" +
@@ -814,11 +829,24 @@ function editT(id){
     "<div class='fg'><label class='fl'>Featured &#x2B50;</label><select class='fs' id='ef'>" +
     "<option value='false'"+(t.featured?"":" selected")+">Ne</option>" +
     "<option value='true'"+(t.featured?" selected":"")+">Da - Trail meseca</option></select></div></div>" +
-    "<div class='fg'><label class='fl'>Naslovna slika</label><div class='ua'><input type='file' accept='image/*' id='ei' onchange='showPrev(this,\"ep\")'><span class='ui'>&#x1F4F8;</span><span>Tapni za zamenjavo</span></div>" +
-    "<div id='ep'>"+(t.main_image?"<div class='ip'><img src='"+t.main_image+"'></div>":"")+"</div></div>" +
-    "<div class='fg'><label class='fl'>Galerija (do 6 slik)</label><div style='display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem'>"+gs+"</div></div>" +
-    "<div class='fg'><label class='fl'>GPX datoteka</label><div class='ua'><input type='file' accept='.gpx' id='egpx' onchange='showGpx(this,\"egpxp\")'><span class='ui'>&#x1F4C1;</span><span>Tapni za .gpx</span></div>" +
-    "<div id='egpxp'>"+(t.gpx_file?"<div style='color:#2ecc71;font-size:.8rem;margin-top:.4rem'>&#x2713; GPX nalozena</div>":"")+"</div></div>" +
+    "<div class='fg'><label class='fl'>Naslovna slika</label>" +
+    (t.main_image?"<div style='margin-bottom:.6rem'><div class='ip'><img src='"+t.main_image+"'></div><button onclick='removeMainImg("+id+")' style='margin-top:.4rem;padding:4px 12px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.76rem;cursor:pointer'>&#x1F5D1; Odstrani sliko</button></div>":"") +
+    "<div class='ua'><input type='file' accept='image/*' id='ei' onchange='showPrev(this,\"ep\")'><span class='ui'>&#x1F4F8;</span><span>"+(t.main_image?"Zamenjaj sliko":"Tapni za izbiro")+"</span></div>" +
+    "<div id='ep'></div></div>" +
+    "<div class='fg'><label class='fl'>Galerija</label><div id='gal-edit'>" +
+    ep.map(function(p,i){
+      if(!p||!p.url)return"";
+      return "<div id='gslot-ex-"+i+"' style='background:var(--bg3);border-radius:var(--rs);padding:.7rem;margin-bottom:.5rem;border:.5px solid rgba(255,255,255,.08)'>" +
+        "<div class='ip'><img src='"+p.url+"'></div>" +
+        "<input class='fi' id='gd-ex-"+i+"' value='"+(p.desc||"")+"' placeholder='Opis slike...' style='margin-top:.4rem;font-size:.8rem'>" +
+        "<button onclick='this.parentNode.remove()' style='margin-top:.3rem;padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.12);border:.5px solid rgba(192,57,43,.25);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button>" +
+        "</div>";
+    }).join("") +
+    "</div><button onclick='galAdd(\"gal-edit\")' style='padding:6px 14px;border-radius:8px;background:var(--bg3);border:.5px solid rgba(255,255,255,.12);color:var(--tx2);font-size:.82rem;cursor:pointer;margin-top:.3rem'>&#x2B; Dodaj sliko</button></div>" +
+    "<div class='fg'><label class='fl'>GPX datoteka</label>" +
+    (t.gpx_file?"<div style='display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem;background:var(--bg3);padding:.5rem .8rem;border-radius:var(--rs)'><span style='color:#2ecc71;font-size:.82rem'>&#x2713; GPX naložena</span><button onclick='removeGpx("+id+")' style='padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button></div>":"") +
+    "<div class='ua'><input type='file' accept='.gpx' id='egpx' onchange='showGpx(this,\"egpxp\")'><span class='ui'>&#x1F4C1;</span><span>"+(t.gpx_file?"Zamenjaj GPX":"Tapni za .gpx")+"</span></div>" +
+    "<div id='egpxp'></div></div>" +
     "<div class='fg'><label class='fl'>&#x1F5FA; Komoot link</label><input class='fi' id='ekmt' value='"+(t.komoot_url||"")+"' placeholder='https://www.komoot.com/tour/...'></div>" +
     "<div class='fg'><label class='fl'>&#x1F4CA; Strava link</label><input class='fi' id='estr' value='"+(t.strava_url||"")+"' placeholder='https://www.strava.com/routes/...'></div>" +
     "<div class='aa'>" +
@@ -838,20 +866,24 @@ function doEditT(id){
   if(document.getElementById("estr"))data.strava_url=document.getElementById("estr").value;
   var fi=document.getElementById("ei");
   var fg=document.getElementById("egpx");
-  var galF=[];for(var i=0;i<6;i++){var gf=document.getElementById("gf"+i);galF.push(gf&&gf.files&&gf.files[0]?gf.files[0]:null);}
+  var gal=galCollect("gal-edit");
   var pM=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]):Promise.resolve(null);
   var pG=fg&&fg.files&&fg.files[0]?uploadFile(fg.files[0]):Promise.resolve(null);
-  var gps=galF.map(function(f){return f?uploadImg(f):Promise.resolve(null);});
+  var gps=gal.files.map(function(f){return f?uploadImg(f):Promise.resolve(null);});
   Promise.all([pM,pG].concat(gps)).then(function(res){
     if(res[0]){data.main_image=res[0];saveSetting("trail_img_"+id,res[0]);}
     if(res[1]){data.gpx_file=res[1];saveSetting("trail_gpx_"+id,res[1]);}
-    var t=null;for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
-    var ep=t&&t.photos?t.photos:[];
+    // Obstoječe slike ki so ostale (niso bile odstranjene)
+    var existingSlots=document.getElementById("gal-edit").querySelectorAll("[id^='gslot-ex-']");
     var photos=[];
-    for(var i=0;i<6;i++){
-      var d=document.getElementById("gd"+i);var desc=d?d.value:"";
-      if(res[2+i])photos.push({url:res[2+i],desc:desc});
-      else if(ep[i]&&ep[i].url)photos.push({url:ep[i].url,desc:desc||ep[i].desc||""});
+    existingSlots.forEach(function(slot,i){
+      var img=slot.querySelector("img");
+      var desc=slot.querySelector("input.fi");
+      if(img)photos.push({url:img.src,desc:desc?desc.value:""});
+    });
+    // Nove slike
+    for(var i=0;i<gal.files.length;i++){
+      if(res[2+i])photos.push({url:res[2+i],desc:gal.descs[i]||""});
     }
     if(photos.length){data.photos=photos;saveSetting("trail_ph_"+id,JSON.stringify(photos));}
     for(var i=0;i<trails.length;i++){if(trails[i].id===id){Object.assign(trails[i],data);break;}}
@@ -865,6 +897,21 @@ function doEditT(id){
   });
 }
 
+function removeMainImg(id){
+  if(!confirm("Res odstraniti naslovno sliko?"))return;
+  for(var i=0;i<trails.length;i++){if(trails[i].id===id){trails[i].main_image=null;break;}}
+  saveSetting("trail_img_"+id,"");
+  dbU("traili",id,{main_image:null}).catch(function(){});
+  renderTrails(trails);renderHome();
+  editT(id);
+}
+function removeGpx(id){
+  if(!confirm("Res odstraniti GPX?"))return;
+  for(var i=0;i<trails.length;i++){if(trails[i].id===id){trails[i].gpx_file=null;break;}}
+  saveSetting("trail_gpx_"+id,"");
+  dbU("traili",id,{gpx_file:null}).catch(function(){});
+  editT(id);
+}
 function delT(id){
   if(!confirm("Res izbrisati trail?"))return;
   dbD("traili",id).then(function(){
