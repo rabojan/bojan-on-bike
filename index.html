@@ -552,7 +552,12 @@ function renderPons(list){
       "<div class='pcard-body'><div class='pcard-types'>"+typeBadges+"</div>" +
       "<div class='pcard-name'>"+(p.map_num?"<span class='pnum'>"+p.map_num+"</span>":"")+p.name+"</div>" +
       "<div style='font-size:.8rem;color:var(--tx2);margin:.25rem 0'>"+(p.description||"")+"</div>" +
-      "<div class='pcard-tel'>"+(p.tel?"&#x1F4DE; "+p.tel:"")+"</div></div></div>";
+      "<div class='pcard-tel'>"+(p.tel?"&#x1F4DE; "+p.tel:"")+"</div>" +
+      "<div style='display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem'>" +
+      (p.website?"<a href='"+p.website+"' target='_blank' style='font-size:.75rem;color:var(--acc);text-decoration:none;padding:3px 8px;border-radius:6px;background:rgba(232,98,42,.1);border:.5px solid rgba(232,98,42,.25)'>&#x1F310; Spletna stran</a>":"") +
+      (p.wiki_url?"<a href='"+p.wiki_url+"' target='_blank' style='font-size:.75rem;color:var(--tx2);text-decoration:none;padding:3px 8px;border-radius:6px;background:var(--bg3);border:.5px solid rgba(255,255,255,.1)'>&#x1F4D6; Wikipedia</a>":"") +
+      "</div>" +
+      "</div></div>";
   }).join("");
 }
 
@@ -728,6 +733,8 @@ function aTab(tab,el){
         "<div class='fg'><label class='fl'>Opis</label><textarea class='fta' id='pd' placeholder='Kratek opis...'></textarea></div>" +
         "<div class='fr'><div class='fg'><label class='fl'>Telefonska</label><input class='fi' id='ptel' placeholder='041 123 456'></div>" +
         "<div class='fg'><label class='fl'>&#x160;t. na mapi</label><input class='fi' type='number' id='pnum' placeholder='1'></div></div>" +
+        "<div class='fg'><label class='fl'>&#x1F310; Spletna stran</label><input class='fi' id='pweb' placeholder='https://www.primer.si'></div>" +
+        "<div class='fg'><label class='fl'>&#x1F4D6; Wikipedia link</label><input class='fi' id='pwiki' placeholder='https://sl.wikipedia.org/wiki/...'></div>" +
         "<div class='fg'><label class='fl'>Fotografija</label><div class='ua'><input type='file' accept='image/*' id='pi' onchange='showPrev(this,\"pp\")'><span class='ui'>&#x1F4F8;</span><span>Tapni za izbiro</span></div><div id='pp'></div></div>" +
         "<div class='aa'><button class='btn btn-p' onclick='savePon()'>&#x1F4BE; Shrani ponudnika</button></div></div>";
     });
@@ -927,7 +934,7 @@ function savePon(){
   if(!name){alert("Vnesi ime ponudnika!");return;}
   var types=getTypes("n");
   if(!types.length){alert("Izberi vsaj eno kategorijo!");return;}
-  var data={name:name,types:types,type:types[0],description:document.getElementById("pd").value,tel:document.getElementById("ptel").value,map_num:Number(document.getElementById("pnum").value)||0};
+  var data={name:name,types:types,type:types[0],description:document.getElementById("pd").value,tel:document.getElementById("ptel").value,map_num:Number(document.getElementById("pnum").value)||0,website:document.getElementById("pweb").value||"",wiki_url:document.getElementById("pwiki").value||""};
   var fi=document.getElementById("pi");
   var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.image=u;}):Promise.resolve();
   p.then(function(){return dbP("ponudniki",data);}).then(function(r){
@@ -952,6 +959,8 @@ function editPon(id){
     "<div class='fg'><label class='fl'>Opis</label><textarea class='fta' id='epd'>"+(p.description||"")+"</textarea></div>" +
     "<div class='fr'><div class='fg'><label class='fl'>Telefonska</label><input class='fi' id='eptel' value='"+(p.tel||"")+"'></div>" +
     "<div class='fg'><label class='fl'>&#x160;t. na mapi</label><input class='fi' type='number' id='epnum' value='"+(p.map_num||"")+"'></div></div>" +
+    "<div class='fg'><label class='fl'>&#x1F310; Spletna stran</label><input class='fi' id='epweb' value='"+(p.website||"")+"' placeholder='https://www.primer.si'></div>" +
+    "<div class='fg'><label class='fl'>&#x1F4D6; Wikipedia link</label><input class='fi' id='epwiki' value='"+(p.wiki_url||"")+"' placeholder='https://sl.wikipedia.org/wiki/...'></div>" +
     "<div class='fg'><label class='fl'>Fotografija</label><div class='ua'><input type='file' accept='image/*' id='epi' onchange='showPrev(this,\"epp\")'><span class='ui'>&#x1F4F8;</span><span>Tapni za novo sliko</span></div>" +
     "<div id='epp'>"+(p.image?"<div class='ip'><img src='"+p.image+"'></div>":"")+"</div></div>" +
     "<div class='aa'>" +
@@ -965,7 +974,7 @@ function doEditPon(id){
   setBtn("epsave","Shranjujem...",true);
   var types=getTypes("e");
   if(!types.length){alert("Izberi vsaj eno kategorijo!");setBtn("epsave","Shrani",false);return;}
-  var data={name:document.getElementById("epn").value,types:types,type:types[0],description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0};
+  var data={name:document.getElementById("epn").value,types:types,type:types[0],description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0,website:document.getElementById("epweb").value||"",wiki_url:document.getElementById("epwiki").value||""};
   var fi=document.getElementById("epi");
   var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.image=u;}):Promise.resolve();
   p.then(function(){return dbU("ponudniki",id,data);}).then(function(){
