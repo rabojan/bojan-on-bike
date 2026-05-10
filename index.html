@@ -487,6 +487,23 @@ function openT(id){
     (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
     (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>Navigacija bo dodana kmalu.</p>":"") +
     "</div>" +
+    (function(){
+      if(!t.ponudniki_ids||!t.ponudniki_ids.length)return"";
+      var linked=pons.filter(function(p){return t.ponudniki_ids.indexOf(p.id)>=0;});
+      if(!linked.length)return"";
+      return "<div class='sh2'>Ponudniki ob poti</div><div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.8rem'>"+
+        linked.map(function(p){
+          return "<div style='display:flex;align-items:center;gap:.8rem;background:var(--bg2);border-radius:var(--rs);padding:.7rem;border:.5px solid rgba(255,255,255,.06)'>" +
+            (p.image?"<img src='"+p.image+"' style='width:40px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0'>":"<div style='width:40px;height:40px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0'>&#x1F4CD;</div>") +
+            "<div style='flex:1;min-width:0'><div style='font-size:.88rem;font-weight:700'>"+p.name+"</div>" +
+            "<div style='font-size:.76rem;color:var(--tx2)'>"+(p.description||"")+"</div>" +
+            "<div style='display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem'>" +
+            (p.tel?"<a href='tel:"+p.tel+"' style='font-size:.74rem;color:var(--tx2);text-decoration:none'>&#x1F4DE; "+p.tel+"</a>":"") +
+            (p.website?"<a href='"+p.website+"' target='_blank' style='font-size:.74rem;color:var(--acc);text-decoration:none'>&#x1F310; Spletna stran</a>":"") +
+            (p.wiki_url?"<a href='"+p.wiki_url+"' target='_blank' style='font-size:.74rem;color:var(--tx2);text-decoration:none'>&#x1F4D6; Wikipedia</a>":"") +
+            "</div></div></div>";
+        }).join("") + "</div>";
+    })() +
     "<div class='sh2'>Komentarji</div>" +
     "<div class='cf'><h3>Pusti komentar</h3><input type='text' placeholder='Tvoje ime' id='cn"+id+"'><textarea placeholder='Tvoje izkusnje...' id='ct"+id+"'></textarea>" +
     "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>Po&#x161;lji</button></div>" +
@@ -836,6 +853,8 @@ function editT(id){
     "<div class='fg'><label class='fl'>Featured &#x2B50;</label><select class='fs' id='ef'>" +
     "<option value='false'"+(t.featured?"":" selected")+">Ne</option>" +
     "<option value='true'"+(t.featured?" selected":"")+">Da - Trail meseca</option></select></div></div>" +
+    "<div class='fr'><div class='fg'><label class='fl'>Sezona</label><input class='fi' id='es' value='"+(t.seasonal||"")+"' placeholder='Maj-Oktober'></div>" +
+    "<div class='fg'><label class='fl'>Podlaga</label><input class='fi' id='esu' value='"+(t.surface||"")+"' placeholder='Zemlja, kamen...'></div></div>" +
     "<div class='fg'><label class='fl'>Naslovna slika</label>" +
     (t.main_image?"<div style='margin-bottom:.6rem'><div class='ip'><img src='"+t.main_image+"'></div><button onclick='removeMainImg("+id+")' style='margin-top:.4rem;padding:4px 12px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.76rem;cursor:pointer'>&#x1F5D1; Odstrani sliko</button></div>":"") +
     "<div class='ua'><input type='file' accept='image/*' id='ei' onchange='showPrev(this,\"ep\")'><span class='ui'>&#x1F4F8;</span><span>"+(t.main_image?"Zamenjaj sliko":"Tapni za izbiro")+"</span></div>" +
@@ -856,6 +875,9 @@ function editT(id){
     "<div id='egpxp'></div></div>" +
     "<div class='fg'><label class='fl'>&#x1F5FA; Komoot link</label><input class='fi' id='ekmt' value='"+(t.komoot_url||"")+"' placeholder='https://www.komoot.com/tour/...'></div>" +
     "<div class='fg'><label class='fl'>&#x1F4CA; Strava link</label><input class='fi' id='estr' value='"+(t.strava_url||"")+"' placeholder='https://www.strava.com/routes/...'></div>" +
+    "<div class='fg'><label class='fl'>&#x1F4CD; Ponudniki ob poti</label>" +
+    (pons.length?"<div style='display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem'>"+pons.map(function(p){var sel=Array.isArray(t.ponudniki_ids)&&t.ponudniki_ids.indexOf(p.id)>=0;return"<label style='display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.82rem;background:var(--bg3);padding:5px 10px;border-radius:20px;border:.5px solid rgba(255,255,255,.07)'><input type='checkbox' id='epid-"+p.id+"'"+(sel?" checked":"")+"> "+p.name+"</label>";}).join("")+"</div>":"<p style='color:var(--tx2);font-size:.8rem'>Najprej dodaj ponudnike v admin.</p>") +
+    "</div>" +
     "<div class='aa'>" +
     "<button class='btn' style='background:rgba(192,57,43,.2);color:#e74c3c;border:.5px solid rgba(192,57,43,.3);padding:9px 18px;border-radius:8px;cursor:pointer' onclick='delT("+id+")'>&#x1F5D1; Izbrisi</button>" +
     "<button class='btn btn-o' onclick='document.getElementById(\"efw\").innerHTML=\"\"'>Preklic</button>" +
@@ -871,6 +893,11 @@ function doEditT(id){
     featured:document.getElementById("ef").value==="true"};
   if(document.getElementById("ekmt"))data.komoot_url=document.getElementById("ekmt").value;
   if(document.getElementById("estr"))data.strava_url=document.getElementById("estr").value;
+  if(document.getElementById("es"))data.seasonal=document.getElementById("es").value;
+  if(document.getElementById("esu"))data.surface=document.getElementById("esu").value;
+  var ponIds=[];
+  pons.forEach(function(p){var cb=document.getElementById("epid-"+p.id);if(cb&&cb.checked)ponIds.push(p.id);});
+  data.ponudniki_ids=ponIds;
   var fi=document.getElementById("ei");
   var fg=document.getElementById("egpx");
   var gal=galCollect("gal-edit");
