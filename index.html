@@ -340,6 +340,7 @@ function stravaLink(url){
   if(m)return"strava://activities/"+m[1];
   return url;
 }
+function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
 function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
 function st(n){var s="";for(var i=0;i<n;i++)s+="&#9733;";for(var j=n;j<5;j++)s+="&#9734;";return s;}
 function iT(url){return url?"<img src='"+url+"' onerror='this.style.display=\"none\"'>":"";}
