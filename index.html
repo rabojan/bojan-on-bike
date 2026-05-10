@@ -282,7 +282,20 @@ var pons=[];
 
 // ===== API =====
 function hdr(){return{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"};}
-function dbG(t,q){return fetch(SB+"/rest/v1/"+t+"?"+(q||""),{headers:hdr()}).then(function(r){return r.ok?r.json():[];}).catch(function(){return[];});}
+function dbG(t,q){
+  var controller=new AbortController();
+  var timer=setTimeout(function(){controller.abort();},8000);
+  return fetch(SB+"/rest/v1/"+t+"?"+(q||""),{headers:hdr(),signal:controller.signal})
+    .then(function(r){clearTimeout(timer);return r.ok?r.json():[];})
+    .catch(function(e){
+      clearTimeout(timer);
+      if(e.name==="AbortError"){
+        var el=document.getElementById("tgrid");
+        if(el)el.innerHTML="<div style='color:#e74c3c;padding:1rem;font-size:.85rem'>&#x274C; Baza ne odgovarja. Poskusi znova čez trenutek.</div>";
+      }
+      return[];
+    });
+}
 function dbP(t,d){return fetch(SB+"/rest/v1/"+t,{method:"POST",headers:Object.assign({},hdr(),{"Prefer":"return=representation"}),body:JSON.stringify(d)}).then(function(r){return r.json();}).catch(function(){return null;});}
 function dbU(t,id,d){return fetch(SB+"/rest/v1/"+t+"?id=eq."+id,{method:"PATCH",headers:Object.assign({},hdr(),{"Prefer":"return=representation"}),body:JSON.stringify(d)}).then(function(r){return r.json();}).catch(function(){return null;});}
 function dbD(t,id){return fetch(SB+"/rest/v1/"+t+"?id=eq."+id,{method:"DELETE",headers:hdr()}).catch(function(){});}
