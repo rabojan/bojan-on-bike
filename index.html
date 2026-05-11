@@ -170,6 +170,15 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
 .fl2{font-size:1.3rem;font-weight:800;color:var(--acc);margin-bottom:.3rem}
 .fl2 span{color:var(--tx)}
 .ft{color:var(--tx3);font-size:.8rem;margin-top:.5rem}
+.spons-badge{display:inline-flex;align-items:center;gap:3px;font-size:.62rem;font-weight:700;color:#f39c12;background:rgba(243,156,18,.12);border:.5px solid rgba(243,156,18,.3);padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:.5px}
+.pcard.sponsored{border-color:rgba(243,156,18,.3)}
+.qr-modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
+.qr-modal.on{display:flex}
+.qr-box{background:var(--bg2);border-radius:16px;padding:1.5rem;text-align:center;border:.5px solid rgba(255,255,255,.1);max-width:280px;width:90%}
+.qr-title{font-size:1rem;font-weight:700;margin-bottom:.3rem}
+.qr-sub{font-size:.75rem;color:var(--tx2);margin-bottom:1rem}
+#qr-canvas{display:flex;justify-content:center;margin-bottom:1rem}
+#qr-canvas canvas,#qr-canvas img{border-radius:8px}
 </style>
 </head>
 <body>
@@ -220,7 +229,11 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
       <div id="home-weather-content" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
     </div>
   </div>
-  <footer><div class="fl2">Bojan <span>on Bike</span></div><div class="ft">2025 Bojan on Bike &mdash; Pohorje, Slovenija</div></footer>
+  <footer>
+    <div class="fl2">Bojan <span>on Bike</span></div>
+    <div class="ft">2025 Bojan on Bike &mdash; Pohorje, Slovenija</div>
+    <div id="footer-sponsors" style="margin-top:.8rem"></div>
+  </footer>
 </div>
 
 <!-- TRAILI -->
@@ -296,6 +309,16 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
   <button class="mback" onclick="closeM('tmod')">&larr; Nazaj</button>
   <button class="mclose" onclick="closeM('tmod')">&#x2715;</button>
   <div id="tmod-c"></div>
+</div>
+
+<!-- QR MODAL -->
+<div class="qr-modal" id="qr-modal" onclick="closeQR()">
+  <div class="qr-box" onclick="event.stopPropagation()">
+    <div class="qr-title" id="qr-title">QR koda traila</div>
+    <div class="qr-sub">Poskeniraš s telefonom &#x2192; odpre se ta trail</div>
+    <div id="qr-canvas"></div>
+    <button onclick="closeQR()" style="padding:7px 20px;border-radius:8px;background:var(--bg3);border:.5px solid rgba(255,255,255,.1);color:var(--tx);font-size:.82rem;cursor:pointer">Zapri</button>
+  </div>
 </div>
 
 <!-- ADMIN -->
@@ -506,6 +529,31 @@ function go(p){
 }
 function closeM(id){document.getElementById(id).classList.remove("on");document.body.style.overflow="";}
 
+// ===== QR KODE =====
+function showQR(id,name){
+  var base=window.location.href.split("?")[0];
+  var url=base+"?t="+id;
+  var box=document.getElementById("qr-canvas");
+  box.innerHTML="";
+  document.getElementById("qr-title").textContent=name||"QR koda traila";
+  new QRCode(box,{text:url,width:200,height:200,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  document.getElementById("qr-modal").classList.add("on");
+}
+function closeQR(){document.getElementById("qr-modal").classList.remove("on");}
+
+// ===== DEEP LINK =====
+function checkDeepLink(){
+  var params=new URLSearchParams(window.location.search);
+  var tid=params.get("t");
+  if(!tid)return;
+  var tryOpen=function(attempts){
+    var t=null;for(var i=0;i<trails.length;i++){if(String(trails[i].id)===String(tid)){t=trails[i];break;}}
+    if(t){go("traili");setTimeout(function(){openT(t.id);},200);}
+    else if(attempts>0){setTimeout(function(){tryOpen(attempts-1);},600);}
+  };
+  setTimeout(function(){tryOpen(8);},800);
+}
+
 // ===== TRAILS =====
 function loadTrails(){
   document.getElementById("tgrid").innerHTML="<div class='ld'><div class='spin'></div>Nalagam...</div>";
@@ -554,6 +602,16 @@ function renderHome(){
   else if(!feat&&trails.length>1)html+=fCard(trails[1],"&#x1F3C6; Priljubljen");
   if(!html)html="<p style='color:var(--tx2)'>Dodaj traile v admin panelu.</p>";
   document.getElementById("hfeat").innerHTML=html;
+  // Sponzorji v footerju
+  var sponsors=pons.filter(function(p){return p.sponsored;});
+  var fsEl=document.getElementById("footer-sponsors");
+  if(fsEl&&sponsors.length){
+    fsEl.innerHTML="<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px'>Podpirajo nas</div>"+
+      sponsors.map(function(s){
+        var link=s.website||"#";
+        return "<a href='"+link+"' target='_blank' style='font-size:.8rem;color:var(--tx2);text-decoration:none;margin:0 .5rem'>"+s.name+"</a>";
+      }).join("<span style='color:var(--tx3)'>&#xB7;</span>");
+  }
 }
 
 function fCard(t,lbl){
@@ -675,6 +733,7 @@ function openT(id){
     (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; Prenesi GPX</a>":"") +
     (t.strava_url?"<a href='"+t.strava_url+"' target='_blank' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
     (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
+    "<button onclick='showQR("+t.id+",\""+t.name.replace(/"/g,"")+"&nbsp;QR\")' class='gb gb-s'>&#x1F4F1; QR koda</button>" +
     (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>Navigacija bo dodana kmalu.</p>":"") +
     "</div>" +
     (function(){
@@ -784,11 +843,15 @@ function loadPons(){
 
 function renderPons(list){
   if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>Ni ponudnikov. Dodaj jih v admin panelu.</p>";return;}
-  document.getElementById("pgrid").innerHTML=list.map(function(p){
+  // Sponzorji na vrhu
+  var sorted=list.slice().sort(function(a,b){return (b.sponsored?1:0)-(a.sponsored?1:0);});
+  document.getElementById("pgrid").innerHTML=sorted.map(function(p){
     var types=Array.isArray(p.types)?p.types:(p.type?[p.type]:[]);
     var typeBadges=types.map(function(t){return"<span class='pcard-type'>"+({kulinarika:"&#x1F37D; Kulinarika",vino:"&#x1F377; Vino",prenocitev:"&#x1F6CF; Preno&#x10D;itev"}[t]||t)+"</span>";}).join("");
-    return "<div class='pcard'><div class='pcard-img'>"+(p.image?iT(p.image):"&#x1F4CD;")+"</div>" +
-      "<div class='pcard-body'><div class='pcard-types'>"+typeBadges+"</div>" +
+    return "<div class='pcard"+(p.sponsored?" sponsored":"")+"'><div class='pcard-img'>"+(p.image?iT(p.image):"&#x1F4CD;")+"</div>" +
+      "<div class='pcard-body'>" +
+      (p.sponsored?"<div style='margin-bottom:.4rem'><span class='spons-badge'>&#x2B50; Sponzor</span></div>":"")+
+      "<div class='pcard-types'>"+typeBadges+"</div>" +
       "<div class='pcard-name'>"+(p.map_num?"<span class='pnum'>"+p.map_num+"</span>":"")+p.name+"</div>" +
       "<div style='font-size:.8rem;color:var(--tx2);margin:.25rem 0'>"+(p.description||"")+"</div>" +
       "<div class='pcard-tel'>"+(p.tel?"<a href='tel:"+p.tel+"' style='color:var(--tx2);text-decoration:none'>&#x1F4DE; "+p.tel+"</a>":"")+"</div>" +
@@ -1210,6 +1273,7 @@ function editPon(id){
     "<div class='fg'><label class='fl'>&#x160;t. na mapi</label><input class='fi' type='number' id='epnum' value='"+(p.map_num||"")+"'></div></div>" +
     "<div class='fg'><label class='fl'>&#x1F310; Spletna stran</label><input class='fi' id='epweb' value='"+(p.website||"")+"' placeholder='https://www.primer.si'></div>" +
     "<div class='fg'><label class='fl'>&#x1F4D6; Wikipedia link</label><input class='fi' id='epwiki' value='"+(p.wiki_url||"")+"' placeholder='https://sl.wikipedia.org/wiki/...'></div>" +
+    "<div class='fg'><label style='display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.88rem'><input type='checkbox' id='epspons'"+(p.sponsored?" checked":"")+"> <span class='spons-badge'>&#x2B50; Sponzor</span> <span style='color:var(--tx2);font-size:.78rem'>Sponzorski partner</span></label></div>" +
     "<div class='fg'><label class='fl'>Fotografija</label><div class='ua'><input type='file' accept='image/*' id='epi' onchange='showPrev(this,\"epp\")'><span class='ui'>&#x1F4F8;</span><span>Tapni za novo sliko</span></div>" +
     "<div id='epp'>"+(p.image?"<div class='ip'><img src='"+p.image+"'></div>":"")+"</div></div>" +
     "<div class='aa'>" +
@@ -1223,7 +1287,7 @@ function doEditPon(id){
   setBtn("epsave","Shranjujem...",true);
   var types=getTypes("e");
   if(!types.length){alert("Izberi vsaj eno kategorijo!");setBtn("epsave","Shrani",false);return;}
-  var data={name:document.getElementById("epn").value,types:types,type:types[0],description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0,website:document.getElementById("epweb").value||"",wiki_url:document.getElementById("epwiki").value||""};
+  var data={name:document.getElementById("epn").value,types:types,type:types[0],description:document.getElementById("epd").value,tel:document.getElementById("eptel").value,map_num:Number(document.getElementById("epnum").value)||0,website:document.getElementById("epweb").value||"",wiki_url:document.getElementById("epwiki").value||"",sponsored:document.getElementById("epspons")&&document.getElementById("epspons").checked};
   var fi=document.getElementById("epi");
   var p=fi&&fi.files&&fi.files[0]?uploadImg(fi.files[0]).then(function(u){if(u)data.image=u;}):Promise.resolve();
   p.then(function(){return dbU("ponudniki",id,data);}).then(function(){
@@ -1282,8 +1346,10 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeM("tmo
 loadTrails();
 loadPons();
 loadHomeWeather();
+checkDeepLink();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
