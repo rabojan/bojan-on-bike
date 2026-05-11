@@ -189,7 +189,6 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
     <div class="nav-links">
       <button class="nb on" id="nb-home" onclick="go('home')">Domov</button>
       <button class="nb" id="nb-traili" onclick="go('traili')">Traili</button>
-      <button class="nb" id="nb-zemljevid" onclick="go('zemljevid')">&#x1F5FA; Zemljevid</button>
       <button class="nb" id="nb-ponudniki" onclick="go('ponudniki')">Ponudniki</button>
       <button class="nb" id="nb-omeni" onclick="go('omeni')">O meni</button>
     </div>
@@ -205,8 +204,11 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
       <h1>&#x17D;ivljenje<br>na dveh <em>kolesih</em></h1>
       <p id="htxt">Sem &#x10D;lovek, ki najde mir in energijo nekje med pohorskimi gozdovi, razgledi in dolgimi klanci. Kolesarjenje zame ni samo &#x161;port &mdash; je svoboda, raziskovanje in na&#x10D;in &#x17E;ivljenja.</p>
       <div class="hero-btns">
+        <button class="btn btn-o" onclick="go('zemljevid')" style="border-color:rgba(232,98,42,.4);color:var(--acc)">Zemljevid</button>
         <button class="btn btn-p" onclick="go('traili')">Razi&#x161;&#x10D;i traile</button>
-        <button class="btn btn-o" onclick="go('omeni')">Spoznaj me</button>
+      </div>
+      <div style="margin-top:.8rem">
+        <button class="btn btn-o" onclick="go('omeni')" style="font-size:.82rem;padding:8px 20px">Spoznaj me</button>
       </div>
     </div>
     <svg class="mtn" viewBox="0 0 1440 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
