@@ -406,6 +406,134 @@ function uploadFile(file){
     throw new Error("GPX upload ni uspel");
   });
 }
+
+function stravaLink(url){
+  if(!url)return"";
+  var m=url.match(/activities\/(\d+)/);
+  if(m)return"strava://activities/"+m[1];
+  return url;
+}
+function wEmoji(code){
+  if(code===0)return"&#9728;";
+  if(code<=3)return"&#9925;";
+  if(code<=48)return"&#127787;";
+  if(code<=55)return"&#127746;";
+  if(code<=65)return"&#127783;";
+  if(code<=77)return"&#10052;";
+  if(code<=82)return"&#127783;";
+  if(code>=95)return"&#9928;";
+  return"&#9925;";
+}
+function wDay(i){return["Danes","Jutri","Pojutr."][i]||"";}
+function fetchWeather(lat,lon,elId){
+  fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&daily=temperature_2m_max,weathercode&forecast_days=3&timezone=auto")
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById(elId);
+      if(!el||!d.daily)return;
+      var html=d.daily.temperature_2m_max.slice(0,3).map(function(temp,i){
+        return "<span style='font-size:.82rem;color:var(--tx2)'>"+wDay(i)+" "+wEmoji(d.daily.weathercode[i])+" <strong style='color:var(--tx)'>"+Math.round(temp)+"\u00b0</strong></span>";
+      }).join("<span style='color:var(--tx3);margin:0 .3rem'>|</span>");
+      el.innerHTML=html;
+    }).catch(function(){
+      var el=document.getElementById(elId);
+      if(el)el.innerHTML="<span style='color:var(--tx3);font-size:.8rem'>Vreme ni na voljo</span>";
+    });
+}
+function loadHomeWeather(){
+  if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var hw=document.getElementById("home-weather");
+    if(hw)hw.style.display="block";
+    fetchWeather(pos.coords.latitude,pos.coords.longitude,"home-weather-content");
+  },function(){});
+}
+function calcEbike(id,mode){
+  var t=null;for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
+  if(!t)return;
+  var km=Number(t.km)||0;
+  var vm=Number(t.vm)||0;
+  var weight=Number(document.getElementById("bc-w-"+id).value)||80;
+  var battery=Number(document.getElementById("bc-b-"+id).value)||800;
+  localStorage.setItem("bc_weight",weight);
+  localStorage.setItem("bc_battery",battery);
+  ["eco","trail","emtb"].forEach(function(m){
+    var b=document.getElementById("bcb-"+id+"-"+m);
+    if(!b)return;
+    if(m===mode){b.style.background="var(--acc)";b.style.color="#fff";b.style.border=".5px solid transparent";b.style.fontWeight="700";}
+    else{b.style.background="var(--bg2)";b.style.color="var(--tx2)";b.style.border=".5px solid rgba(255,255,255,.1)";b.style.fontWeight="normal";}
+  });
+  var baseKm={eco:3.5,trail:4.5,emtb:6.0}[mode]||4.5;
+  var baseVm={eco:12,trail:16,emtb:20}[mode]||16;
+  var weightFactor=1+((weight-88)/88)*0.15;
+  var totalWh=Math.round((km*baseKm + vm/100*baseVm)*weightFactor);
+  var pct=Math.round(totalWh/battery*100);
+  var remaining=100-pct;
+  var rec="";
+  if(pct>100){rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Baterija ne zadostuje za ta trail!</div>";}
+  else if(remaining>=50){rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Odli\u010dno! Pride\u0161 domov s "+remaining+"% baterije.</div>";}
+  else if(remaining>=25){rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija zadostuje. Pride\u0161 domov s ~"+remaining+"% baterije.</div>";}
+  else if(remaining>=10){rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje (~"+remaining+"% ostane). Var\u010duj na spustih.</div>";}
+  else{rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Tvegano! Pride\u0161 domov z le ~"+remaining+"% baterije.</div>";}
+  var barColor=remaining>=25?"#2ecc71":(remaining>=10?"#f39c12":"#e74c3c");
+  document.getElementById("bc-result-"+id).innerHTML=
+    "<div style='background:var(--bg2);border-radius:7px;padding:.7rem;font-size:.8rem'>" +
+    "<div style='display:flex;justify-content:space-between;margin-bottom:.5rem'>" +
+    "<span style='color:var(--tx2)'>Poraba za ta trail</span>" +
+    "<span style='color:var(--tx);font-weight:700'>"+totalWh+" Wh &nbsp;("+pct+"%)</span></div>" +
+    "<div style='height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:.3rem'>" +
+    "<div style='height:100%;width:"+Math.min(pct,100)+"%;background:"+barColor+";border-radius:4px;transition:width .4s'></div></div>" +
+    "<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.2rem'>Ostane po trailu: ~"+Math.max(0,remaining)+"%</div>" +
+    rec+"</div>";
+}
+function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
+function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
+function dColor(d){return{zelena:"#27ae60",modra:"#2980b9",rdeca:"#c0392b",crna:"#888"}[d]||"#e8622a";}
+function st(n){var s="";for(var i=0;i<n;i++)s+="&#9733;";for(var j=n;j<5;j++)s+="&#9734;";return s;}
+function iT(url){return url?"<img src='"+url+"' onerror='this.style.display=\"none\"'>":"";}
+function showPrev(inp,pid){
+  if(!inp.files||!inp.files.length)return;
+  inp.closest(".ua").style.borderColor="var(--acc)";
+  var r=new FileReader();r.onload=function(e){document.getElementById(pid).innerHTML="<div class='ip'><img src='"+e.target.result+"'></div>";};r.readAsDataURL(inp.files[0]);
+}
+function showGpx(inp,pid){
+  if(!inp.files||!inp.files.length)return;
+  document.getElementById(pid).innerHTML="<div style='color:#2ecc71;font-size:.8rem;margin-top:.4rem'>&#x2713; "+inp.files[0].name+"</div>";
+}
+function setBtn(id,txt,dis){var b=document.getElementById(id);if(b){b.textContent=txt;b.disabled=dis;}}
+function addMsg(txt,type){var d=document.createElement("div");d.className=type==="ok"?"ok":"er";d.textContent=txt;document.getElementById("ac-c").appendChild(d);setTimeout(function(){d.remove();},5000);}
+function go(p){
+  document.querySelectorAll(".page").forEach(function(el){el.classList.remove("on");});
+  document.querySelectorAll(".nb").forEach(function(el){el.classList.remove("on");});
+  document.getElementById("page-"+p).classList.add("on");
+  var nb=document.getElementById("nb-"+p);if(nb)nb.classList.add("on");
+  window.scrollTo(0,0);
+  if(p==="traili")loadTrails();
+  if(p==="ponudniki")loadPons();
+  if(p==="zemljevid")loadZemljevid();
+}
+function closeM(id){document.getElementById(id).classList.remove("on");document.body.style.overflow="";}
+function showQR(id,name){
+  var base=window.location.href.split("?")[0];
+  var url=base+"?t="+id;
+  var box=document.getElementById("qr-canvas");
+  box.innerHTML="";
+  document.getElementById("qr-title").textContent=name||"QR koda traila";
+  new QRCode(box,{text:url,width:200,height:200,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  document.getElementById("qr-modal").classList.add("on");
+}
+function closeQR(){document.getElementById("qr-modal").classList.remove("on");}
+function checkDeepLink(){
+  var params=new URLSearchParams(window.location.search);
+  var tid=params.get("t");
+  if(!tid)return;
+  var tryOpen=function(attempts){
+    var t=null;for(var i=0;i<trails.length;i++){if(String(trails[i].id)===String(tid)){t=trails[i];break;}}
+    if(t){go("traili");setTimeout(function(){openT(t.id);},200);}
+    else if(attempts>0){setTimeout(function(){tryOpen(attempts-1);},600);}
+  };
+  setTimeout(function(){tryOpen(8);},800);
+}
 function loadTrails(){
   document.getElementById("tgrid").innerHTML="<div class='ld'><div class='spin'></div>Nalagam...</div>";
   dbG("traili","order=created_at.desc").then(function(data){
@@ -1236,7 +1364,6 @@ checkDeepLink();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
