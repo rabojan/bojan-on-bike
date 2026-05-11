@@ -13,12 +13,15 @@
 #zmap{width:100%;height:100%;background:var(--bg3)}
 .zmap-info{position:absolute;top:.8rem;left:3.5rem;z-index:500;background:rgba(12,12,12,.92);border:.5px solid rgba(232,98,42,.4);border-radius:12px;padding:.7rem 1rem;font-size:.78rem;color:var(--tx2);backdrop-filter:blur(8px);max-width:180px}
 .zmap-info strong{color:var(--acc);display:block;font-size:.85rem;margin-bottom:.2rem}
-.leaflet-popup-content-wrapper{background:#0c0c0c;border:.5px solid rgba(232,98,42,.5);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.7)}
-.leaflet-popup-content{margin:.8rem 1rem;color:#f2f2f2}
-.leaflet-popup-tip-container{display:none}
-.zpop-name{font-size:.95rem;font-weight:800;margin-bottom:.2rem;color:#f2f2f2}
-.zpop-meta{font-size:.76rem;color:#e8622a;margin-bottom:.6rem}
-.zpop-btn{padding:6px 14px;border-radius:6px;background:#e8622a;color:#fff;border:none;font-size:.76rem;font-weight:700;cursor:pointer;width:100%}
+.leaflet-popup-content-wrapper{background:#0c0c0c !important;border:.5px solid rgba(232,98,42,.6) !important;border-radius:12px !important;box-shadow:0 6px 30px rgba(0,0,0,.9) !important}
+.leaflet-popup-content{margin:0 !important;color:#f2f2f2 !important;padding:0 !important}
+.leaflet-popup-tip-container{display:none !important}
+.leaflet-popup-close-button{color:#999 !important;top:6px !important;right:8px !important}
+.zpop-wrap{padding:.8rem 1rem;min-width:160px}
+.zpop-name{font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.25rem}
+.zpop-diff{font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem}
+.zpop-meta{font-size:.8rem;color:#ccc;margin-bottom:.6rem;white-space:nowrap}
+.zpop-btn{padding:7px 14px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.8rem;font-weight:700;cursor:pointer;width:100%;letter-spacing:.3px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;max-width:100%}
 :root{--bg:#0c0c0c;--bg2:#151515;--bg3:#1e1e1e;--bg4:#272727;--acc:#e8622a;--tx:#f2f2f2;--tx2:#999;--tx3:#555;--r:12px;--rs:8px}
 html,body{height:100%;overflow-x:hidden;width:100%}
@@ -507,10 +510,13 @@ function loadZemljevid(){
       }).on("loaded",function(e){
         var layer=e.target;
         var center=layer.getBounds().getCenter();
-        var popup=L.popup().setLatLng(center).setContent(
-          "<div class='zpop-name'>"+t.name+"</div>"+
-          "<div class='zpop-meta'>"+dL(t.diff)+" &middot; "+(t.km||0)+" km &middot; "+(t.vm||0)+" vm</div>"+
-          "<button class='zpop-btn' onclick='closeZpop();openT("+t.id+")'>Odpri trail &#x2192;</button>"
+        var popup=L.popup({maxWidth:220}).setLatLng(center).setContent(
+          "<div class='zpop-wrap'>" +
+          "<div class='zpop-name'>"+t.name+"</div>" +
+          "<div class='zpop-diff'>"+dL(t.diff)+"</div>" +
+          "<div class='zpop-meta'>&#x1F4CD; "+(t.km||0)+" km &nbsp;&#x26F0; "+(t.vm||0)+" vm</div>" +
+          "<button class='zpop-btn' onclick='closeZpop();openT("+t.id+")'>Odpri trail &#x2192;</button>" +
+          "</div>"
         );
         layer.on("click",function(){zmapObj.openPopup(popup);});
       }).addTo(zmapObj);
