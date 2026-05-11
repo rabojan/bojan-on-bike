@@ -197,7 +197,6 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
       <div class="hero-btns">
         <button class="btn btn-p" onclick="go('traili')">Razi&#x161;&#x10D;i traile</button>
         <button class="btn btn-o" onclick="go('omeni')">Spoznaj me</button>
-        <button class="btn btn-o" onclick="go('zemljevid')" style="border-color:rgba(232,98,42,.4);color:var(--acc)">&#x1F5FA; Skupni zemljevid</button>
       </div>
     </div>
     <svg class="mtn" viewBox="0 0 1440 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -389,15 +388,15 @@ function stravaLink(url){
 }
 // ===== VREME =====
 function wEmoji(code){
-  if(code===0)return"☀️";
-  if(code<=3)return"🌤";
-  if(code<=48)return"🌫";
-  if(code<=55)return"🌦";
-  if(code<=65)return"🌧";
-  if(code<=77)return"❄️";
-  if(code<=82)return"🌧";
-  if(code>=95)return"⛈";
-  return"🌤";
+  if(code===0)return"&#9728;";
+  if(code<=3)return"&#9925;";
+  if(code<=48)return"&#127787;";
+  if(code<=55)return"&#127746;";
+  if(code<=65)return"&#127783;";
+  if(code<=77)return"&#10052;";
+  if(code<=82)return"&#127783;";
+  if(code>=95)return"&#9928;";
+  return"&#9925;";
 }
 function wDay(i){return["Danes","Jutri","Pojutr."][i]||"";}
 function fetchWeather(lat,lon,elId){
@@ -407,7 +406,7 @@ function fetchWeather(lat,lon,elId){
       var el=document.getElementById(elId);
       if(!el||!d.daily)return;
       var html=d.daily.temperature_2m_max.slice(0,3).map(function(temp,i){
-        return "<span style='font-size:.82rem;color:var(--tx2)'>"+wDay(i)+" "+wEmoji(d.daily.weathercode[i])+" <strong style='color:var(--tx)'>"+Math.round(temp)+"°</strong></span>";
+        return "<span style='font-size:.82rem;color:var(--tx2)'>"+wDay(i)+" "+wEmoji(d.daily.weathercode[i])+" <strong style='color:var(--tx)'>"+Math.round(temp)+"\u00b0</strong></span>";
       }).join("<span style='color:var(--tx3);margin:0 .3rem'>|</span>");
       el.innerHTML=html;
     }).catch(function(){
@@ -686,7 +685,8 @@ function openT(id){
     } else {
       fetchWeather(46.35,15.5,"tw-"+id);
     }
-  }"trail_id=eq."+id+"&approved=eq.true&order=created_at.desc").then(function(cs){
+  }
+  dbG("komentarji","trail_id=eq."+id+"&approved=eq.true&order=created_at.desc").then(function(cs){
     var el=document.getElementById("cl"+id);
     if(el&&cs&&cs.length)el.innerHTML=cs.map(function(c){return"<div class='cmt'><div class='cmt-av'>"+c.name[0]+"</div><div><div class='cmt-name'>"+c.name+"</div><div class='cmt-txt'>"+c.text+"</div></div></div>";}).join("");
   });
