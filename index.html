@@ -499,13 +499,13 @@ function loadZemljevid(){
     }else{zmapObj.invalidateSize();}
     var withGpx=trails.filter(function(t){return t.gpx_file;});
     var cnt=document.getElementById("zmap-count");
-    if(cnt)cnt.textContent=withGpx.length+" trailov na karti";
+    if(cnt)cnt.textContent="Tapni traso za podrobnosti";
     if(!withGpx.length){if(cnt)cnt.textContent="Naloži GPX za prikaz";return;}
     withGpx.forEach(function(t){
       var color=dColor(t.diff);
-      new L.GPX(t.gpx_file,{
+      var gpxLayer=new L.GPX(t.gpx_file,{
         async:true,
-        polyline_options:{color:color,weight:4,opacity:0.85},
+        polyline_options:{color:color,weight:6,opacity:0.9},
         marker_options:{startIconUrl:null,endIconUrl:null,shadowUrl:null}
       }).on("loaded",function(e){
         var layer=e.target;
@@ -514,11 +514,11 @@ function loadZemljevid(){
           "<div style='background:#0c0c0c;border-radius:10px;padding:.85rem 1rem;min-width:155px'>" +
           "<div style='font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.2rem'>"+t.name+"</div>" +
           "<div style='font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem'>"+dL(t.diff)+"</div>" +
-          "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+( t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
+          "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+(t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
           "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>Odpri trail &#x2192;</button>" +
           "</div>"
         );
-        layer.on("click",function(){
+        function openPopup(){
           zmapObj.openPopup(popup);
           setTimeout(function(){
             var w=document.querySelector(".leaflet-popup-content-wrapper");
@@ -528,7 +528,10 @@ function loadZemljevid(){
             var cm=document.querySelector(".leaflet-popup-content");
             if(cm){cm.style.margin="0";cm.style.padding="0";}
           },30);
-        });
+        }
+        // Klik na celotno traso (vsak segment)
+        layer.eachLayer(function(sub){if(sub.on)sub.on("click",openPopup);});
+        layer.on("click",openPopup);
       }).addTo(zmapObj);
     });
     setTimeout(function(){
