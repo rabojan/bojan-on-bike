@@ -423,6 +423,52 @@ function loadHomeWeather(){
   },function(){});
 }
 
+// ===== EBIKE KALKULATOR =====
+function calcEbike(id,mode,btn){
+  var t=null;for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
+  if(!t)return;
+  var km=Number(t.km)||0;
+  var vm=Number(t.vm)||0;
+  var weight=Number(document.getElementById("bc-w-"+id).value)||80;
+  var battery=Number(document.getElementById("bc-b-"+id).value)||800;
+  // Shrani nastavitve
+  localStorage.setItem("bc_weight",weight);
+  localStorage.setItem("bc_battery",battery);
+  // Posodobi gumbe
+  var btns=document.querySelectorAll("[id^='bc-result-"+id+"']")[0];
+  document.querySelectorAll("[onclick^='calcEbike("+id+"]").forEach(function(b){
+    b.style.background="var(--bg2)";b.style.color="var(--tx2)";b.style.border=".5px solid rgba(255,255,255,.1)";b.style.fontWeight="normal";
+  });
+  if(btn){btn.style.background="var(--acc)";btn.style.color="#fff";btn.style.border=".5px solid transparent";btn.style.fontWeight="700";}
+  // Poraba Wh/km in Wh/100m vzpona glede na Bosch CX realne meritve
+  var wPerKm={eco:6,emtb:10,turbo:16}[mode]||10;
+  var wPer100m={eco:18,emtb:28,turbo:42}[mode]||28;
+  // Korekcija za težo (standard 85kg, ±1.5% na 5kg)
+  var weightFactor=1+((weight-85)/5)*0.015;
+  var totalWh=Math.round((km*wPerKm+vm/100*wPer100m)*weightFactor);
+  var pct=Math.round(totalWh/battery*100);
+  var pctReturn=Math.round(totalWh*2/battery*100);
+  var canReturn=pctReturn<=100;
+  var canGo=pct<=100;
+  // Priporočilo
+  var rec="";
+  if(pctReturn<=60)rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija z lahkoto zadostuje.</div>";
+  else if(pctReturn<=85)rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija zadostuje, a bodi pazljiv.</div>";
+  else if(canReturn)rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje za tja in nazaj.</div>";
+  else if(canGo)rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Na povratku ti zmanjka baterije! Preklopi na Eco.</div>";
+  else rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Baterija ne zadostuje! Preklopi na Eco.</div>";
+  var barColor=canReturn?(pctReturn<=60?"#2ecc71":(pctReturn<=85?"#f39c12":"#e67e22")):"#e74c3c";
+  document.getElementById("bc-result-"+id).innerHTML=
+    "<div style='background:var(--bg2);border-radius:7px;padding:.7rem;font-size:.8rem'>" +
+    "<div style='display:flex;justify-content:space-between;margin-bottom:.3rem'>" +
+    "<span style='color:var(--tx2)'>Poraba (enkrat)</span><span style='color:var(--tx);font-weight:700'>"+totalWh+" Wh &nbsp;("+pct+"%)</span></div>" +
+    "<div style='display:flex;justify-content:space-between;margin-bottom:.5rem'>" +
+    "<span style='color:var(--tx2)'>Tja in nazaj</span><span style='color:"+(canReturn?"var(--tx)":"#e74c3c")+";font-weight:700'>"+Math.min(pctReturn,200)+"% baterije</span></div>" +
+    "<div style='height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden'>" +
+    "<div style='height:100%;width:"+Math.min(pctReturn,100)+"%;background:"+barColor+";border-radius:4px;transition:width .4s'></div></div>" +
+    rec+"</div>";
+}
+
 function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
 function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
 function dColor(d){return{zelena:"#27ae60",modra:"#2980b9",rdeca:"#c0392b",crna:"#888"}[d]||"#e8622a";}
@@ -654,6 +700,21 @@ function openT(id){
     "<div class='srow'><span>Sezona</span><span>"+(t.seasonal||"-")+"</span></div>" +
     "<div class='srow'><span>Podlaga</span><span>"+(t.surface||"-")+"</span></div>" +
     "<div class='srow'><span>Vreme</span><span id='tw-"+id+"' style='font-size:.78rem'>&#x23F3;</span></div>" +
+    "</div>" +
+    "<div style='margin-top:1rem;background:var(--bg3);border-radius:var(--rs);padding:1rem;border:.5px solid rgba(232,98,42,.25)'>" +
+    "<div style='font-size:.78rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem'>&#x1F50B; eBike kalkulator dosega</div>" +
+    "<div style='font-size:.72rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.5'>Za e-kolesarje z motorjem <strong style='color:var(--tx)'>Bosch Performance Line CX</strong>. Vnesi svojo težo in kapaciteto baterije svojega kolesa, izberi način vožnje.</div>" +
+    "<div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:.8rem'>" +
+    "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Teža kolesarja (kg)</label><input id='bc-w-"+id+"' type='number' value='"+(localStorage.getItem('bc_weight')||80)+"' min='40' max='150' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
+    "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Baterija (Wh)</label><input id='bc-b-"+id+"' type='number' value='"+(localStorage.getItem('bc_battery')||800)+"' min='200' max='1500' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
+    "</div>" +
+    "<div style='display:flex;gap:.4rem;margin-bottom:.8rem'>" +
+    "<button onclick='calcEbike("+id+",\"eco\",this)' style='flex:1;padding:5px;border-radius:6px;background:var(--bg2);border:.5px solid rgba(255,255,255,.1);color:var(--tx2);font-size:.74rem;cursor:pointer'>Eco</button>" +
+    "<button onclick='calcEbike("+id+",\"emtb\",this)' style='flex:1;padding:5px;border-radius:6px;background:var(--acc);border:.5px solid transparent;color:#fff;font-size:.74rem;cursor:pointer;font-weight:700'>eMTB</button>" +
+    "<button onclick='calcEbike("+id+",\"turbo\",this)' style='flex:1;padding:5px;border-radius:6px;background:var(--bg2);border:.5px solid rgba(255,255,255,.1);color:var(--tx2);font-size:.74rem;cursor:pointer'>Turbo</button>" +
+    "</div>" +
+    "<div id='bc-result-"+id+"'></div>" +
+    "</div>" +
     "</div></div></div></div>";
   document.getElementById("tmod").classList.add("on");
   document.body.style.overflow="hidden";
@@ -690,6 +751,8 @@ function openT(id){
     var el=document.getElementById("cl"+id);
     if(el&&cs&&cs.length)el.innerHTML=cs.map(function(c){return"<div class='cmt'><div class='cmt-av'>"+c.name[0]+"</div><div><div class='cmt-name'>"+c.name+"</div><div class='cmt-txt'>"+c.text+"</div></div></div>";}).join("");
   });
+  // Avtomatski izračun ob odprtju (eMTB način)
+  setTimeout(function(){calcEbike(id,"emtb",null);},200);
 }
 
 function addCmt(id){
