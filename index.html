@@ -189,7 +189,6 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
     <div class="nav-links">
       <button class="nb on" id="nb-home" onclick="go('home')">Domov</button>
       <button class="nb" id="nb-traili" onclick="go('traili')">Traili</button>
-      <button class="nb" id="nb-zemljevid" onclick="go('zemljevid')">&#x1F5FA; Zemljevid</button>
       <button class="nb" id="nb-ponudniki" onclick="go('ponudniki')">Ponudniki</button>
       <button class="nb" id="nb-omeni" onclick="go('omeni')">O meni</button>
     </div>
@@ -205,8 +204,11 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
       <h1>&#x17D;ivljenje<br>na dveh <em>kolesih</em></h1>
       <p id="htxt">Sem &#x10D;lovek, ki najde mir in energijo nekje med pohorskimi gozdovi, razgledi in dolgimi klanci. Kolesarjenje zame ni samo &#x161;port &mdash; je svoboda, raziskovanje in na&#x10D;in &#x17E;ivljenja.</p>
       <div class="hero-btns">
-        <button class="btn btn-p" onclick="go('traili')">Razi&#x161;&#x10D;i traile</button>
-        <button class="btn btn-o" onclick="go('omeni')">Spoznaj me</button>
+        <button class="btn btn-o" id="hbtn-map" onclick="go('zemljevid')" style="border-color:rgba(232,98,42,.4);color:var(--acc)">Zemljevid</button>
+        <button class="btn btn-p" id="hbtn-trails" onclick="go('traili')">Razi&#x161;&#x10D;i traile</button>
+      </div>
+      <div style="margin-top:.8rem">
+        <button class="btn btn-o" id="hbtn-about" onclick="go('omeni')" style="font-size:.82rem;padding:8px 20px">Spoznaj me</button>
       </div>
     </div>
     <svg class="mtn" viewBox="0 0 1440 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -214,19 +216,19 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
     </svg>
   </div>
   <div class="stats">
-    <div><div class="stat-n" id="s-km">0</div><div class="stat-l">Skupaj km</div></div>
-    <div><div class="stat-n" id="s-vm">0</div><div class="stat-l">Vi&#x161;inskih m</div></div>
-    <div><div class="stat-n" id="s-tr">0</div><div class="stat-l">Trailov</div></div>
-    <div><div class="stat-n">8 let</div><div class="stat-l">e-kolesarjenja</div></div>
+    <div><div class="stat-n" id="s-km">0</div><div class="stat-l" id="sl-km">Skupaj km</div></div>
+    <div><div class="stat-n" id="s-vm">0</div><div class="stat-l" id="sl-vm">Vi&#x161;inskih m</div></div>
+    <div><div class="stat-n" id="s-tr">0</div><div class="stat-l" id="sl-tr">Trailov</div></div>
+    <div><div class="stat-n">8 let</div><div class="stat-l" id="sl-yr">e-kolesarjenja</div></div>
   </div>
   <div class="sec">
-    <div class="sec-tag">Moji traili</div>
-    <div class="sec-title">Zadnji &amp; izbrani</div>
+    <div class="sec-tag" id="home-sec-tag">Moji traili</div>
+    <div class="sec-title" id="home-sec-title">Zadnji &amp; izbrani</div>
     <div class="hgrid" id="hfeat"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
   <div id="home-weather" style="max-width:1000px;margin:0 auto 2rem;padding:0 1.2rem;display:none">
     <div style="background:var(--bg2);border-radius:var(--r);padding:1rem 1.3rem;border:.5px solid rgba(255,255,255,.06)">
-      <div style="font-size:.68rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.7rem">&#x1F4CD; Vreme pri tebi</div>
+      <div id="hw-label" style="font-size:.68rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.7rem">&#x1F4CD; Vreme pri tebi</div>
       <div id="home-weather-content" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
     </div>
   </div>
@@ -240,18 +242,18 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
 <!-- TRAILI -->
 <div class="page" id="page-traili">
   <div class="sec">
-    <button class="pb" onclick="go('home')">&larr; Nazaj</button>
+    <button class="pb back-btn" onclick="go('home')">&larr; Nazaj</button>
     <div class="sec-tag">Traili &amp; Poti</div>
     <div class="sec-title">Moji traili</div>
     <div class="frow">
-      <div class="ftab on" onclick="fT('vse',this)">Vsi</div>
-      <div class="ftab" onclick="fT('gorski',this)">Gorski</div>
-      <div class="ftab" onclick="fT('kolesarska',this)">Kolesarska pot</div>
-      <div class="ftab" onclick="fT('mesani',this)">Me&#x161;an</div>
-      <div class="ftab" onclick="fT('zelena',this)">&#x1F7E2; Lahka</div>
-      <div class="ftab" onclick="fT('modra',this)">&#x1F535; Srednja</div>
-      <div class="ftab" onclick="fT('rdeca',this)">&#x1F534; Te&#x17E;ka</div>
-      <div class="ftab" onclick="fT('crna',this)">&#x26AB; Ekstrem</div>
+      <div id="ftab-0" class="ftab on" onclick="fT('vse',this)">Vsi</div>
+      <div id="ftab-1" class="ftab" onclick="fT('gorski',this)">Gorski</div>
+      <div id="ftab-2" class="ftab" onclick="fT('kolesarska',this)">Kolesarska pot</div>
+      <div id="ftab-3" class="ftab" onclick="fT('mesani',this)">Me&#x161;an</div>
+      <div id="ftab-4" class="ftab" onclick="fT('zelena',this)">&#x1F7E2; Lahka</div>
+      <div id="ftab-5" class="ftab" onclick="fT('modra',this)">&#x1F535; Srednja</div>
+      <div id="ftab-6" class="ftab" onclick="fT('rdeca',this)">&#x1F534; Te&#x17E;ka</div>
+      <div id="ftab-7" class="ftab" onclick="fT('crna',this)">&#x26AB; Ekstrem</div>
     </div>
     <div class="tgrid" id="tgrid"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
@@ -272,14 +274,14 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
 <!-- PONUDNIKI -->
 <div class="page" id="page-ponudniki">
   <div class="sec">
-    <button class="pb" onclick="go('home')">&larr; Nazaj</button>
-    <div class="sec-tag">Ob poti</div>
-    <div class="sec-title">Ponudniki ob trailih</div>
+    <button class="pb back-btn" onclick="go('home')">&larr; Nazaj</button>
+    <div class="sec-tag" id="pon-tag">Ob poti</div>
+    <div class="sec-title" id="pon-title">Ponudniki ob trailih</div>
     <div class="frow" id="pfrow">
-      <div class="ftab on" onclick="fP('vse',this)">Vsi</div>
-      <div class="ftab" onclick="fP('kulinarika',this)">&#x1F37D; Kulinarika</div>
-      <div class="ftab" onclick="fP('vino',this)">&#x1F377; Vino</div>
-      <div class="ftab" onclick="fP('prenocitev',this)">&#x1F6CF; Preno&#x10D;itve</div>
+      <div id="pftab-0" class="ftab on" onclick="fP('vse',this)">Vsi</div>
+      <div id="pftab-1" class="ftab" onclick="fP('kulinarika',this)">&#x1F37D; Kulinarika</div>
+      <div id="pftab-2" class="ftab" onclick="fP('vino',this)">&#x1F377; Vino</div>
+      <div id="pftab-3" class="ftab" onclick="fP('prenocitev',this)">&#x1F6CF; Preno&#x10D;itve</div>
     </div>
     <div class="pgrid" id="pgrid"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
@@ -288,9 +290,9 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
 <!-- O MENI -->
 <div class="page" id="page-omeni">
   <div class="sec">
-    <button class="pb" onclick="go('home')">&larr; Nazaj</button>
-    <div class="sec-tag">O meni</div>
-    <div class="sec-title">Moja zgodba</div>
+    <button class="pb back-btn" onclick="go('home')">&larr; Nazaj</button>
+    <div class="sec-tag" id="about-tag">O meni</div>
+    <div class="sec-title" id="about-title">Moja zgodba</div>
     <div class="agrid">
       <div class="aimg" id="aimg">&#x1F6B5;</div>
       <div>
@@ -348,7 +350,7 @@ function dbG(t,q){
       clearTimeout(timer);
       if(e.name==="AbortError"){
         var el=document.getElementById("tgrid");
-        if(el)el.innerHTML="<div style='color:#e74c3c;padding:1rem;font-size:.85rem'>&#x274C; Baza ne odgovarja. Poskusi znova čez trenutek.</div>";
+        if(el)el.innerHTML="<div style='color:#e74c3c;padding:1rem;font-size:.85rem'>&#x274C; Baza ne odgovarja. Poskusi znova.</div>";
       }
       return[];
     });
@@ -359,7 +361,7 @@ function dbD(t,id){return fetch(SB+"/rest/v1/"+t+"?id=eq."+id,{method:"DELETE",h
 
 function saveSetting(k,v){
   return dbG("settings","key=eq."+encodeURIComponent(k)).then(function(d){
-    if(d&&d.length>0) return fetch(SB+"/rest/v1/settings?key=eq."+encodeURIComponent(k),{method:"PATCH",headers:hdr(),body:JSON.stringify({value:v})});
+    if(d&&d.length>0)return fetch(SB+"/rest/v1/settings?key=eq."+encodeURIComponent(k),{method:"PATCH",headers:hdr(),body:JSON.stringify({value:v})});
     else return fetch(SB+"/rest/v1/settings",{method:"POST",headers:hdr(),body:JSON.stringify({key:k,value:v})});
   }).catch(function(){});
 }
@@ -388,7 +390,7 @@ function uploadImg(file){
   return fetch(SB+"/storage/v1/object/slike/"+path,{
     method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":file.type||"image/jpeg","x-upsert":"true"},body:file
   }).then(function(r){
-    if(r.ok) return SB+"/storage/v1/object/public/slike/"+path;
+    if(r.ok)return SB+"/storage/v1/object/public/slike/"+path;
     return compressImg(file);
   }).catch(function(){return compressImg(file);});
 }
@@ -400,162 +402,10 @@ function uploadFile(file){
     headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/octet-stream","x-upsert":"true"},
     body:file
   }).then(function(r){
-    if(r.ok) return SB+"/storage/v1/object/public/slike/"+path;
+    if(r.ok)return SB+"/storage/v1/object/public/slike/"+path;
     throw new Error("GPX upload ni uspel");
   });
 }
-function stravaLink(url){
-  if(!url)return"";
-  var m=url.match(/activities\/(\d+)/);
-  if(m)return"strava://activities/"+m[1];
-  return url;
-}
-// ===== VREME =====
-function wEmoji(code){
-  if(code===0)return"&#9728;";
-  if(code<=3)return"&#9925;";
-  if(code<=48)return"&#127787;";
-  if(code<=55)return"&#127746;";
-  if(code<=65)return"&#127783;";
-  if(code<=77)return"&#10052;";
-  if(code<=82)return"&#127783;";
-  if(code>=95)return"&#9928;";
-  return"&#9925;";
-}
-function wDay(i){return["Danes","Jutri","Pojutr."][i]||"";}
-function fetchWeather(lat,lon,elId){
-  fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&daily=temperature_2m_max,weathercode&forecast_days=3&timezone=auto")
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var el=document.getElementById(elId);
-      if(!el||!d.daily)return;
-      var html=d.daily.temperature_2m_max.slice(0,3).map(function(temp,i){
-        return "<span style='font-size:.82rem;color:var(--tx2)'>"+wDay(i)+" "+wEmoji(d.daily.weathercode[i])+" <strong style='color:var(--tx)'>"+Math.round(temp)+"\u00b0</strong></span>";
-      }).join("<span style='color:var(--tx3);margin:0 .3rem'>|</span>");
-      el.innerHTML=html;
-    }).catch(function(){
-      var el=document.getElementById(elId);
-      if(el)el.innerHTML="<span style='color:var(--tx3);font-size:.8rem'>Vreme ni na voljo</span>";
-    });
-}
-function loadHomeWeather(){
-  if(!navigator.geolocation)return;
-  navigator.geolocation.getCurrentPosition(function(pos){
-    var hw=document.getElementById("home-weather");
-    if(hw)hw.style.display="block";
-    fetchWeather(pos.coords.latitude,pos.coords.longitude,"home-weather-content");
-  },function(){});
-}
-
-// ===== EBIKE KALKULATOR =====
-function calcEbike(id,mode){
-  var t=null;for(var i=0;i<trails.length;i++){if(trails[i].id===id){t=trails[i];break;}}
-  if(!t)return;
-  var km=Number(t.km)||0;
-  var vm=Number(t.vm)||0;
-  var weight=Number(document.getElementById("bc-w-"+id).value)||80;
-  var battery=Number(document.getElementById("bc-b-"+id).value)||800;
-  localStorage.setItem("bc_weight",weight);
-  localStorage.setItem("bc_battery",battery);
-
-  // Popravi izbrane gumbe
-  ["eco","trail","emtb"].forEach(function(m){
-    var b=document.getElementById("bcb-"+id+"-"+m);
-    if(!b)return;
-    if(m===mode){b.style.background="var(--acc)";b.style.color="#fff";b.style.border=".5px solid transparent";b.style.fontWeight="700";}
-    else{b.style.background="var(--bg2)";b.style.color="var(--tx2)";b.style.border=".5px solid rgba(255,255,255,.1)";b.style.fontWeight="normal";}
-  });
-
-  // Formula kalibrirana na uradnih Bosch CX vrednostih + realnih podatkih uporabnika
-  // Ločimo ravninski del (Wh/km) in vzponski del (Wh/100vm) - za MTB loope je to natančnejše
-  var baseKm={eco:3.5,trail:4.5,emtb:6.0}[mode]||4.5;
-  var baseVm={eco:12,trail:16,emtb:20}[mode]||16;
-  // Korekcija za težo (standard 88kg kolesarja)
-  var weightFactor=1+((weight-88)/88)*0.15;
-  var totalWh=Math.round((km*baseKm + vm/100*baseVm)*weightFactor);
-  var pct=Math.round(totalWh/battery*100);
-  var remaining=100-pct;
-  var rec="";
-  if(pct>100){
-    rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Baterija ne zadostuje za ta trail!</div>";
-  } else if(remaining>=50){
-    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Odli&#x10D;no! Prideš domov s "+remaining+"% baterije.</div>";
-  } else if(remaining>=25){
-    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija zadostuje. Prideš domov s ~"+remaining+"% baterije.</div>";
-  } else if(remaining>=10){
-    rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje (~"+remaining+"% ostane). Varčuj na spustih.</div>";
-  } else {
-    rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Tvegano! Prideš domov z le ~"+remaining+"% baterije.</div>";
-  }
-  var barColor=remaining>=25?"#2ecc71":(remaining>=10?"#f39c12":"#e74c3c");
-
-  document.getElementById("bc-result-"+id).innerHTML=
-    "<div style='background:var(--bg2);border-radius:7px;padding:.7rem;font-size:.8rem'>" +
-    "<div style='display:flex;justify-content:space-between;margin-bottom:.5rem'>" +
-    "<span style='color:var(--tx2)'>Poraba za ta trail</span>" +
-    "<span style='color:var(--tx);font-weight:700'>"+totalWh+" Wh &nbsp;("+pct+"%)</span></div>" +
-    "<div style='height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:.3rem'>" +
-    "<div style='height:100%;width:"+Math.min(pct,100)+"%;background:"+barColor+";border-radius:4px;transition:width .4s'></div></div>" +
-    "<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.2rem'>Ostane po trailu: ~"+Math.max(0,remaining)+"%</div>" +
-    rec+"</div>";
-}
-
-function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
-function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
-function dColor(d){return{zelena:"#27ae60",modra:"#2980b9",rdeca:"#c0392b",crna:"#888"}[d]||"#e8622a";}
-function st(n){var s="";for(var i=0;i<n;i++)s+="&#9733;";for(var j=n;j<5;j++)s+="&#9734;";return s;}
-function iT(url){return url?"<img src='"+url+"' onerror='this.style.display=\"none\"'>":"";}
-function showPrev(inp,pid){
-  if(!inp.files||!inp.files.length)return;
-  inp.closest(".ua").style.borderColor="var(--acc)";
-  var r=new FileReader();r.onload=function(e){document.getElementById(pid).innerHTML="<div class='ip'><img src='"+e.target.result+"'></div>";};r.readAsDataURL(inp.files[0]);
-}
-function showGpx(inp,pid){
-  if(!inp.files||!inp.files.length)return;
-  document.getElementById(pid).innerHTML="<div style='color:#2ecc71;font-size:.8rem;margin-top:.4rem'>&#x2713; "+inp.files[0].name+"</div>";
-}
-function setBtn(id,txt,dis){var b=document.getElementById(id);if(b){b.textContent=txt;b.disabled=dis;}}
-function addMsg(txt,type){var d=document.createElement("div");d.className=type==="ok"?"ok":"er";d.textContent=txt;document.getElementById("ac-c").appendChild(d);setTimeout(function(){d.remove();},5000);}
-
-// ===== NAV =====
-function go(p){
-  document.querySelectorAll(".page").forEach(function(el){el.classList.remove("on");});
-  document.querySelectorAll(".nb").forEach(function(el){el.classList.remove("on");});
-  document.getElementById("page-"+p).classList.add("on");
-  var nb=document.getElementById("nb-"+p);if(nb)nb.classList.add("on");
-  window.scrollTo(0,0);
-  if(p==="traili")loadTrails();
-  if(p==="ponudniki")loadPons();
-  if(p==="zemljevid")loadZemljevid();
-}
-function closeM(id){document.getElementById(id).classList.remove("on");document.body.style.overflow="";}
-
-// ===== QR KODE =====
-function showQR(id,name){
-  var base=window.location.href.split("?")[0];
-  var url=base+"?t="+id;
-  var box=document.getElementById("qr-canvas");
-  box.innerHTML="";
-  document.getElementById("qr-title").textContent=name||"QR koda traila";
-  new QRCode(box,{text:url,width:200,height:200,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
-  document.getElementById("qr-modal").classList.add("on");
-}
-function closeQR(){document.getElementById("qr-modal").classList.remove("on");}
-
-// ===== DEEP LINK =====
-function checkDeepLink(){
-  var params=new URLSearchParams(window.location.search);
-  var tid=params.get("t");
-  if(!tid)return;
-  var tryOpen=function(attempts){
-    var t=null;for(var i=0;i<trails.length;i++){if(String(trails[i].id)===String(tid)){t=trails[i];break;}}
-    if(t){go("traili");setTimeout(function(){openT(t.id);},200);}
-    else if(attempts>0){setTimeout(function(){tryOpen(attempts-1);},600);}
-  };
-  setTimeout(function(){tryOpen(8);},800);
-}
-
-// ===== TRAILS =====
 function loadTrails(){
   document.getElementById("tgrid").innerHTML="<div class='ld'><div class='spin'></div>Nalagam...</div>";
   dbG("traili","order=created_at.desc").then(function(data){
@@ -603,16 +453,6 @@ function renderHome(){
   else if(!feat&&trails.length>1)html+=fCard(trails[1],"&#x1F3C6; Priljubljen");
   if(!html)html="<p style='color:var(--tx2)'>Dodaj traile v admin panelu.</p>";
   document.getElementById("hfeat").innerHTML=html;
-  // Sponzorji v footerju
-  var sponsors=pons.filter(function(p){return p.sponsored;});
-  var fsEl=document.getElementById("footer-sponsors");
-  if(fsEl&&sponsors.length){
-    fsEl.innerHTML="<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px'>Podpirajo nas</div>"+
-      sponsors.map(function(s){
-        var link=s.website||"#";
-        return "<a href='"+link+"' target='_blank' style='font-size:.8rem;color:var(--tx2);text-decoration:none;margin:0 .5rem'>"+s.name+"</a>";
-      }).join("<span style='color:var(--tx3)'>&#xB7;</span>");
-  }
 }
 
 function fCard(t,lbl){
@@ -624,7 +464,7 @@ function fCard(t,lbl){
 }
 
 function renderTrails(list){
-  if(!list||!list.length){document.getElementById("tgrid").innerHTML="<p style='color:var(--tx2)'>Ni trailov. Dodaj jih v admin panelu.</p>";return;}
+  if(!list||!list.length){document.getElementById("tgrid").innerHTML="<p style='color:var(--tx2)'>"+"Ni trailov. Dodaj jih v admin panelu."+"</p>";return;}
   document.getElementById("tgrid").innerHTML=list.map(function(t){
     return "<div class='tcard' onclick='openT("+t.id+")'>" +
       "<div class='tcard-img'>"+iT(t.main_image)+"<div class='db "+dC(t.diff)+"'>"+dL(t.diff)+"</div></div>" +
@@ -669,7 +509,7 @@ function loadZemljevid(){
           "<div style='font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.2rem'>"+t.name+"</div>" +
           "<div style='font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem'>"+dL(t.diff)+"</div>" +
           "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+(t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
-          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>Odpri trail &#x2192;</button>" +
+          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>"+"Odpri trail →"+"</button>" +
           "</div>"
         );
         function openPopup(){
@@ -686,7 +526,7 @@ function loadZemljevid(){
         // Vidna linija
         layer.eachLayer(function(sub){if(sub.on)sub.on("click",openPopup);});
         layer.on("click",openPopup);
-        // Nevidna debela linija za lažji klik
+        // Nevidna debela linija za la\u017eji klik
         layer.eachLayer(function(sub){
           if(sub.getLatLngs){
             var hitLine=L.polyline(sub.getLatLngs(),{color:"transparent",weight:20,opacity:0});
@@ -713,11 +553,11 @@ function openT(id){
   if(t.photos&&t.photos.length)t.photos.forEach(function(p){if(p&&p.url)imgs.push(p);});
   var galHtml="";
   if(imgs.length>0){
-    galHtml="<div class='sh2'>Galerija</div><div class='gal'>"+
+    galHtml="<div class='sh2'>"+"Galerija"+"</div><div class='gal'>"+
       imgs.map(function(img){
         return "<div class='gal-item'><img src='"+img.url+"'>"+(img.desc?"<div class='gal-desc'>"+img.desc+"</div>":"")+"</div>";
       }).join("")+"</div>"+
-      (imgs.length>1?"<div style='text-align:center;font-size:.72rem;color:var(--tx3);margin-bottom:1.5rem'>&#x2190; Povleci za ve&#x10D; slik ("+imgs.length+") &#x2192;</div>":"");
+      (imgs.length>1?"<div style='text-align:center;font-size:.72rem;color:var(--tx3);margin-bottom:1.5rem'>&#x2190; "+"Galerija"+" ("+imgs.length+") &#x2192;</div>":"");
   }
   document.getElementById("tmod-c").innerHTML=
     "<div class='mhero'>"+iT(t.main_image)+"<div class='mhero-cnt'>" +
@@ -726,22 +566,22 @@ function openT(id){
     "<div style='color:rgba(255,255,255,.55);font-size:.82rem'>"+(t.region||"")+" &middot; <span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
     "</div></div>" +
     "<div class='mbody'><div class='mgrid'><div>" +
-    "<div class='sh2'>Moj komentar</div><p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>"+(t.comment||"")+"</p>" +
+    "<div class='sh2'>"+"Moj komentar"+"</div><p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>"+(t.comment||"")+"</p>" +
     galHtml +
-    "<div class='sh2'>Trasa</div>" +
-    (t.gpx_file?"<div id='map-"+id+"' class='gpx-map'></div>":"<div class='sbox'><span>GPX ni nalozena</span></div>") +
+    "<div class='sh2'>"+"Trasa"+"</div>" +
+    (t.gpx_file?"<div id='map-"+id+"' class='gpx-map'></div>":"<div class='sbox'><span>"+"GPX ni nalozena"+"</span></div>") +
     "<div class='grow' style='margin-bottom:2rem'>" +
-    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; Prenesi GPX</a>":"") +
+    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; "+"Prenesi GPX"+"</a>":"") +
     (t.strava_url?"<a href='"+t.strava_url+"' target='_blank' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
     (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
-    "<button onclick='showQR("+t.id+",\""+t.name.replace(/"/g,"")+"&nbsp;QR\")' class='gb gb-s'>&#x1F4F1; QR koda</button>" +
-    (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>Navigacija bo dodana kmalu.</p>":"") +
+    "<button onclick='showQR("+t.id+",\""+t.name.replace(/"/g,"")+"&nbsp;QR\")' class='gb gb-s'>&#x1F4F1; "+"QR koda"+"</button>" +
+    (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>"+"Navigacija bo dodana kmalu."+"</p>":"") +
     "</div>" +
     (function(){
       if(!t.ponudniki_ids||!t.ponudniki_ids.length)return"";
       var linked=pons.filter(function(p){return t.ponudniki_ids.indexOf(p.id)>=0;});
       if(!linked.length)return"";
-      return "<div class='sh2'>Ponudniki ob poti</div><div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.8rem'>"+
+      return "<div class='sh2'>"+"Ponudniki ob poti"+"</div><div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.8rem'>"+
         linked.map(function(p){
           return "<div style='display:flex;align-items:center;gap:.8rem;background:var(--bg2);border-radius:var(--rs);padding:.7rem;border:.5px solid rgba(255,255,255,.06)'>" +
             (p.image?"<img src='"+p.image+"' style='width:40px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0'>":"<div style='width:40px;height:40px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0'>&#x1F4CD;</div>") +
@@ -754,25 +594,25 @@ function openT(id){
             "</div></div></div>";
         }).join("") + "</div>";
     })() +
-    "<div class='sh2'>Komentarji</div>" +
-    "<div class='cf'><h3>Pusti komentar</h3><input type='text' placeholder='Tvoje ime' id='cn"+id+"'><textarea placeholder='Tvoje izkusnje...' id='ct"+id+"'></textarea>" +
-    "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>Po&#x161;lji</button></div>" +
+    "<div class='sh2'>"+"Komentarji"+"</div>" +
+    "<div class='cf'><h3>"+"Pusti komentar"+"</h3><input type='text' placeholder='"+"Tvoje ime"+"' id='cn"+id+"'><textarea placeholder='"+"Tvoje izkusnje..."+"' id='ct"+id+"'></textarea>" +
+    "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>"+"Pošlji"+"</button></div>" +
     "<div id='cl"+id+"'></div>" +
     "</div><div>" +
     "<div class='sp'><div class='sh2'>Podatki</div>" +
-    "<div class='srow'><span>Razdalja</span><span>"+(t.km||0)+" km</span></div>" +
-    "<div class='srow'><span>Vzpon</span><span>"+(t.vm||0)+" vm</span></div>" +
-    "<div class='srow'><span>Te&#x17E;avnost</span><span>"+dL(t.diff)+"</span></div>" +
-    "<div class='srow'><span>Ocena</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
-    "<div class='srow'><span>Sezona</span><span>"+(t.seasonal||"-")+"</span></div>" +
-    "<div class='srow'><span>Podlaga</span><span>"+(t.surface||"-")+"</span></div>" +
-    "<div class='srow'><span>Vreme</span><span id='tw-"+id+"' style='font-size:.78rem'>&#x23F3;</span></div>" +
+    "<div class='srow'><span>"+"Razdalja"+"</span><span>"+(t.km||0)+" km</span></div>" +
+    "<div class='srow'><span>"+"Vzpon"+"</span><span>"+(t.vm||0)+" vm</span></div>" +
+    "<div class='srow'><span>"+"Težavnost"+"</span><span>"+dL(t.diff)+"</span></div>" +
+    "<div class='srow'><span>"+"Ocena"+"</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
+    "<div class='srow'><span>"+"Sezona"+"</span><span>"+(t.seasonal||"-")+"</span></div>" +
+    "<div class='srow'><span>"+"Podlaga"+"</span><span>"+(t.surface||"-")+"</span></div>" +
+    "<div class='srow'><span>"+"Vreme"+"</span><span id='tw-"+id+"' style='font-size:.78rem'>&#x23F3;</span></div>" +
     "</div>" +
     "<div style='margin-top:1rem;background:var(--bg3);border-radius:var(--rs);padding:1rem;border:.5px solid rgba(232,98,42,.25)'>" +
-    "<div style='font-size:.78rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem'>&#x1F50B; eBike kalkulator dosega</div>" +
-    "<div style='font-size:.72rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.5'>Za e-kolesarje z motorjem <strong style='color:var(--tx)'>Bosch Performance Line CX</strong>. Vnesi svojo težo in kapaciteto baterije svojega kolesa, izberi način vožnje.</div>" +
+    "<div style='font-size:.78rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem'>&#x1F50B; "+"&#x1F50B; eBike kalkulator dosega"+"</div>" +
+    "<div style='font-size:.72rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.5'>Za e-kolesarje z motorjem <strong style='color:var(--tx)'>Bosch Performance Line CX</strong>. Vnesi svojo te\u017eo in kapaciteto baterije svojega kolesa, izberi na\u010din vo\u017enje.</div>" +
     "<div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:.8rem'>" +
-    "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Teža kolesarja (kg)</label><input id='bc-w-"+id+"' type='number' value='"+(localStorage.getItem('bc_weight')||80)+"' min='40' max='150' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
+    "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Te\u017ea kolesarja (kg)</label><input id='bc-w-"+id+"' type='number' value='"+(localStorage.getItem('bc_weight')||80)+"' min='40' max='150' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
     "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Baterija (Wh)</label><input id='bc-b-"+id+"' type='number' value='"+(localStorage.getItem('bc_battery')||800)+"' min='200' max='1500' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
     "</div>" +
     "<div style='display:flex;gap:.4rem;margin-bottom:.8rem'>" +
@@ -803,7 +643,7 @@ function openT(id){
       }).addTo(map);
     },150);
   } else {
-    // Brez GPX — vreme po geolokaciji
+    // Brez GPX \u2014 vreme po geolokaciji
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(pos){
         fetchWeather(pos.coords.latitude,pos.coords.longitude,"tw-"+id);
@@ -818,7 +658,7 @@ function openT(id){
     var el=document.getElementById("cl"+id);
     if(el&&cs&&cs.length)el.innerHTML=cs.map(function(c){return"<div class='cmt'><div class='cmt-av'>"+c.name[0]+"</div><div><div class='cmt-name'>"+c.name+"</div><div class='cmt-txt'>"+c.text+"</div></div></div>";}).join("");
   });
-  // Avtomatski izračun ob odprtju (eMTB način)
+  // Avtomatski izra\u010dun ob odprtju (eMTB na\u010din)
   setTimeout(function(){calcEbike(id,"trail");},200);
 }
 
@@ -839,11 +679,12 @@ function loadPons(){
   dbG("ponudniki","order=map_num.asc").then(function(data){
     pons=data&&data.length>0?data:[];
     renderPons(pons);
+    renderSponsorsFooter();
   });
 }
 
 function renderPons(list){
-  if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>Ni ponudnikov. Dodaj jih v admin panelu.</p>";return;}
+  if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>"+"Ni ponudnikov. Dodaj jih v admin panelu."+"</p>";return;}
   // Sponzorji na vrhu
   var sorted=list.slice().sort(function(a,b){return (b.sponsored?1:0)-(a.sponsored?1:0);});
   document.getElementById("pgrid").innerHTML=sorted.map(function(p){
@@ -1129,6 +970,11 @@ function editT(id){
     "<div class='fr'><div class='fg'><label class='fl'>Ime</label><input class='fi' id='en' value='"+t.name+"'></div>" +
     "<div class='fg'><label class='fl'>Regija</label><input class='fi' id='er' value='"+(t.region||"")+"'></div></div>" +
     "<div class='fg'><label class='fl'>Komentar</label><textarea class='fta' id='ec'>"+(t.comment||"")+"</textarea></div>" +
+    "<div class='fg' style='background:rgba(41,128,185,.08);border-radius:var(--rs);padding:.7rem;border:.5px solid rgba(41,128,185,.2)'>" +
+    "<div style='font-size:.7rem;color:#3498db;font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F1EC;&#x1F1E7; Angle\u0161ka vsebina (neobvezno)</div>" +
+    "<div class='fg' style='margin-bottom:.6rem'><label class='fl'>Trail name (EN)</label><input class='fi' id='en_name' value='"+(t.name_en||"")+"' placeholder='English trail name...'></div>" +
+    "<div class='fg' style='margin-bottom:0'><label class='fl'>Comment (EN)</label><textarea class='fta' id='en_comment' style='min-height:60px'>"+(t.comment_en||"")+"</textarea></div>" +
+    "</div>" +
     "<div class='fr'><div class='fg'><label class='fl'>km</label><input class='fi' type='number' id='ekm' value='"+(t.km||0)+"'></div>" +
     "<div class='fg'><label class='fl'>vm</label><input class='fi' type='number' id='evm' value='"+(t.vm||0)+"'></div></div>" +
     "<div class='fr'><div class='fg'><label class='fl'>Te&#x17E;avnost</label><select class='fs' id='ed'>" +
@@ -1156,7 +1002,7 @@ function editT(id){
     }).join("") +
     "</div><button onclick='galAdd(\"gal-edit\")' style='padding:6px 14px;border-radius:8px;background:var(--bg3);border:.5px solid rgba(255,255,255,.12);color:var(--tx2);font-size:.82rem;cursor:pointer;margin-top:.3rem'>&#x2B; Dodaj sliko</button></div>" +
     "<div class='fg'><label class='fl'>GPX datoteka</label>" +
-    (t.gpx_file?"<div style='display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem;background:var(--bg3);padding:.5rem .8rem;border-radius:var(--rs)'><span style='color:#2ecc71;font-size:.82rem'>&#x2713; GPX naložena</span><button onclick='removeGpx("+id+")' style='padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button></div>":"") +
+    (t.gpx_file?"<div style='display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem;background:var(--bg3);padding:.5rem .8rem;border-radius:var(--rs)'><span style='color:#2ecc71;font-size:.82rem'>&#x2713; GPX nalo\u017eena</span><button onclick='removeGpx("+id+")' style='padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button></div>":"") +
     "<div class='ua'><input type='file' accept='.gpx' id='egpx' onchange='showGpx(this,\"egpxp\")'><span class='ui'>&#x1F4C1;</span><span>"+(t.gpx_file?"Zamenjaj GPX":"Tapni za .gpx")+"</span></div>" +
     "<div id='egpxp'></div></div>" +
     "<div class='fg'><label class='fl'>&#x1F5FA; Komoot link</label><input class='fi' id='ekmt' value='"+(t.komoot_url||"")+"' placeholder='https://www.komoot.com/tour/...'></div>" +
@@ -1193,7 +1039,7 @@ function doEditT(id){
   Promise.all([pM,pG].concat(gps)).then(function(res){
     if(res[0]){data.main_image=res[0];saveSetting("trail_img_"+id,res[0]);}
     if(res[1]){data.gpx_file=res[1];saveSetting("trail_gpx_"+id,res[1]);}
-    // Obstoječe slike ki so ostale (niso bile odstranjene)
+    // Obstoje\u010de slike ki so ostale (niso bile odstranjene)
     var existingSlots=document.getElementById("gal-edit").querySelectorAll("[id^='gslot-ex-']");
     var photos=[];
     existingSlots.forEach(function(slot,i){
@@ -1351,6 +1197,7 @@ checkDeepLink();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
