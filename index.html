@@ -352,7 +352,7 @@ var TX={
     dl_gpx:'Prenesi GPX',qr:'QR koda',
     prov_trail:'Ponudniki ob poti',
     leave_cmt:'Pusti komentar',your_name:'Tvoje ime',your_exp:'Tvoje izku\u0161nje...',send:'Po\u0161lji',
-    cmt_sent:t('cmt_sent'),
+    cmt_sent:tx('cmt_sent'),
     no_nav:'Navigacija bo dodana kmalu.',
     d_zelena:'Zelena',d_modra:'Modra',d_rdeca:'Rdeca',d_crna:'Crna',
     lbl_latest:'&#x1F195; Zadnji trail',lbl_feat:'&#x2B50; Izbrani trail',lbl_pop:'&#x1F3C6; Priljubljen',
@@ -369,7 +369,7 @@ var TX={
     res_great:'Odli\u010dno! Pride\u0161 domov s ',res_ok:'Baterija zadostuje. Pride\u0161 domov s ~',
     res_tight:'Baterija ravno zadostuje (~',res_risky:'Tvegano! Pride\u0161 domov z le ~',
     res_no:'Baterija ne zadostuje za ta trail!',bc_pct:'% baterije.',
-    supports:t("supports"),
+    supports:tx("supports"),
     w_here:'&#x1F4CD; Vreme pri tebi',w_today:'Danes',w_tom:'Jutri',w_dat:'Pojutr.',
     tap_trail:'Tapni traso za podrobnosti',open_trail:'Odpri trail \u2192',
     gpx_none:'GPX ni nalozena',no_providers:'Ni ponudnikov. Dodaj jih v admin panelu.',
@@ -409,7 +409,7 @@ var TX={
     no_trails:'No trails. Add them in admin.'
   }
 };
-function t(k){return TX[lang][k]||TX.sl[k]||k;}
+function tx(k){return TX[lang][k]||TX.sl[k]||k;}
 function setLang(l){
   lang=l;localStorage.setItem('bob_lang',l);
   var btn=document.getElementById('lang-btn');
@@ -419,40 +419,40 @@ function setLang(l){
 }
 function applyLang(){
   // Nav
-  var nh=document.getElementById('nb-home');if(nh)nh.textContent=t('nav_home');
-  var nt=document.getElementById('nb-traili');if(nt)nt.textContent=t('nav_trails');
-  var np=document.getElementById('nb-ponudniki');if(np)np.textContent=t('nav_providers');
-  var no=document.getElementById('nb-omeni');if(no)no.textContent=t('nav_about');
+  var nh=document.getElementById('nb-home');if(nh)nh.textContent=tx('nav_home');
+  var nt=document.getElementById('nb-traili');if(nt)nt.textContent=tx('nav_trails');
+  var np=document.getElementById('nb-ponudniki');if(np)np.textContent=tx('nav_providers');
+  var no=document.getElementById('nb-omeni');if(no)no.textContent=tx('nav_about');
   // Hero buttons
-  var hb1=document.getElementById('hbtn-map');if(hb1)hb1.textContent=t('btn_map');
-  var hb2=document.getElementById('hbtn-trails');if(hb2)hb2.textContent=t('btn_trails');
-  var hb3=document.getElementById('hbtn-about');if(hb3)hb3.textContent=t('btn_about');
+  var hb1=document.getElementById('hbtn-map');if(hb1)hb1.textContent=tx('btn_map');
+  var hb2=document.getElementById('hbtn-trails');if(hb2)hb2.textContent=tx('btn_trails');
+  var hb3=document.getElementById('hbtn-about');if(hb3)hb3.textContent=tx('btn_about');
   // Stats
-  var sk=document.getElementById('sl-km');if(sk)sk.textContent=t('stat_km');
-  var sv=document.getElementById('sl-vm');if(sv)sv.textContent=t('stat_vm');
-  var str=document.getElementById('sl-tr');if(str)str.textContent=t('stat_trails');
-  var sy=document.getElementById('sl-yr');if(sy)sy.textContent=t('stat_years');
+  var sk=document.getElementById('sl-km');if(sk)sk.textContent=tx('stat_km');
+  var sv=document.getElementById('sl-vm');if(sv)sv.textContent=tx('stat_vm');
+  var str=document.getElementById('sl-tr');if(str)str.textContent=tx('stat_trails');
+  var sy=document.getElementById('sl-yr');if(sy)sy.textContent=tx('stat_years');
   // Sections
-  var stag=document.getElementById('home-sec-tag');if(stag)stag.textContent=t('sect_tag');
-  var stit=document.getElementById('home-sec-title');if(stit)stit.innerHTML=t('sect_title');
+  var stag=document.getElementById('home-sec-tag');if(stag)stag.textContent=tx('sect_tag');
+  var stit=document.getElementById('home-sec-title');if(stit)stit.innerHTML=tx('sect_title');
   // Ponudniki page
-  var ptag=document.getElementById('pon-tag');if(ptag)ptag.textContent=t('prov_tag');
-  var ptit=document.getElementById('pon-title');if(ptit)ptit.textContent=t('prov_title');
+  var ptag=document.getElementById('pon-tag');if(ptag)ptag.textContent=tx('prov_tag');
+  var ptit=document.getElementById('pon-title');if(ptit)ptit.textContent=tx('prov_title');
   // About
-  var atag=document.getElementById('about-tag');if(atag)atag.textContent=t('about_tag');
-  var atit=document.getElementById('about-title');if(atit)atit.textContent=t('about_title');
+  var atag=document.getElementById('about-tag');if(atag)atag.textContent=tx('about_tag');
+  var atit=document.getElementById('about-title');if(atit)atit.textContent=tx('about_title');
   // Trail filters
   var ftabs=['f_all','f_mountain','f_cycling','f_mixed','f_easy','f_medium','f_hard','f_extreme'];
   ftabs.forEach(function(k,i){var el=document.getElementById('ftab-'+i);if(el)el.innerHTML=t(k);});
   // Pon filters
   var pfltabs=['f_all','f_kul','f_vin','f_pre'];
-  pfltabs.forEach(function(k,i){var el=document.getElementById('pftab-'+i);if(el)el.innerHTML=i===0?t('f_all'):t('cat_'+['kul','vin','pre'][i-1]);});
+  pfltabs.forEach(function(k,i){var el=document.getElementById('pftab-'+i);if(el)el.innerHTML=i===0?tx('f_all'):tx('cat_'+['kul','vin','pre'][i-1]);});
   // Weather
-  var wh=document.getElementById('hw-label');if(wh)wh.innerHTML=t('w_here');
+  var wh=document.getElementById('hw-label');if(wh)wh.innerHTML=tx('w_here');
   // Map
-  var zm=document.getElementById('zmap-count');if(zm&&zm.textContent!=='')zm.textContent=t('tap_trail');
+  var zm=document.getElementById('zmap-count');if(zm&&zm.textContent!=='')zm.textContent=tx('tap_trail');
   // Back buttons
-  document.querySelectorAll('.back-btn').forEach(function(b){b.textContent=t('back');});
+  document.querySelectorAll('.back-btn').forEach(function(b){b.textContent=tx('back');});
 }
 
 
@@ -541,7 +541,7 @@ function wEmoji(code){
   if(code>=95)return"&#9928;";
   return"&#9925;";
 }
-function wDay(i){return[t("w_today"),t("w_tom"),t("w_dat")][i]||"";}
+function wDay(i){return[tx("w_today"),tx("w_tom"),tx("w_dat")][i]||"";}
 function fetchWeather(lat,lon,elId){
   fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&daily=temperature_2m_max,weathercode&forecast_days=3&timezone=auto")
     .then(function(r){return r.json();})
@@ -624,7 +624,7 @@ function renderSponsorsFooter(){
   var fsEl=document.getElementById("footer-sponsors");
   if(!fsEl)return;
   if(sponsors.length){
-    fsEl.innerHTML="<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px'>"+t('supports')+"</div>"+
+    fsEl.innerHTML="<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px'>"+tx('supports')+"</div>"+
       "<div>"+sponsors.map(function(s){
         var link=s.website||"#";
         return "<a href='"+link+"' target='_blank' style='font-size:.82rem;color:var(--tx2);text-decoration:none;margin:0 .4rem'>"+s.name+"</a>";
@@ -633,7 +633,7 @@ function renderSponsorsFooter(){
     fsEl.innerHTML="";
   }
 }
-function dL(d){return{zelena:t('d_zelena'),modra:t('d_modra'),rdeca:t('d_rdeca'),crna:t('d_crna')}[d]||d;}
+function dL(d){return{zelena:tx('d_zelena'),modra:tx('d_modra'),rdeca:tx('d_rdeca'),crna:tx('d_crna')}[d]||d;}
 function dColor(d){return{zelena:"#27ae60",modra:"#2980b9",rdeca:"#c0392b",crna:"#888"}[d]||"#e8622a";}
 function st(n){var s="";for(var i=0;i<n;i++)s+="&#9733;";for(var j=n;j<5;j++)s+="&#9734;";return s;}
 function iT(url){return url?"<img src='"+url+"' onerror='this.style.display=\"none\"'>":"";}
@@ -730,9 +730,9 @@ function renderHome(){
   var latest=trails[0]||null;
   var feat=null;for(var i=0;i<trails.length;i++){if(trails[i].featured){feat=trails[i];break;}}
   var html="";
-  if(latest)html+=fCard(latest,t("lbl_latest"));
-  if(feat&&(!latest||feat.id!==latest.id))html+=fCard(feat,t("lbl_feat"));
-  else if(!feat&&trails.length>1)html+=fCard(trails[1],t("lbl_pop"));
+  if(latest)html+=fCard(latest,tx("lbl_latest"));
+  if(feat&&(!latest||feat.id!==latest.id))html+=fCard(feat,tx("lbl_feat"));
+  else if(!feat&&trails.length>1)html+=fCard(trails[1],tx("lbl_pop"));
   if(!html)html="<p style='color:var(--tx2)'>Dodaj traile v admin panelu.</p>";
   document.getElementById("hfeat").innerHTML=html;
 }
@@ -746,7 +746,7 @@ function fCard(t,lbl){
 }
 
 function renderTrails(list){
-  if(!list||!list.length){document.getElementById("tgrid").innerHTML="<p style='color:var(--tx2)'>"+t("no_trails")+"</p>";return;}
+  if(!list||!list.length){document.getElementById("tgrid").innerHTML="<p style='color:var(--tx2)'>"+tx("no_trails")+"</p>";return;}
   document.getElementById("tgrid").innerHTML=list.map(function(t){
     return "<div class='tcard' onclick='openT("+t.id+")'>" +
       "<div class='tcard-img'>"+iT(t.main_image)+"<div class='db "+dC(t.diff)+"'>"+dL(t.diff)+"</div></div>" +
@@ -775,8 +775,8 @@ function loadZemljevid(){
     }else{zmapObj.invalidateSize();}
     var withGpx=trails.filter(function(t){return t.gpx_file;});
     var cnt=document.getElementById("zmap-count");
-    if(cnt)cnt.textContent=t("tap_trail");
-    if(!withGpx.length){if(cnt)cnt.textContent=t("gpx_none");return;}
+    if(cnt)cnt.textContent=tx("tap_trail");
+    if(!withGpx.length){if(cnt)cnt.textContent=tx("gpx_none");return;}
     withGpx.forEach(function(t){
       var color=dColor(t.diff);
       var gpxLayer=new L.GPX(t.gpx_file,{
@@ -791,7 +791,7 @@ function loadZemljevid(){
           "<div style='font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.2rem'>"+t.name+"</div>" +
           "<div style='font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem'>"+dL(t.diff)+"</div>" +
           "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+(t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
-          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>"+t('open_trail')+"</button>" +
+          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>"+tx('open_trail')+"</button>" +
           "</div>"
         );
         function openPopup(){
@@ -835,11 +835,11 @@ function openT(id){
   if(t.photos&&t.photos.length)t.photos.forEach(function(p){if(p&&p.url)imgs.push(p);});
   var galHtml="";
   if(imgs.length>0){
-    galHtml="<div class='sh2'>"+t('gallery')+"</div><div class='gal'>"+
+    galHtml="<div class='sh2'>"+tx('gallery')+"</div><div class='gal'>"+
       imgs.map(function(img){
         return "<div class='gal-item'><img src='"+img.url+"'>"+(img.desc?"<div class='gal-desc'>"+img.desc+"</div>":"")+"</div>";
       }).join("")+"</div>"+
-      (imgs.length>1?"<div style='text-align:center;font-size:.72rem;color:var(--tx3);margin-bottom:1.5rem'>&#x2190; "+t('gallery')+" ("+imgs.length+") &#x2192;</div>":"");
+      (imgs.length>1?"<div style='text-align:center;font-size:.72rem;color:var(--tx3);margin-bottom:1.5rem'>&#x2190; "+tx('gallery')+" ("+imgs.length+") &#x2192;</div>":"");
   }
   document.getElementById("tmod-c").innerHTML=
     "<div class='mhero'>"+iT(t.main_image)+"<div class='mhero-cnt'>" +
@@ -848,22 +848,22 @@ function openT(id){
     "<div style='color:rgba(255,255,255,.55);font-size:.82rem'>"+(t.region||"")+" &middot; <span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
     "</div></div>" +
     "<div class='mbody'><div class='mgrid'><div>" +
-    "<div class='sh2'>"+t('my_comment')+"</div><p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>"+((lang==='en'&&t.comment_en)?t.comment_en:(t.comment||""))+"</p>" +
+    "<div class='sh2'>"+tx('my_comment')+"</div><p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>"+((lang==='en'&&t.comment_en)?t.comment_en:(t.comment||""))+"</p>" +
     galHtml +
-    "<div class='sh2'>"+t('route')+"</div>" +
-    (t.gpx_file?"<div id='map-"+id+"' class='gpx-map'></div>":"<div class='sbox'><span>"+t('gpx_none')+"</span></div>") +
+    "<div class='sh2'>"+tx('route')+"</div>" +
+    (t.gpx_file?"<div id='map-"+id+"' class='gpx-map'></div>":"<div class='sbox'><span>"+tx('gpx_none')+"</span></div>") +
     "<div class='grow' style='margin-bottom:2rem'>" +
-    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; "+t('dl_gpx')+"</a>":"") +
+    (t.gpx_file?"<a href='"+t.gpx_file+"' download='trail.gpx' class='gb gb-p'>&#x2B07; "+tx('dl_gpx')+"</a>":"") +
     (t.strava_url?"<a href='"+t.strava_url+"' target='_blank' class='gb gb-s'>&#x1F4CA; Strava &#x2197;</a>":"") +
     (t.komoot_url?"<a href='"+t.komoot_url+"' target='_blank' class='gb gb-s'>&#x1F5FA; Komoot &#x2197;</a>":"") +
-    "<button onclick='showQR("+t.id+",\""+t.name.replace(/"/g,"")+"&nbsp;QR\")' class='gb gb-s'>&#x1F4F1; "+t('qr')+"</button>" +
-    (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>"+t('no_nav')+"</p>":"") +
+    "<button onclick='showQR("+t.id+",\""+t.name.replace(/"/g,"")+"&nbsp;QR\")' class='gb gb-s'>&#x1F4F1; "+tx('qr')+"</button>" +
+    (!t.gpx_file&&!t.strava_url&&!t.komoot_url?"<p style='color:var(--tx2);font-size:.85rem'>"+tx('no_nav')+"</p>":"") +
     "</div>" +
     (function(){
       if(!t.ponudniki_ids||!t.ponudniki_ids.length)return"";
       var linked=pons.filter(function(p){return t.ponudniki_ids.indexOf(p.id)>=0;});
       if(!linked.length)return"";
-      return "<div class='sh2'>"+t('prov_trail')+"</div><div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.8rem'>"+
+      return "<div class='sh2'>"+tx('prov_trail')+"</div><div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.8rem'>"+
         linked.map(function(p){
           return "<div style='display:flex;align-items:center;gap:.8rem;background:var(--bg2);border-radius:var(--rs);padding:.7rem;border:.5px solid rgba(255,255,255,.06)'>" +
             (p.image?"<img src='"+p.image+"' style='width:40px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0'>":"<div style='width:40px;height:40px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0'>&#x1F4CD;</div>") +
@@ -876,22 +876,22 @@ function openT(id){
             "</div></div></div>";
         }).join("") + "</div>";
     })() +
-    "<div class='sh2'>"+t('comments')+"</div>" +
-    "<div class='cf'><h3>"+t('leave_cmt')+"</h3><input type='text' placeholder='"+t('your_name')+"' id='cn"+id+"'><textarea placeholder='"+t('your_exp')+"' id='ct"+id+"'></textarea>" +
-    "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>"+t('send')+"</button></div>" +
+    "<div class='sh2'>"+tx('comments')+"</div>" +
+    "<div class='cf'><h3>"+tx('leave_cmt')+"</h3><input type='text' placeholder='"+tx('your_name')+"' id='cn"+id+"'><textarea placeholder='"+tx('your_exp')+"' id='ct"+id+"'></textarea>" +
+    "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>"+tx('send')+"</button></div>" +
     "<div id='cl"+id+"'></div>" +
     "</div><div>" +
     "<div class='sp'><div class='sh2'>Podatki</div>" +
-    "<div class='srow'><span>"+t('dist')+"</span><span>"+(t.km||0)+" km</span></div>" +
-    "<div class='srow'><span>"+t('ascent')+"</span><span>"+(t.vm||0)+" vm</span></div>" +
-    "<div class='srow'><span>"+t('diff')+"</span><span>"+dL(t.diff)+"</span></div>" +
-    "<div class='srow'><span>"+t('rating')+"</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
-    "<div class='srow'><span>"+t('season')+"</span><span>"+(t.seasonal||"-")+"</span></div>" +
-    "<div class='srow'><span>"+t('surface')+"</span><span>"+(t.surface||"-")+"</span></div>" +
-    "<div class='srow'><span>"+t('weather')+"</span><span id='tw-"+id+"' style='font-size:.78rem'>&#x23F3;</span></div>" +
+    "<div class='srow'><span>"+tx('dist')+"</span><span>"+(t.km||0)+" km</span></div>" +
+    "<div class='srow'><span>"+tx('ascent')+"</span><span>"+(t.vm||0)+" vm</span></div>" +
+    "<div class='srow'><span>"+tx('diff')+"</span><span>"+dL(t.diff)+"</span></div>" +
+    "<div class='srow'><span>"+tx('rating')+"</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
+    "<div class='srow'><span>"+tx('season')+"</span><span>"+(t.seasonal||"-")+"</span></div>" +
+    "<div class='srow'><span>"+tx('surface')+"</span><span>"+(t.surface||"-")+"</span></div>" +
+    "<div class='srow'><span>"+tx('weather')+"</span><span id='tw-"+id+"' style='font-size:.78rem'>&#x23F3;</span></div>" +
     "</div>" +
     "<div style='margin-top:1rem;background:var(--bg3);border-radius:var(--rs);padding:1rem;border:.5px solid rgba(232,98,42,.25)'>" +
-    "<div style='font-size:.78rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem'>&#x1F50B; "+t('ebike_title')+"</div>" +
+    "<div style='font-size:.78rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem'>&#x1F50B; "+tx('ebike_title')+"</div>" +
     "<div style='font-size:.72rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.5'>Za e-kolesarje z motorjem <strong style='color:var(--tx)'>Bosch Performance Line CX</strong>. Vnesi svojo te\u017eo in kapaciteto baterije svojega kolesa, izberi na\u010din vo\u017enje.</div>" +
     "<div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:.8rem'>" +
     "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Te\u017ea kolesarja (kg)</label><input id='bc-w-"+id+"' type='number' value='"+(localStorage.getItem('bc_weight')||80)+"' min='40' max='150' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
@@ -950,7 +950,7 @@ function addCmt(id){
   if(!n||!t){alert("Prosim vnesi ime in komentar.");return;}
   dbP("komentarji",{trail_id:id,name:n,text:t,approved:false}).then(function(){
     document.getElementById("cn"+id).value="";document.getElementById("ct"+id).value="";
-    var d=document.createElement("div");d.className="ok";d.textContent=t("cmt_sent");
+    var d=document.createElement("div");d.className="ok";d.textContent=tx("cmt_sent");
     document.getElementById("cl"+id).before(d);setTimeout(function(){d.remove();},4000);
   });
 }
@@ -966,7 +966,7 @@ function loadPons(){
 }
 
 function renderPons(list){
-  if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>"+t("no_providers")+"</p>";return;}
+  if(!list||!list.length){document.getElementById("pgrid").innerHTML="<p style='color:var(--tx2)'>"+tx("no_providers")+"</p>";return;}
   // Sponzorji na vrhu
   var sorted=list.slice().sort(function(a,b){return (b.sponsored?1:0)-(a.sponsored?1:0);});
   document.getElementById("pgrid").innerHTML=sorted.map(function(p){
