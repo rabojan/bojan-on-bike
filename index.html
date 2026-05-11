@@ -515,7 +515,7 @@ function loadZemljevid(){
           "<div style='font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.2rem'>"+t.name+"</div>" +
           "<div style='font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem'>"+dL(t.diff)+"</div>" +
           "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+( t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
-          "<button onclick='closeZpop();openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>Odpri trail &#x2192;</button>" +
+          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>Odpri trail &#x2192;</button>" +
           "</div>"
         );
         layer.on("click",function(){
