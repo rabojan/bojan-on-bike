@@ -450,24 +450,29 @@ function calcEbike(id,mode){
   var weightFactor=1+((weight-88)/88)*0.15;
   var totalWh=Math.round((km*baseKm + vm/100*baseVm)*weightFactor);
   var pct=Math.round(totalWh/battery*100);
-  var pctReturn=Math.round(totalWh*2/battery*100);
-  var canReturn=pctReturn<=100;
-
+  var remaining=100-pct;
   var rec="";
-  if(pctReturn<=70)rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija z lahkoto zadostuje za celotno pot.</div>";
-  else if(pctReturn<=90)rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija zadostuje, varčuj na spustih.</div>";
-  else if(canReturn)rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje. Priporoča se Eco ali Trail način.</div>";
-  else rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Na povratku ti zmanjka baterije! Preklopi na Eco.</div>";
-  var barColor=canReturn?(pctReturn<=70?"#2ecc71":(pctReturn<=90?"#f39c12":"#e67e22")):"#e74c3c";
+  if(pct>100){
+    rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Baterija ne zadostuje za ta trail!</div>";
+  } else if(remaining>=50){
+    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Odli&#x10D;no! Prideš domov s "+remaining+"% baterije.</div>";
+  } else if(remaining>=25){
+    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija zadostuje. Prideš domov s ~"+remaining+"% baterije.</div>";
+  } else if(remaining>=10){
+    rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje (~"+remaining+"% ostane). Varčuj na spustih.</div>";
+  } else {
+    rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Tvegano! Prideš domov z le ~"+remaining+"% baterije.</div>";
+  }
+  var barColor=remaining>=25?"#2ecc71":(remaining>=10?"#f39c12":"#e74c3c");
 
   document.getElementById("bc-result-"+id).innerHTML=
     "<div style='background:var(--bg2);border-radius:7px;padding:.7rem;font-size:.8rem'>" +
-    "<div style='display:flex;justify-content:space-between;margin-bottom:.3rem'>" +
-    "<span style='color:var(--tx2)'>Poraba (enkrat)</span><span style='color:var(--tx);font-weight:700'>"+totalWh+" Wh &nbsp;("+pct+"%)</span></div>" +
     "<div style='display:flex;justify-content:space-between;margin-bottom:.5rem'>" +
-    "<span style='color:var(--tx2)'>Tja in nazaj</span><span style='color:"+(canReturn?"var(--tx)":"#e74c3c")+";font-weight:700'>"+Math.min(pctReturn,200)+"% baterije</span></div>" +
+    "<span style='color:var(--tx2)'>Poraba za ta trail</span>" +
+    "<span style='color:var(--tx);font-weight:700'>"+totalWh+" Wh &nbsp;("+pct+"%)</span></div>" +
     "<div style='height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:.3rem'>" +
-    "<div style='height:100%;width:"+Math.min(pctReturn,100)+"%;background:"+barColor+";border-radius:4px;transition:width .4s'></div></div>" +
+    "<div style='height:100%;width:"+Math.min(pct,100)+"%;background:"+barColor+";border-radius:4px;transition:width .4s'></div></div>" +
+    "<div style='font-size:.7rem;color:var(--tx3);margin-bottom:.2rem'>Ostane po trailu: ~"+Math.max(0,remaining)+"%</div>" +
     rec+"</div>";
 }
 
