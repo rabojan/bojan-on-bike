@@ -508,7 +508,7 @@ function loadZemljevid(){
     var withGpx=trails.filter(function(t){return t.gpx_file;});
     var cnt=document.getElementById("zmap-count");
     if(cnt)cnt.textContent="Tapni traso za podrobnosti";
-    if(!withGpx.length){if(cnt)cnt.textContent="Naloži GPX za prikaz";return;}
+    if(!withGpx.length){if(cnt)cnt.textContent="Nalo\u017ei GPX za prikaz";return;}
     withGpx.forEach(function(t){
       var color=dColor(t.diff);
       var gpxLayer=new L.GPX(t.gpx_file,{
@@ -523,7 +523,7 @@ function loadZemljevid(){
           "<div style='font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.2rem'>"+t.name+"</div>" +
           "<div style='font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem'>"+dL(t.diff)+"</div>" +
           "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+(t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
-          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>"+"Odpri trail →"+"</button>" +
+          "<button onclick='closeZpop();go(\"traili\");openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>"+"Odpri trail \u2192"+"</button>" +
           "</div>"
         );
         function openPopup(){
@@ -610,13 +610,13 @@ function openT(id){
     })() +
     "<div class='sh2'>"+"Komentarji"+"</div>" +
     "<div class='cf'><h3>"+"Pusti komentar"+"</h3><input type='text' placeholder='"+"Tvoje ime"+"' id='cn"+id+"'><textarea placeholder='"+"Tvoje izkusnje..."+"' id='ct"+id+"'></textarea>" +
-    "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>"+"Pošlji"+"</button></div>" +
+    "<button class='btn btn-p' onclick='addCmt("+id+")' style='width:100%;justify-content:center'>"+"Po\u0161lji"+"</button></div>" +
     "<div id='cl"+id+"'></div>" +
     "</div><div>" +
     "<div class='sp'><div class='sh2'>Podatki</div>" +
     "<div class='srow'><span>"+"Razdalja"+"</span><span>"+(t.km||0)+" km</span></div>" +
     "<div class='srow'><span>"+"Vzpon"+"</span><span>"+(t.vm||0)+" vm</span></div>" +
-    "<div class='srow'><span>"+"Težavnost"+"</span><span>"+dL(t.diff)+"</span></div>" +
+    "<div class='srow'><span>"+"Te\u017eavnost"+"</span><span>"+dL(t.diff)+"</span></div>" +
     "<div class='srow'><span>"+"Ocena"+"</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
     "<div class='srow'><span>"+"Sezona"+"</span><span>"+(t.seasonal||"-")+"</span></div>" +
     "<div class='srow'><span>"+"Podlaga"+"</span><span>"+(t.surface||"-")+"</span></div>" +
@@ -683,7 +683,7 @@ function addCmt(id){
   if(!n||!t){alert("Prosim vnesi ime in komentar.");return;}
   dbP("komentarji",{trail_id:id,name:n,text:t,approved:false}).then(function(){
     document.getElementById("cn"+id).value="";document.getElementById("ct"+id).value="";
-    var d=document.createElement("div");d.className="ok";d.textContent="Komentar poslan! Admin ga mora najprej odobriti v Admin → Komentarji.";
+    var d=document.createElement("div");d.className="ok";d.textContent="Komentar poslan! Admin ga mora najprej odobriti v Admin \u2192 Komentarji.";
     document.getElementById("cl"+id).before(d);setTimeout(function(){d.remove();},4000);
   });
 }
