@@ -215,6 +215,12 @@ footer{background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);padding
     <div class="sec-title">Zadnji &amp; izbrani</div>
     <div class="hgrid" id="hfeat"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
+  <div id="home-weather" style="max-width:1000px;margin:0 auto 2rem;padding:0 1.2rem;display:none">
+    <div style="background:var(--bg2);border-radius:var(--r);padding:1rem 1.3rem;border:.5px solid rgba(255,255,255,.06)">
+      <div style="font-size:.68rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.7rem">&#x1F4CD; Vreme pri tebi</div>
+      <div id="home-weather-content" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
+    </div>
+  </div>
   <footer><div class="fl2">Bojan <span>on Bike</span></div><div class="ft">2025 Bojan on Bike &mdash; Pohorje, Slovenija</div></footer>
 </div>
 
@@ -381,6 +387,43 @@ function stravaLink(url){
   if(m)return"strava://activities/"+m[1];
   return url;
 }
+// ===== VREME =====
+function wEmoji(code){
+  if(code===0)return"☀️";
+  if(code<=3)return"🌤";
+  if(code<=48)return"🌫";
+  if(code<=55)return"🌦";
+  if(code<=65)return"🌧";
+  if(code<=77)return"❄️";
+  if(code<=82)return"🌧";
+  if(code>=95)return"⛈";
+  return"🌤";
+}
+function wDay(i){return["Danes","Jutri","Pojutr."][i]||"";}
+function fetchWeather(lat,lon,elId){
+  fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&daily=temperature_2m_max,weathercode&forecast_days=3&timezone=auto")
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById(elId);
+      if(!el||!d.daily)return;
+      var html=d.daily.temperature_2m_max.slice(0,3).map(function(temp,i){
+        return "<span style='font-size:.82rem;color:var(--tx2)'>"+wDay(i)+" "+wEmoji(d.daily.weathercode[i])+" <strong style='color:var(--tx)'>"+Math.round(temp)+"°</strong></span>";
+      }).join("<span style='color:var(--tx3);margin:0 .3rem'>|</span>");
+      el.innerHTML=html;
+    }).catch(function(){
+      var el=document.getElementById(elId);
+      if(el)el.innerHTML="<span style='color:var(--tx3);font-size:.8rem'>Vreme ni na voljo</span>";
+    });
+}
+function loadHomeWeather(){
+  if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var hw=document.getElementById("home-weather");
+    if(hw)hw.style.display="block";
+    fetchWeather(pos.coords.latitude,pos.coords.longitude,"home-weather-content");
+  },function(){});
+}
+
 function dC(d){return{zelena:"d-z",modra:"d-m",rdeca:"d-r",crna:"d-c"}[d]||"d-m";}
 function dL(d){return{zelena:"Zelena",modra:"Modra",rdeca:"Rdeca",crna:"Crna"}[d]||d;}
 function dColor(d){return{zelena:"#27ae60",modra:"#2980b9",rdeca:"#c0392b",crna:"#888"}[d]||"#e8622a";}
@@ -529,9 +572,17 @@ function loadZemljevid(){
             if(cm){cm.style.margin="0";cm.style.padding="0";}
           },30);
         }
-        // Klik na celotno traso (vsak segment)
+        // Vidna linija
         layer.eachLayer(function(sub){if(sub.on)sub.on("click",openPopup);});
         layer.on("click",openPopup);
+        // Nevidna debela linija za lažji klik
+        layer.eachLayer(function(sub){
+          if(sub.getLatLngs){
+            var hitLine=L.polyline(sub.getLatLngs(),{color:"transparent",weight:20,opacity:0});
+            hitLine.on("click",openPopup);
+            hitLine.addTo(zmapObj);
+          }
+        });
       }).addTo(zmapObj);
     });
     setTimeout(function(){
@@ -603,6 +654,7 @@ function openT(id){
     "<div class='srow'><span>Ocena</span><span style='color:var(--acc)'>"+st(t.stars||3)+"</span></div>" +
     "<div class='srow'><span>Sezona</span><span>"+(t.seasonal||"-")+"</span></div>" +
     "<div class='srow'><span>Podlaga</span><span>"+(t.surface||"-")+"</span></div>" +
+    "<div class='srow'><span>Vreme</span><span id='tw-"+id+"' style='font-size:.78rem'>&#x23F3;</span></div>" +
     "</div></div></div></div>";
   document.getElementById("tmod").classList.add("on");
   document.body.style.overflow="hidden";
@@ -618,10 +670,23 @@ function openT(id){
         marker_options:{startIconUrl:null,endIconUrl:null,shadowUrl:null}
       }).on("loaded",function(e){
         map.fitBounds(e.target.getBounds(),{padding:[20,20]});
+        // Vreme za lokacijo traila
+        var center=e.target.getBounds().getCenter();
+        fetchWeather(center.lat,center.lng,"tw-"+id);
       }).addTo(map);
     },150);
-  }
-  dbG("komentarji","trail_id=eq."+id+"&approved=eq.true&order=created_at.desc").then(function(cs){
+  } else {
+    // Brez GPX — vreme po geolokaciji
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        fetchWeather(pos.coords.latitude,pos.coords.longitude,"tw-"+id);
+      },function(){
+        fetchWeather(46.35,15.5,"tw-"+id); // fallback Pohorje
+      });
+    } else {
+      fetchWeather(46.35,15.5,"tw-"+id);
+    }
+  }"trail_id=eq."+id+"&approved=eq.true&order=created_at.desc").then(function(cs){
     var el=document.getElementById("cl"+id);
     if(el&&cs&&cs.length)el.innerHTML=cs.map(function(c){return"<div class='cmt'><div class='cmt-av'>"+c.name[0]+"</div><div><div class='cmt-name'>"+c.name+"</div><div class='cmt-txt'>"+c.text+"</div></div></div>";}).join("");
   });
@@ -1146,6 +1211,7 @@ function delCmt(id){dbD("komentarji",id).then(function(){var el=document.getElem
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeM("tmod");closeM("adm");}});
 loadTrails();
 loadPons();
+loadHomeWeather();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
