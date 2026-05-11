@@ -510,15 +510,25 @@ function loadZemljevid(){
       }).on("loaded",function(e){
         var layer=e.target;
         var center=layer.getBounds().getCenter();
-        var popup=L.popup({maxWidth:220}).setLatLng(center).setContent(
-          "<div class='zpop-wrap'>" +
-          "<div class='zpop-name'>"+t.name+"</div>" +
-          "<div class='zpop-diff'>"+dL(t.diff)+"</div>" +
-          "<div class='zpop-meta'>&#x1F4CD; "+(t.km||0)+" km &nbsp;&#x26F0; "+(t.vm||0)+" vm</div>" +
-          "<button class='zpop-btn' onclick='closeZpop();openT("+t.id+")'>Odpri trail &#x2192;</button>" +
+        var popup=L.popup({maxWidth:220,className:"zpop-custom"}).setLatLng(center).setContent(
+          "<div style='background:#0c0c0c;border-radius:10px;padding:.85rem 1rem;min-width:155px'>" +
+          "<div style='font-size:1rem;font-weight:800;color:#f2f2f2;white-space:nowrap;margin-bottom:.2rem'>"+t.name+"</div>" +
+          "<div style='font-size:.72rem;color:#e8622a;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.25rem'>"+dL(t.diff)+"</div>" +
+          "<div style='font-size:.82rem;color:#ccc;margin-bottom:.65rem;white-space:nowrap'>"+( t.km||0)+" km &nbsp;&bull;&nbsp; "+(t.vm||0)+" vm</div>" +
+          "<button onclick='closeZpop();openT("+t.id+")' style='width:100%;padding:7px;border-radius:7px;background:#e8622a;color:#fff;border:none;font-size:.82rem;font-weight:700;cursor:pointer'>Odpri trail &#x2192;</button>" +
           "</div>"
         );
-        layer.on("click",function(){zmapObj.openPopup(popup);});
+        layer.on("click",function(){
+          zmapObj.openPopup(popup);
+          setTimeout(function(){
+            var w=document.querySelector(".leaflet-popup-content-wrapper");
+            var t2=document.querySelector(".leaflet-popup-tip-container");
+            if(w){w.style.background="#0c0c0c";w.style.border=".5px solid rgba(232,98,42,.7)";w.style.borderRadius="12px";w.style.boxShadow="0 6px 30px rgba(0,0,0,.9)";w.style.padding="0";}
+            if(t2)t2.style.display="none";
+            var cm=document.querySelector(".leaflet-popup-content");
+            if(cm){cm.style.margin="0";cm.style.padding="0";}
+          },30);
+        });
       }).addTo(zmapObj);
     });
     setTimeout(function(){
