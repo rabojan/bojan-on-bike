@@ -344,34 +344,34 @@ var lang=localStorage.getItem('bob_lang')||'sl';
 var TX={
   sl:{
     nav_home:'Domov',nav_trails:'Traili',nav_providers:'Ponudniki',nav_about:'O meni',
-    btn_trails:'Razišči traile',btn_map:'Zemljevid',btn_about:'Spoznaj me',
-    stat_km:'Skupaj km',stat_vm:'Višinskih m',stat_trails:'Trailov',stat_years:'e-kolesarjenja',
+    btn_trails:'Razi\u0161\u010di traile',btn_map:'Zemljevid',btn_about:'Spoznaj me',
+    stat_km:'Skupaj km',stat_vm:'Vi\u0161inskih m',stat_trails:'Trailov',stat_years:'e-kolesarjenja',
     sect_tag:'Moji traili',sect_title:'Zadnji & izbrani',
     gallery:'Galerija',my_comment:'Moj komentar',route:'Trasa',comments:'Komentarji',
-    dist:'Razdalja',ascent:'Vzpon',diff:'Težavnost',rating:'Ocena',season:'Sezona',surface:'Podlaga',weather:'Vreme',
+    dist:'Razdalja',ascent:'Vzpon',diff:'Te\u017eavnost',rating:'Ocena',season:'Sezona',surface:'Podlaga',weather:'Vreme',
     dl_gpx:'Prenesi GPX',qr:'QR koda',
     prov_trail:'Ponudniki ob poti',
-    leave_cmt:'Pusti komentar',your_name:'Tvoje ime',your_exp:'Tvoje izkušnje...',send:'Pošlji',
+    leave_cmt:'Pusti komentar',your_name:'Tvoje ime',your_exp:'Tvoje izku\u0161nje...',send:'Po\u0161lji',
     cmt_sent:t('cmt_sent'),
     no_nav:'Navigacija bo dodana kmalu.',
     d_zelena:'Zelena',d_modra:'Modra',d_rdeca:'Rdeca',d_crna:'Crna',
     lbl_latest:'&#x1F195; Zadnji trail',lbl_feat:'&#x2B50; Izbrani trail',lbl_pop:'&#x1F3C6; Priljubljen',
-    f_all:'Vsi',f_mountain:'Gorski',f_cycling:'Kolesarska pot',f_mixed:'Mešan',
-    f_easy:'&#x1F7E2; Lahka',f_medium:'&#x1F535; Srednja',f_hard:'&#x1F534; Težka',f_extreme:'&#x26AB; Ekstrem',
+    f_all:'Vsi',f_mountain:'Gorski',f_cycling:'Kolesarska pot',f_mixed:'Me\u0161an',
+    f_easy:'&#x1F7E2; Lahka',f_medium:'&#x1F535; Srednja',f_hard:'&#x1F534; Te\u017eka',f_extreme:'&#x26AB; Ekstrem',
     prov_tag:'Ob poti',prov_title:'Ponudniki ob trailih',
-    cat_kul:'&#x1F37D; Kulinarika',cat_vin:'&#x1F377; Vino',cat_pre:'&#x1F6CF; Prenočitev',
+    cat_kul:'&#x1F37D; Kulinarika',cat_vin:'&#x1F377; Vino',cat_pre:'&#x1F6CF; Preno\u010ditev',
     about_tag:'O meni',about_title:'Moja zgodba',
-    back:'← Nazaj',
+    back:'\u2190 Nazaj',
     ebike_title:'&#x1F50B; eBike kalkulator dosega',
-    ebike_desc:'Za e-kolesarje z motorjem <strong style="color:var(--tx)">Bosch Performance Line CX</strong>. Vnesi svojo težo in kapaciteto baterije svojega kolesa, izberi način vožnje.',
-    w_rider:'Teža kolesarja (kg)',w_batt:'Baterija (Wh)',
+    ebike_desc:'Za e-kolesarje z motorjem <strong style="color:var(--tx)">Bosch Performance Line CX</strong>. Vnesi svojo te\u017eo in kapaciteto baterije svojega kolesa, izberi na\u010din vo\u017enje.',
+    w_rider:'Te\u017ea kolesarja (kg)',w_batt:'Baterija (Wh)',
     bc_consumption:'Poraba za ta trail',bc_remaining:'Ostane po trailu',
-    res_great:'Odlično! Prideš domov s ',res_ok:'Baterija zadostuje. Prideš domov s ~',
-    res_tight:'Baterija ravno zadostuje (~',res_risky:'Tvegano! Prideš domov z le ~',
+    res_great:'Odli\u010dno! Pride\u0161 domov s ',res_ok:'Baterija zadostuje. Pride\u0161 domov s ~',
+    res_tight:'Baterija ravno zadostuje (~',res_risky:'Tvegano! Pride\u0161 domov z le ~',
     res_no:'Baterija ne zadostuje za ta trail!',bc_pct:'% baterije.',
     supports:t("supports"),
     w_here:'&#x1F4CD; Vreme pri tebi',w_today:'Danes',w_tom:'Jutri',w_dat:'Pojutr.',
-    tap_trail:'Tapni traso za podrobnosti',open_trail:'Odpri trail →',
+    tap_trail:'Tapni traso za podrobnosti',open_trail:'Odpri trail \u2192',
     gpx_none:'GPX ni nalozena',no_providers:'Ni ponudnikov. Dodaj jih v admin panelu.',
     no_trails:'Ni trailov. Dodaj jih v admin panelu.'
   },
@@ -394,7 +394,7 @@ var TX={
     prov_tag:'Along the trail',prov_title:'Providers along trails',
     cat_kul:'&#x1F37D; Culinary',cat_vin:'&#x1F377; Wine',cat_pre:'&#x1F6CF; Accommodation',
     about_tag:'About me',about_title:'My story',
-    back:'← Back',
+    back:'\u2190 Back',
     ebike_title:'&#x1F50B; eBike range calculator',
     ebike_desc:"For e-bikers with <strong style=\"color:var(--tx)\">Bosch Performance Line CX</strong> motor. Enter your weight and battery capacity, choose riding mode.",
     w_rider:'Rider weight (kg)',w_batt:'Battery (Wh)',
@@ -404,7 +404,7 @@ var TX={
     res_no:'Battery not sufficient for this trail!',bc_pct:'% remaining.',
     supports:'Supported by',
     w_here:'&#x1F4CD; Weather near you',w_today:'Today',w_tom:'Tomorrow',w_dat:'Day after',
-    tap_trail:'Tap a trail for details',open_trail:'Open trail →',
+    tap_trail:'Tap a trail for details',open_trail:'Open trail \u2192',
     gpx_none:'GPX not loaded',no_providers:'No providers. Add them in admin.',
     no_trails:'No trails. Add them in admin.'
   }
@@ -467,7 +467,7 @@ function dbG(t,q){
       clearTimeout(timer);
       if(e.name==="AbortError"){
         var el=document.getElementById("tgrid");
-        if(el)el.innerHTML="<div style='color:#e74c3c;padding:1rem;font-size:.85rem'>&#x274C; Baza ne odgovarja. Poskusi znova čez trenutek.</div>";
+        if(el)el.innerHTML="<div style='color:#e74c3c;padding:1rem;font-size:.85rem'>&#x274C; Baza ne odgovarja. Poskusi znova \u010dez trenutek.</div>";
       }
       return[];
     });
@@ -586,10 +586,10 @@ function calcEbike(id,mode){
   });
 
   // Formula kalibrirana na uradnih Bosch CX vrednostih + realnih podatkih uporabnika
-  // Ločimo ravninski del (Wh/km) in vzponski del (Wh/100vm) - za MTB loope je to natančnejše
+  // Lo\u010dimo ravninski del (Wh/km) in vzponski del (Wh/100vm) - za MTB loope je to natan\u010dnej\u0161e
   var baseKm={eco:3.5,trail:4.5,emtb:6.0}[mode]||4.5;
   var baseVm={eco:12,trail:16,emtb:20}[mode]||16;
-  // Korekcija za težo (standard 88kg kolesarja)
+  // Korekcija za te\u017eo (standard 88kg kolesarja)
   var weightFactor=1+((weight-88)/88)*0.15;
   var totalWh=Math.round((km*baseKm + vm/100*baseVm)*weightFactor);
   var pct=Math.round(totalWh/battery*100);
@@ -598,13 +598,13 @@ function calcEbike(id,mode){
   if(pct>100){
     rec="<div style='font-size:.74rem;color:#e74c3c;margin-top:.4rem'>&#x274C; Baterija ne zadostuje za ta trail!</div>";
   } else if(remaining>=50){
-    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Odli&#x10D;no! Prideš domov s "+remaining+"% baterije.</div>";
+    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Odli&#x10D;no! Pride\u0161 domov s "+remaining+"% baterije.</div>";
   } else if(remaining>=25){
-    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija zadostuje. Prideš domov s ~"+remaining+"% baterije.</div>";
+    rec="<div style='font-size:.74rem;color:#2ecc71;margin-top:.4rem'>&#x2705; Baterija zadostuje. Pride\u0161 domov s ~"+remaining+"% baterije.</div>";
   } else if(remaining>=10){
-    rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje (~"+remaining+"% ostane). Varčuj na spustih.</div>";
+    rec="<div style='font-size:.74rem;color:#f39c12;margin-top:.4rem'>&#x26A0; Baterija ravno zadostuje (~"+remaining+"% ostane). Var\u010duj na spustih.</div>";
   } else {
-    rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Tvegano! Prideš domov z le ~"+remaining+"% baterije.</div>";
+    rec="<div style='font-size:.74rem;color:#e67e22;margin-top:.4rem'>&#x26A0; Tvegano! Pride\u0161 domov z le ~"+remaining+"% baterije.</div>";
   }
   var barColor=remaining>=25?"#2ecc71":(remaining>=10?"#f39c12":"#e74c3c");
 
@@ -808,7 +808,7 @@ function loadZemljevid(){
         // Vidna linija
         layer.eachLayer(function(sub){if(sub.on)sub.on("click",openPopup);});
         layer.on("click",openPopup);
-        // Nevidna debela linija za lažji klik
+        // Nevidna debela linija za la\u017eji klik
         layer.eachLayer(function(sub){
           if(sub.getLatLngs){
             var hitLine=L.polyline(sub.getLatLngs(),{color:"transparent",weight:20,opacity:0});
@@ -892,9 +892,9 @@ function openT(id){
     "</div>" +
     "<div style='margin-top:1rem;background:var(--bg3);border-radius:var(--rs);padding:1rem;border:.5px solid rgba(232,98,42,.25)'>" +
     "<div style='font-size:.78rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.3rem'>&#x1F50B; "+t('ebike_title')+"</div>" +
-    "<div style='font-size:.72rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.5'>Za e-kolesarje z motorjem <strong style='color:var(--tx)'>Bosch Performance Line CX</strong>. Vnesi svojo težo in kapaciteto baterije svojega kolesa, izberi način vožnje.</div>" +
+    "<div style='font-size:.72rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.5'>Za e-kolesarje z motorjem <strong style='color:var(--tx)'>Bosch Performance Line CX</strong>. Vnesi svojo te\u017eo in kapaciteto baterije svojega kolesa, izberi na\u010din vo\u017enje.</div>" +
     "<div style='display:flex;flex-direction:column;gap:.5rem;margin-bottom:.8rem'>" +
-    "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Teža kolesarja (kg)</label><input id='bc-w-"+id+"' type='number' value='"+(localStorage.getItem('bc_weight')||80)+"' min='40' max='150' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
+    "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Te\u017ea kolesarja (kg)</label><input id='bc-w-"+id+"' type='number' value='"+(localStorage.getItem('bc_weight')||80)+"' min='40' max='150' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
     "<div style='display:flex;justify-content:space-between;align-items:center'><label style='font-size:.78rem;color:var(--tx2)'>Baterija (Wh)</label><input id='bc-b-"+id+"' type='number' value='"+(localStorage.getItem('bc_battery')||800)+"' min='200' max='1500' style='width:60px;background:var(--bg2);border:.5px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:.82rem;text-align:center;outline:none'></div>" +
     "</div>" +
     "<div style='display:flex;gap:.4rem;margin-bottom:.8rem'>" +
@@ -925,7 +925,7 @@ function openT(id){
       }).addTo(map);
     },150);
   } else {
-    // Brez GPX — vreme po geolokaciji
+    // Brez GPX \u2014 vreme po geolokaciji
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(function(pos){
         fetchWeather(pos.coords.latitude,pos.coords.longitude,"tw-"+id);
@@ -940,7 +940,7 @@ function openT(id){
     var el=document.getElementById("cl"+id);
     if(el&&cs&&cs.length)el.innerHTML=cs.map(function(c){return"<div class='cmt'><div class='cmt-av'>"+c.name[0]+"</div><div><div class='cmt-name'>"+c.name+"</div><div class='cmt-txt'>"+c.text+"</div></div></div>";}).join("");
   });
-  // Avtomatski izračun ob odprtju (eMTB način)
+  // Avtomatski izra\u010dun ob odprtju (eMTB na\u010din)
   setTimeout(function(){calcEbike(id,"trail");},200);
 }
 
@@ -1253,7 +1253,7 @@ function editT(id){
     "<div class='fg'><label class='fl'>Regija</label><input class='fi' id='er' value='"+(t.region||"")+"'></div></div>" +
     "<div class='fg'><label class='fl'>Komentar</label><textarea class='fta' id='ec'>"+(t.comment||"")+"</textarea></div>" +
     "<div class='fg' style='background:rgba(41,128,185,.08);border-radius:var(--rs);padding:.7rem;border:.5px solid rgba(41,128,185,.2)'>" +
-    "<div style='font-size:.7rem;color:#3498db;font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F1EC;&#x1F1E7; Angleška vsebina (neobvezno)</div>" +
+    "<div style='font-size:.7rem;color:#3498db;font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F1EC;&#x1F1E7; Angle\u0161ka vsebina (neobvezno)</div>" +
     "<div class='fg' style='margin-bottom:.6rem'><label class='fl'>Trail name (EN)</label><input class='fi' id='en_name' value='"+(t.name_en||"")+"' placeholder='English trail name...'></div>" +
     "<div class='fg' style='margin-bottom:0'><label class='fl'>Comment (EN)</label><textarea class='fta' id='en_comment' style='min-height:60px'>"+(t.comment_en||"")+"</textarea></div>" +
     "</div>" +
@@ -1284,7 +1284,7 @@ function editT(id){
     }).join("") +
     "</div><button onclick='galAdd(\"gal-edit\")' style='padding:6px 14px;border-radius:8px;background:var(--bg3);border:.5px solid rgba(255,255,255,.12);color:var(--tx2);font-size:.82rem;cursor:pointer;margin-top:.3rem'>&#x2B; Dodaj sliko</button></div>" +
     "<div class='fg'><label class='fl'>GPX datoteka</label>" +
-    (t.gpx_file?"<div style='display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem;background:var(--bg3);padding:.5rem .8rem;border-radius:var(--rs)'><span style='color:#2ecc71;font-size:.82rem'>&#x2713; GPX naložena</span><button onclick='removeGpx("+id+")' style='padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button></div>":"") +
+    (t.gpx_file?"<div style='display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem;background:var(--bg3);padding:.5rem .8rem;border-radius:var(--rs)'><span style='color:#2ecc71;font-size:.82rem'>&#x2713; GPX nalo\u017eena</span><button onclick='removeGpx("+id+")' style='padding:3px 10px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.72rem;cursor:pointer'>&#x1F5D1; Odstrani</button></div>":"") +
     "<div class='ua'><input type='file' accept='.gpx' id='egpx' onchange='showGpx(this,\"egpxp\")'><span class='ui'>&#x1F4C1;</span><span>"+(t.gpx_file?"Zamenjaj GPX":"Tapni za .gpx")+"</span></div>" +
     "<div id='egpxp'></div></div>" +
     "<div class='fg'><label class='fl'>&#x1F5FA; Komoot link</label><input class='fi' id='ekmt' value='"+(t.komoot_url||"")+"' placeholder='https://www.komoot.com/tour/...'></div>" +
@@ -1323,7 +1323,7 @@ function doEditT(id){
   Promise.all([pM,pG].concat(gps)).then(function(res){
     if(res[0]){data.main_image=res[0];saveSetting("trail_img_"+id,res[0]);}
     if(res[1]){data.gpx_file=res[1];saveSetting("trail_gpx_"+id,res[1]);}
-    // Obstoječe slike ki so ostale (niso bile odstranjene)
+    // Obstoje\u010de slike ki so ostale (niso bile odstranjene)
     var existingSlots=document.getElementById("gal-edit").querySelectorAll("[id^='gslot-ex-']");
     var photos=[];
     existingSlots.forEach(function(slot,i){
