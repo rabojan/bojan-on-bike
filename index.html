@@ -683,7 +683,7 @@ function addCmt(id){
   if(!n||!t){alert("Prosim vnesi ime in komentar.");return;}
   dbP("komentarji",{trail_id:id,name:n,text:t,approved:false}).then(function(){
     document.getElementById("cn"+id).value="";document.getElementById("ct"+id).value="";
-    var d=document.createElement("div");d.className="ok";d.textContent="Komentar poslan! Prikazan bo po odobritvi.";
+    var d=document.createElement("div");d.className="ok";d.textContent="Komentar poslan! Admin ga mora najprej odobriti v Admin → Komentarji.";
     document.getElementById("cl"+id).before(d);setTimeout(function(){d.remove();},4000);
   });
 }
@@ -912,18 +912,42 @@ function aTab(tab,el){
 
   }else if(tab==="kmt"){
     c.innerHTML="<div class='ld'><div class='spin'></div>Nalagam...</div>";
-    dbG("komentarji","order=created_at.desc&approved=eq.false").then(function(all){
-      if(!all||!all.length){c.innerHTML="<div class='af'><p style='color:var(--tx2)'>Ni novih komentarjev. &#x2713;</p></div>";return;}
-      c.innerHTML="<div class='af'>"+all.map(function(cm){
-        return "<div id='cm"+cm.id+"' style='background:var(--bg3);border-radius:var(--rs);padding:1rem;margin-bottom:.7rem;border:.5px solid rgba(255,255,255,.06)'>" +
-          "<div style='font-size:.72rem;color:var(--acc);margin-bottom:.25rem'>Trail ID: "+cm.trail_id+"</div>" +
-          "<div style='font-size:.85rem;font-weight:600;margin-bottom:.15rem'>"+cm.name+"</div>" +
-          "<div style='font-size:.82rem;color:var(--tx2)'>"+cm.text+"</div>" +
-          "<div style='display:flex;gap:.5rem;margin-top:.7rem'>" +
-          "<button class='btn btn-p' style='padding:5px 12px;font-size:.76rem' onclick='approveCmt("+cm.id+")'>&#x2713; Objavi</button>" +
-          "<button class='btn btn-o' style='padding:5px 12px;font-size:.76rem' onclick='delCmt("+cm.id+")'>&#x2715; Izbrisi</button>" +
-          "</div></div>";
-      }).join("")+"</div>";
+    Promise.all([
+      dbG("komentarji","order=created_at.desc&approved=eq.false"),
+      dbG("komentarji","order=created_at.desc&approved=eq.true")
+    ]).then(function(results){
+      var pending=results[0]||[];
+      var approved=results[1]||[];
+      var html="";
+      if(pending.length){
+        html+="<div style='font-size:.8rem;font-weight:700;color:#f39c12;margin-bottom:.6rem'>&#x23F3; Cakajo na odobritev ("+pending.length+")</div>";
+        html+=pending.map(function(cm){
+          return "<div id='cm"+cm.id+"' style='background:var(--bg3);border-radius:var(--rs);padding:1rem;margin-bottom:.5rem;border:.5px solid rgba(243,156,18,.2)'>" +
+            "<div style='font-size:.72rem;color:var(--acc);margin-bottom:.25rem'>Trail ID: "+cm.trail_id+"</div>" +
+            "<div style='font-size:.85rem;font-weight:600;margin-bottom:.15rem'>"+cm.name+"</div>" +
+            "<div style='font-size:.82rem;color:var(--tx2)'>"+cm.text+"</div>" +
+            "<div style='display:flex;gap:.5rem;margin-top:.7rem'>" +
+            "<button class='btn btn-p' style='padding:5px 12px;font-size:.76rem' onclick='approveCmt("+cm.id+")'>&#x2713; Objavi</button>" +
+            "<button class='btn btn-o' style='padding:5px 12px;font-size:.76rem' onclick='delCmt("+cm.id+")'>&#x2715; Izbrisi</button>" +
+            "</div></div>";
+        }).join("");
+      }
+      if(approved.length){
+        html+="<div style='font-size:.8rem;font-weight:700;color:#2ecc71;margin:.8rem 0 .6rem'>&#x2713; Objavljeni ("+approved.length+")</div>";
+        html+=approved.map(function(cm){
+          return "<div id='cm"+cm.id+"' style='background:var(--bg3);border-radius:var(--rs);padding:1rem;margin-bottom:.5rem;border:.5px solid rgba(46,204,113,.15)'>" +
+            "<div style='font-size:.72rem;color:var(--acc);margin-bottom:.25rem'>Trail ID: "+cm.trail_id+"</div>" +
+            "<div style='font-size:.85rem;font-weight:600;margin-bottom:.15rem'>"+cm.name+"</div>" +
+            "<div style='font-size:.82rem;color:var(--tx2)'>"+cm.text+"</div>" +
+            "<div style='display:flex;gap:.5rem;margin-top:.7rem'>" +
+            "<button class='btn btn-o' style='padding:5px 12px;font-size:.76rem;background:rgba(192,57,43,.15);color:#e74c3c;border-color:rgba(192,57,43,.3)' onclick='delCmt("+cm.id+")'>&#x1F5D1; Izbrisi</button>" +
+            "</div></div>";
+        }).join("");
+      }
+      if(!pending.length&&!approved.length){
+        html="<p style='color:var(--tx2)'>Ni komentarjev. &#x2713;</p>";
+      }
+      c.innerHTML="<div class='af'>"+html+"</div>";
     });
   }
 }
