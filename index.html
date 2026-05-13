@@ -191,6 +191,14 @@ nav {
 .rcard-body{padding:.8rem}
 .rcard-name{font-size:.95rem;font-weight:800;margin-bottom:.15rem}
 .rcard-sub{font-size:.73rem;color:var(--tx2)}
+.fblock{margin-bottom:.8rem}
+.fblock-label{font-size:.65rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.4rem;padding-left:.2rem}
+.surf-bar{margin-bottom:.5rem}
+.surf-bar-label{display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:.2rem}
+.surf-bar-label span:first-child{color:var(--tx2)}
+.surf-bar-label span:last-child{color:var(--tx);font-weight:600}
+.surf-bar-track{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.surf-bar-fill{height:100%;border-radius:3px;background:var(--acc);transition:width .4s}
 
 
 /* =====================================================
@@ -423,18 +431,28 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
     <button class="pb" onclick="go('home')">&larr; Nazaj</button>
     <div class="sec-tag">Traili &amp; Poti</div>
     <div class="sec-title">Moji traili</div>
-    <div class="frow">
-      <div class="ftab on" onclick="fT('vse',this)">Vse</div>
-      <div class="ftab" onclick="fT('gorska',this)">&#x26F0;&#xFE0F; Gorska</div>
-      <div class="ftab" onclick="fT('gravel',this)">&#x1F6E4; Gravel</div>
-      <div class="ftab" onclick="fT('vinska',this)">&#x1F377; Vinska</div>
-      <div class="ftab" onclick="fT('druzinska',this)">&#x1F46A; Dru&#x17E;inska</div>
-      <div class="ftab" onclick="fT('skrita',this)">&#x1F50D; Skrita</div>
-      <div class="ftab" onclick="fT('zgodovinska',this)">&#x1F3F0; Zgodovinska</div>
-      <div class="ftab" onclick="fT('zelena',this)">&#x1F7E2; Lahka</div>
-      <div class="ftab" onclick="fT('rdeca',this)">&#x1F534; Rde&#x10D;a</div>
-      <div class="ftab" onclick="fT('crna',this)">&#x26AB; &#x10C;rna</div>
+
+    <!-- FILTER 1: Tip doživetja -->
+    <div class="fblock">
+      <div class="fblock-label">Tip do&#x17E;ivetja</div>
+      <div class="frow" id="frow-tip">
+        <div class="ftab on" onclick="fT('vse','tip',this)">Vsi</div>
+        <div id="tip-tabs"></div>
+      </div>
     </div>
+
+    <!-- FILTER 2: Težavnost -->
+    <div class="fblock">
+      <div class="fblock-label">Te&#x17E;avnost</div>
+      <div class="frow" id="frow-diff">
+        <div class="ftab on" onclick="fT('vse','diff',this)">Vse</div>
+        <div class="ftab" onclick="fT('zelena','diff',this)">&#x1F7E2; Zelena</div>
+        <div class="ftab" onclick="fT('modra','diff',this)">&#x1F535; Modra</div>
+        <div class="ftab" onclick="fT('rdeca','diff',this)">&#x1F534; Rde&#x10D;a</div>
+        <div class="ftab" onclick="fT('crna','diff',this)">&#x26AB; &#x10C;rna</div>
+      </div>
+    </div>
+
     <div class="tgrid" id="tgrid"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
 </div>
@@ -811,7 +829,7 @@ function go(page) {
   var nb = document.getElementById("nb-" + page);
   if (nb) nb.classList.add("on");
   window.scrollTo(0, 0);
-  if (page === "traili")     loadTrails();
+  if (page === "traili")     { activeFilter = {tip:'vse',diff:'vse'}; loadTrails(); }
   if (page === "ponudniki")  loadPons();
   if (page === "zemljevid")  loadZemljevid();
   if (page === "regije")     loadRegije();
@@ -1085,6 +1103,7 @@ function loadTrails() {
     });
     renderTrails(trails);
     renderHome();
+    renderTipTabs();
   });
 }
 
@@ -1126,12 +1145,15 @@ function renderHomeRegije(){
 }
 
 function goDiscover(type){
+  activeFilter = {tip: type, diff: 'vse'};
   go("traili");
   setTimeout(function(){
-    var filtered=trails.filter(function(t){return t.type===type;});
-    renderTrails(filtered.length?filtered:trails);
-    document.querySelectorAll("#page-traili .frow .ftab").forEach(function(tab){tab.classList.remove("on");});
-  },100);
+    renderTipTabs();
+    applyFilters();
+    // Oznaci pravi gumb v frow-tip
+    var tabs = document.querySelectorAll("#frow-diff .ftab");
+    if (tabs.length) tabs[0].classList.add("on");
+  },150);
 }
 
 function fCard(t, lbl) {
@@ -1164,14 +1186,55 @@ function renderTrails(list) {
   }).join("");
 }
 
-function fT(f, el) {
-  document.querySelectorAll("#page-traili .frow .ftab").forEach(function(t){t.classList.remove("on");});
-  el.classList.add("on");
-  if (f === "vse") { renderTrails(trails); return; }
-  // Filtrira po type (experience type) ALI po diff (tezavnost)
-  var filtered = trails.filter(function(t){ return t.type === f || t.diff === f; });
+// Filter state
+var activeFilter = { tip: 'vse', diff: 'vse' };
+
+// Privzeti tipi doživetja (extensible iz settings)
+var expTypes = [
+  {key:'gorska',    label:'&#x26F0;&#xFE0F; Gorska'},
+  {key:'gravel',    label:'&#x1F6E4; Gravel'},
+  {key:'vinska',    label:'&#x1F377; Vinska'},
+  {key:'druzinska', label:'&#x1F46A; Družinska'},
+  {key:'skrita',    label:'&#x1F50D; Skrita'},
+  {key:'zgodovinska',label:'&#x1F3F0; Zgodovinska'}
+];
+
+function renderTipTabs() {
+  var el = document.getElementById('tip-tabs');
+  if (!el) return;
+  el.innerHTML = '';
+  expTypes.forEach(function(et) {
+    var btn = document.createElement('div');
+    btn.className = 'ftab' + (activeFilter.tip === et.key ? ' on' : '');
+    btn.innerHTML = et.label;
+    btn.onclick = (function(key){ return function(){ fT(key,'tip',this); }; })(et.key);
+    el.appendChild(btn);
+  });
+}
+
+function fT(val, category, el) {
+  activeFilter[category] = val;
+  // Posodobi gumbe za to kategorijo
+  var rowId = category === 'tip' ? 'frow-tip' : 'frow-diff';
+  document.querySelectorAll('#' + rowId + ' .ftab').forEach(function(t){ t.classList.remove('on'); });
+  // Posodobi dinamicne gumbe
+  if (category === 'tip') {
+    var tipTabs = document.getElementById('tip-tabs');
+    if (tipTabs) tipTabs.querySelectorAll('.ftab').forEach(function(t){ t.classList.remove('on'); });
+  }
+  el.classList.add('on');
+  applyFilters();
+}
+
+function applyFilters() {
+  var filtered = trails.filter(function(t) {
+    var tipOk  = activeFilter.tip  === 'vse' || t.type === activeFilter.tip;
+    var diffOk = activeFilter.diff === 'vse' || t.diff === activeFilter.diff;
+    return tipOk && diffOk;
+  });
   renderTrails(filtered);
 }
+
 
 function loadZemljevid() {
   setTimeout(function() {
@@ -1338,7 +1401,22 @@ function openT(id) {
     "<div class='srow'><span>Težavnost</span><span>" + dL(t.diff) + "</span></div>" +
     "<div class='srow'><span>Ocena</span><span style='color:var(--acc)'>" + st(t.stars || 3) + "</span></div>" +
     "<div class='srow'><span>Sezona</span><span>" + escHtml(t.seasonal || "-") + "</span></div>" +
-    "<div class='srow'><span>Podlaga</span><span>" + escHtml(t.surface || "-") + "</span></div>" +
+    (function(){
+    var sp = t.surface_pct;
+    if (sp && (sp.asfalt||sp.makadam||sp.gozd)) {
+      var bars = [
+        {label:'&#x1F6E3; Asfalt',key:'asfalt',color:'#3498db'},
+        {label:'&#x1FA8A; Makadam',key:'makadam',color:'#e8622a'},
+        {label:'&#x1F333; Gozdna',key:'gozd',color:'#27ae60'}
+      ].filter(function(b){return sp[b.key]>0;}).map(function(b){
+        return "<div class='surf-bar'>" +
+          "<div class='surf-bar-label'><span>"+b.label+"</span><span>"+sp[b.key]+"%</span></div>" +
+          "<div class='surf-bar-track'><div class='surf-bar-fill' style='width:"+sp[b.key]+"%;background:"+b.color+"'></div></div></div>";
+      }).join('');
+      return "<div class='srow' style='flex-direction:column;align-items:flex-start;gap:.5rem'><span style='color:var(--tx2)'>Podlaga</span><div style='width:100%'>"+bars+"</div></div>";
+    }
+    return "<div class='srow'><span>Podlaga</span><span>" + escHtml(t.surface || "-") + "</span></div>";
+  })() +
     "<div class='srow' style='align-items:flex-start'><span style='white-space:nowrap'>Vreme</span><span id='tw-" + id + "' style='font-size:.78rem;text-align:right'>&#x23F3;</span></div>" +
     "<div style='font-size:.67rem;color:var(--tx3);padding:.15rem 0 .35rem;border-bottom:.5px solid rgba(255,255,255,.04)'>&#x1F4CD; Napoved za vreme na lokaciji traila</div>" +
     "</div>" +
@@ -1592,7 +1670,13 @@ function aTab(tab, el) {
       "<div class='fg'><label class='fl'>Tip</label><select class='fs' id='nt'>" +
       "<option value='gorski'>Gorski trail</option><option value='kolesarska'>Kolesarska pot</option><option value='mesani'>Mešan</option></select></div></div>" +
       "<div class='fr'><div class='fg'><label class='fl'>Sezona</label><input class='fi' id='ns' placeholder='Maj-Oktober'></div>" +
-      "<div class='fg'><label class='fl'>Podlaga</label><input class='fi' id='nsu' placeholder='Zemlja'></div></div>" +
+      "<div class='fg'><label class='fl'>Opis podlage</label><input class='fi' id='nsu' placeholder='npr. Zemlja, kamen...'></div></div>" +
+      "<div class='fg'><div style='font-size:.76rem;color:var(--acc);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F6E3; Sestava podlage (%)</div>" +
+      "<div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem'>" +
+      "<div><label class='fl'>Asfalt %</label><input class='fi' type='number' id='nsp_as' min='0' max='100' placeholder='0'></div>" +
+      "<div><label class='fl'>Makadam %</label><input class='fi' type='number' id='nsp_mk' min='0' max='100' placeholder='0'></div>" +
+      "<div><label class='fl'>Gozdna %</label><input class='fi' type='number' id='nsp_gz' min='0' max='100' placeholder='0'></div>" +
+      "</div></div>" +
       "<div class='fr'><div class='fg'><label class='fl'>Ocena (1-5)</label><select class='fs' id='nst'>" +
       "<option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>" +
       "<div class='fg'><label class='fl'>Featured &#x2B50;</label><select class='fs' id='nf'>" +
@@ -1732,6 +1816,11 @@ function saveTrail() {
     type:     document.getElementById("nt").value,
     seasonal: document.getElementById("ns").value  || "",
     surface:  document.getElementById("nsu").value || "",
+    surface_pct: {
+      asfalt: Number(document.getElementById("nsp_as") ? document.getElementById("nsp_as").value : 0) || 0,
+      makadam: Number(document.getElementById("nsp_mk") ? document.getElementById("nsp_mk").value : 0) || 0,
+      gozd: Number(document.getElementById("nsp_gz") ? document.getElementById("nsp_gz").value : 0) || 0
+    },
     stars:    Number(document.getElementById("nst").value) || 3,
     featured: document.getElementById("nf").value === "true",
     novo:     false
@@ -1809,7 +1898,13 @@ function editT(id) {
     "<option value='false'" + (t.featured ? "" : " selected") + ">Ne</option>" +
     "<option value='true'"  + (t.featured ? " selected" : "") + ">Da - Trail meseca</option></select></div></div>" +
     "<div class='fr'><div class='fg'><label class='fl'>Sezona</label><input class='fi' id='es' value='" + escHtml(t.seasonal || "") + "' placeholder='Maj-Oktober'></div>" +
-    "<div class='fg'><label class='fl'>Podlaga</label><input class='fi' id='esu' value='" + escHtml(t.surface || "") + "' placeholder='Zemlja, kamen...'></div></div>" +
+    "<div class='fg'><label class='fl'>Opis podlage</label><input class='fi' id='esu' value='" + escHtml(t.surface || "") + "' placeholder='Zemlja, kamen...'></div></div>" +
+    "<div class='fg'><div style='font-size:.76rem;color:var(--acc);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F6E3; Sestava podlage (%)</div>" +
+    "<div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem'>" +
+    "<div><label class='fl'>Asfalt %</label><input class='fi' type='number' id='esp_as' min='0' max='100' value='" + ((t.surface_pct&&t.surface_pct.asfalt)||0) + "'></div>" +
+    "<div><label class='fl'>Makadam %</label><input class='fi' type='number' id='esp_mk' min='0' max='100' value='" + ((t.surface_pct&&t.surface_pct.makadam)||0) + "'></div>" +
+    "<div><label class='fl'>Gozdna %</label><input class='fi' type='number' id='esp_gz' min='0' max='100' value='" + ((t.surface_pct&&t.surface_pct.gozd)||0) + "'></div>" +
+    "</div></div>" +
     "<div class='fg'><label class='fl'>Naslovna slika</label>" +
     (t.main_image ? "<div style='margin-bottom:.6rem'><div class='ip'><img src='" + escHtml(t.main_image) + "'></div><button onclick='removeMainImg(" + id + ")' style='margin-top:.4rem;padding:4px 12px;border-radius:6px;background:rgba(192,57,43,.15);border:.5px solid rgba(192,57,43,.3);color:#e74c3c;font-size:.76rem;cursor:pointer'>&#x1F5D1; Odstrani sliko</button></div>" : "") +
     "<div class='ua'><input type='file' accept='image/*' id='ei' onchange='showPrev(this,\"ep\")'><span class='ui'>&#x1F4F8;</span><span>" + (t.main_image ? "Zamenjaj sliko" : "Tapni za izbiro") + "</span></div>" +
@@ -1863,7 +1958,12 @@ function doEditT(id) {
   if (document.getElementById("ekmt"))       data.komoot_url  = document.getElementById("ekmt").value;
   if (document.getElementById("estr"))       data.strava_url  = document.getElementById("estr").value;
   if (document.getElementById("es"))         data.seasonal    = document.getElementById("es").value;
-  if (document.getElementById("esu"))        data.surface     = document.getElementById("esu").value;
+  if (document.getElementById("esu")) data.surface = document.getElementById("esu").value;
+  data.surface_pct = {
+    asfalt:  Number(document.getElementById("esp_as") ? document.getElementById("esp_as").value : 0) || 0,
+    makadam: Number(document.getElementById("esp_mk") ? document.getElementById("esp_mk").value : 0) || 0,
+    gozd:    Number(document.getElementById("esp_gz") ? document.getElementById("esp_gz").value : 0) || 0
+  };
 
   var ponIds = [];
   pons.forEach(function(p) {
