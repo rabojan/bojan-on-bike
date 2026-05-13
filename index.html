@@ -320,6 +320,7 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
       <button class="nb on" id="nb-home"      onclick="go('home')">Domov</button>
       <button class="nb"    id="nb-traili"    onclick="go('traili')">Traili</button>
       <button class="nb"    id="nb-ponudniki" onclick="go('ponudniki')">Ponudniki</button>
+      <button class="nb"    id="nb-regije"    onclick="go('regije')">Regije</button>
       <button class="nb"    id="nb-omeni"     onclick="go('omeni')">O meni</button>
     </div>
     <button class="na" onclick="openAdm()">&#x2699; Admin</button>
@@ -431,6 +432,16 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
 <!-- =====================================================
      O MENI PAGE
      ===================================================== -->
+<!-- REGIJE -->
+<div class="page" id="page-regije">
+  <div class="sec">
+    <button class="pb" onclick="go('home')">&larr; Nazaj</button>
+    <div class="sec-tag">Destinacije</div>
+    <div class="sec-title">Regije &amp; Destinacije</div>
+    <div class="tgrid" id="rgrid"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
+  </div>
+</div>
+
 <div class="page" id="page-omeni">
   <div class="sec">
     <button class="pb" onclick="go('home')">&larr; Nazaj</button>
@@ -762,6 +773,7 @@ function go(page) {
   if (page === "traili")     loadTrails();
   if (page === "ponudniki")  loadPons();
   if (page === "zemljevid")  loadZemljevid();
+  if (page === "regije")     loadRegije();
 }
 
 function closeM(id) {
@@ -913,6 +925,83 @@ function calcEbike(id, mode) {
 /* -------------------------------------------------------
    NALOŽI TRAILE + NASTAVITVE
    ------------------------------------------------------- */
+
+// ===== REGIJE =====
+function loadRegije() {
+  var grid = document.getElementById("rgrid");
+  if (!grid) return;
+  if (!trails.length) {
+    dbG("traili", "order=created_at.desc").then(function(data) {
+      trails = data && data.length ? data : [];
+      dbG("settings", "").then(function(ss) {
+        (ss || []).forEach(function(s) {
+          if (s.key.indexOf("trail_img_") === 0 && s.value) {
+            var id = parseInt(s.key.replace("trail_img_", ""));
+            var t = trails.find(function(x) { return x.id === id; });
+            if (t) t.main_image = s.value;
+          }
+        });
+        renderRegije();
+      });
+    });
+  } else {
+    renderRegije();
+  }
+}
+
+function renderRegije() {
+  var grid = document.getElementById("rgrid");
+  if (!grid) return;
+
+  // Group trails by region
+  var regions = {};
+  trails.forEach(function(t) {
+    var reg = (t.region || "Ostalo").trim();
+    if (!regions[reg]) regions[reg] = [];
+    regions[reg].push(t);
+  });
+
+  var keys = Object.keys(regions).sort();
+  if (!keys.length) {
+    grid.innerHTML = "<p style='color:var(--tx2)'>Ni regij. Dodaj regijo pri trailih v admin panelu.</p>";
+    return;
+  }
+
+  grid.innerHTML = keys.map(function(reg) {
+    var rTrails = regions[reg];
+    var cover = null;
+    for (var i = 0; i < rTrails.length; i++) { if (rTrails[i].main_image) { cover = rTrails[i].main_image; break; } }
+    var totalKm = rTrails.reduce(function(s, t) { return s + (Number(t.km) || 0); }, 0);
+    var diffs = {};
+    rTrails.forEach(function(t) { diffs[t.diff] = (diffs[t.diff] || 0) + 1; });
+    var diffBadges = Object.keys(diffs).map(function(d) {
+      return "<span class='db " + dC(d) + "' style='position:static;display:inline-block;margin-right:3px'>" + dL(d) + " " + diffs[d] + "</span>";
+    }).join("");
+
+    return "<div class='tcard' onclick='goRegija(&quot;" + reg.replace(/"/g, "").replace(/'/g,"") + "&quot;)'>" +
+      "<div class='tcard-img'>" + (cover ? "<img src='" + cover + "'>" : "") +
+      "<div style='position:absolute;top:10px;left:10px;z-index:2;background:rgba(12,12,12,.85);border-radius:8px;padding:3px 10px;font-size:.7rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:1px'>" + rTrails.length + " trailov</div>" +
+      "</div>" +
+      "<div class='tcard-body'>" +
+      "<div class='tcard-name'>" + reg + "</div>" +
+      "<div class='tcard-reg' style='margin-bottom:.5rem'>" + Math.round(totalKm) + " km skupaj</div>" +
+      "<div style='display:flex;flex-wrap:wrap;gap:.3rem'>" + diffBadges + "</div>" +
+      "</div></div>";
+  }).join("");
+}
+
+function goRegija(reg) {
+  go("traili");
+  setTimeout(function() {
+    var list = trails.filter(function(t) { return (t.region || "Ostalo").trim() === reg; });
+    renderTrails(list);
+    // Highlight active state - remove all filter tabs active, show region
+    document.querySelectorAll("#page-traili .frow .ftab").forEach(function(t) { t.classList.remove("on"); });
+    // scroll to top
+    window.scrollTo(0, 0);
+  }, 100);
+}
+
 function loadTrails() {
   document.getElementById("tgrid").innerHTML = "<div class='ld'><div class='spin'></div>Nalagam...</div>";
   dbG("traili", "order=created_at.desc").then(function(data) {
