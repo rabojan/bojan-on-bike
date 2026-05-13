@@ -379,11 +379,7 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
     </svg>
   </div>
 
-  <!-- TIP DOŽIVETJA — sekcija na domači strani -->
-  <div style="max-width:1000px;margin:0 auto;padding:1.8rem 1.2rem 0">
-    <div style="font-size:.68rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.5rem">Tip do&#x17E;ivetja</div>
-    <div id="home-tip-grid" style="display:flex;flex-wrap:wrap;gap:.5rem"></div>
-  </div>
+
 
   <!-- FEATURED EXPERIENCE -->
   <div class="sec">
@@ -392,12 +388,7 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
     <div class="hgrid" id="hfeat"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
 
-  <!-- FEATURED REGIJE -->
-  <div style="max-width:1000px;margin:0 auto;padding:0 1.2rem 2.5rem">
-    <div style="font-size:.7rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.4rem">&#x1F5FA; Regije</div>
-    <div style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:800;letter-spacing:-1px;margin-bottom:1.2rem">Kam ta vikend?</div>
-    <div id="home-regije" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem"></div>
-  </div>
+
 
   <div id="home-weather" style="max-width:1000px;margin:0 auto 2rem;padding:0 1.2rem;display:none">
     <div style="background:var(--bg2);border-radius:var(--r);padding:1rem 1.3rem;border:.5px solid rgba(255,255,255,.06)">
@@ -1087,6 +1078,11 @@ function loadTrails() {
         var t = trails.find(function(x) { return x.id === id; });
         if (t) t.gpx_file = s.value;
       }
+      if (s.key.indexOf("trail_sp_") === 0 && s.value) {
+        var id = parseInt(s.key.replace("trail_sp_", ""));
+        var t = trails.find(function(x) { return x.id === id; });
+        if (t) { try { t.surface_pct = JSON.parse(s.value); } catch(e) {} }
+      }
       if (s.key.indexOf("trail_story_") === 0 && s.value) {
         var id = parseInt(s.key.replace("trail_story_", ""));
         var t = trails.find(function(x) { return x.id === id; });
@@ -1123,8 +1119,6 @@ function renderHome() {
   else if (!feat && trails.length > 1)             html += fCard(trails[1], "&#x1F3C6; Priporočeno");
   if (!html) html = "<p style=\'color:var(--tx2)\'>Dodaj traile v admin panelu.</p>";
   document.getElementById("hfeat").innerHTML = html;
-  renderHomeRegije();
-  renderHomeTipGrid();
   var sponsors = pons.filter(function(p){return p.sponsored;});
   var fsEl = document.getElementById("footer-sponsors");
   if (fsEl && sponsors.length) {
@@ -1255,13 +1249,18 @@ function renderRegTabs() {
 
 function fT(val, category, el) {
   activeFilter[category] = val;
-  // Posodobi gumbe za to kategorijo
-  var rowId = category === 'tip' ? 'frow-tip' : 'frow-diff';
+  // Pravilno mapiranje kategorije na row ID
+  var rowMap = {tip:'frow-tip', diff:'frow-diff', reg:'frow-reg'};
+  var rowId = rowMap[category] || 'frow-tip';
+  // Pocisti vse gumbe v tej vrstici (static + dynamic)
   document.querySelectorAll('#' + rowId + ' .ftab').forEach(function(t){ t.classList.remove('on'); });
-  // Posodobi dinamicne gumbe
   if (category === 'tip') {
     var tipTabs = document.getElementById('tip-tabs');
     if (tipTabs) tipTabs.querySelectorAll('.ftab').forEach(function(t){ t.classList.remove('on'); });
+  }
+  if (category === 'reg') {
+    var regTabs = document.getElementById('reg-tabs');
+    if (regTabs) regTabs.querySelectorAll('.ftab').forEach(function(t){ t.classList.remove('on'); });
   }
   el.classList.add('on');
   applyFilters();
@@ -1452,19 +1451,17 @@ function openT(id) {
     "<div class='srow'><span>Sezona</span><span>" + escHtml(t.seasonal || "-") + "</span></div>" +
     (function(){
     var sp = t.surface_pct;
-    if (sp && (sp.asfalt||sp.makadam||sp.gozd)) {
-      var bars = [
-        {label:'&#x1F6E3; Asfalt',key:'asfalt',color:'#3498db'},
-        {label:'&#x1FA8A; Makadam',key:'makadam',color:'#e8622a'},
-        {label:'&#x1F333; Gozdna',key:'gozd',color:'#27ae60'}
-      ].filter(function(b){return sp[b.key]>0;}).map(function(b){
-        return "<div class='surf-bar'>" +
-          "<div class='surf-bar-label'><span>"+b.label+"</span><span>"+sp[b.key]+"%</span></div>" +
-          "<div class='surf-bar-track'><div class='surf-bar-fill' style='width:"+sp[b.key]+"%;background:"+b.color+"'></div></div></div>";
-      }).join('');
-      return "<div class='srow' style='flex-direction:column;align-items:flex-start;gap:.5rem'><span style='color:var(--tx2)'>Podlaga</span><div style='width:100%'>"+bars+"</div></div>";
-    }
-    return "<div class='srow'><span>Podlaga</span><span>" + escHtml(t.surface || "-") + "</span></div>";
+    if (!sp || (!sp.asfalt && !sp.makadam && !sp.gozd)) return "";
+    var bars = [
+      {label:'&#x1F6E3; Asfalt', key:'asfalt', color:'#3498db'},
+      {label:'&#x1FA8A; Makadam', key:'makadam', color:'#e8622a'},
+      {label:'&#x1F333; Gozdna',  key:'gozd',    color:'#27ae60'}
+    ].filter(function(b){return sp[b.key]>0;}).map(function(b){
+      return "<div class='surf-bar'>" +
+        "<div class='surf-bar-label'><span>"+b.label+"</span><span>"+sp[b.key]+"%</span></div>" +
+        "<div class='surf-bar-track'><div class='surf-bar-fill' style='width:"+sp[b.key]+"%;background:"+b.color+"'></div></div></div>";
+    }).join('');
+    return "<div class='srow' style='flex-direction:column;align-items:flex-start;gap:.5rem;padding:.8rem 0'><span style='color:var(--tx2);font-size:.8rem;margin-bottom:.3rem'>Podlaga</span><div style='width:100%'>"+bars+"</div></div>";
   })() +
     "<div class='srow' style='align-items:flex-start'><span style='white-space:nowrap'>Vreme</span><span id='tw-" + id + "' style='font-size:.78rem;text-align:right'>&#x23F3;</span></div>" +
     "<div style='font-size:.67rem;color:var(--tx3);padding:.15rem 0 .35rem;border-bottom:.5px solid rgba(255,255,255,.04)'>&#x1F4CD; Napoved za vreme na lokaciji traila</div>" +
@@ -1896,6 +1893,7 @@ function saveTrail() {
       if (data.main_image) saveSetting("trail_img_" + row.id, data.main_image);
       if (data.photos && data.photos.length) saveSetting("trail_ph_" + row.id, JSON.stringify(data.photos));
       if (data.gpx_file) saveSetting("trail_gpx_" + row.id, data.gpx_file);
+      if (data.surface_pct) saveSetting("trail_sp_" + row.id, JSON.stringify(data.surface_pct));
       if (data.main_image) row.main_image = data.main_image;
       if (data.photos)     row.photos     = data.photos;
       trails.unshift(row);
@@ -2029,6 +2027,7 @@ function doEditT(id) {
   Promise.all([pM, pG].concat(gps)).then(function(res) {
     if (res[0]) { data.main_image = res[0]; saveSetting("trail_img_" + id, res[0]); }
     if (res[1]) { data.gpx_file  = res[1]; saveSetting("trail_gpx_" + id, res[1]); }
+    saveSetting("trail_sp_" + id, JSON.stringify(data.surface_pct || {asfalt:0,makadam:0,gozd:0}));
 
     // Obstoječe slike (ki niso bile odstranjene)
     var existingSlots = document.getElementById("gal-edit").querySelectorAll("[id^='gslot-ex-']");
