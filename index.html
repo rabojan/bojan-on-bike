@@ -935,6 +935,11 @@ function loadTrails() {
         var t = trails.find(function(x) { return x.id === id; });
         if (t) t.gpx_file = s.value;
       }
+      if (s.key.indexOf("trail_story_") === 0 && s.value) {
+        var id = parseInt(s.key.replace("trail_story_", ""));
+        var t = trails.find(function(x) { return x.id === id; });
+        if (t) t.story = s.value;
+      }
       if (s.key === "profile_img" && s.value) document.getElementById("aimg").innerHTML = "<img src='" + escHtml(s.value) + "'>";
       if (s.key === "aname"       && s.value) document.getElementById("aname").textContent   = s.value;
       if (s.key === "ahandle"     && s.value) document.getElementById("ahandle").textContent = s.value;
@@ -1151,8 +1156,12 @@ function openT(id) {
     "<div style='color:rgba(255,255,255,.55);font-size:.82rem'>" + escHtml(t.region || "") + " &middot; <span style='color:var(--acc)'>" + st(t.stars || 3) + "</span></div>" +
     "</div></div>" +
     "<div class='mbody'><div class='mgrid'><div>" +
-    "<div class='sh2'>Moj komentar</div>" +
-    "<p style='color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem'>" + escHtml(t.comment || "") + "</p>" +
+    (t.story ? "<div style=\'background:linear-gradient(135deg,rgba(232,98,42,.08),rgba(232,98,42,.03));border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:2rem;border:.5px solid rgba(232,98,42,.2)\'>" +
+    "<div style=\'font-size:.65rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.6rem\'>&#x2728; Zgodba traila</div>" +
+    "<p style=\'color:var(--tx);line-height:1.9;font-size:.96rem;font-style:italic\'>" + escHtml(t.story) + "</p>" +
+    "</div>" : "") +
+    "<div class=\'sh2\'>Moj komentar</div>" +
+    "<p style=\'color:var(--tx2);line-height:1.8;font-size:.92rem;margin-bottom:1.8rem\'>" + escHtml(t.comment || "") + "</p>" +
     galHtml +
     "<div class='sh2'>Trasa</div>" +
     (t.gpx_file
@@ -1425,6 +1434,7 @@ function aTab(tab, el) {
       "<div class='fr'><div class='fg'><label class='fl'>Ime traila</label><input class='fi' id='nn' placeholder='Pohorska divjina'></div>" +
       "<div class='fg'><label class='fl'>Regija</label><input class='fi' id='nr' placeholder='Pohorje'></div></div>" +
       "<div class='fg'><label class='fl'>Komentar</label><textarea class='fta' id='nc' placeholder='Tvoj osebni komentar...'></textarea></div>" +
+      "<div class='fg'><label class='fl'>&#x2728; Zgodba traila</label><textarea class='fta' id='ns' placeholder='Zakaj je ta pot posebna? Kaj bo kolesař doživel? Kakšen je občutek...' style='min-height:100px'></textarea></div>" +
       "<div class='fr'><div class='fg'><label class='fl'>Razdalja (km)</label><input class='fi' type='number' id='nkm' placeholder='24'></div>" +
       "<div class='fg'><label class='fl'>Vzpon (vm)</label><input class='fi' type='number' id='nvm' placeholder='850'></div></div>" +
       "<div class='fr'><div class='fg'><label class='fl'>Težavnost</label><select class='fs' id='nd'>" +
@@ -1565,6 +1575,7 @@ function saveTrail() {
     name:     name,
     region:   document.getElementById("nr").value  || "",
     comment:  document.getElementById("nc").value  || "",
+    story:    document.getElementById("nstory") ? (document.getElementById("nstory").value || "") : "",
     km:       Number(document.getElementById("nkm").value) || 0,
     vm:       Number(document.getElementById("nvm").value) || 0,
     diff:     document.getElementById("nd").value,
@@ -1632,6 +1643,7 @@ function editT(id) {
     "<div class='fr'><div class='fg'><label class='fl'>Ime</label><input class='fi' id='en' value='" + escHtml(t.name) + "'></div>" +
     "<div class='fg'><label class='fl'>Regija</label><input class='fi' id='er' value='" + escHtml(t.region || "") + "'></div></div>" +
     "<div class='fg'><label class='fl'>Komentar</label><textarea class='fta' id='ec'>" + escHtml(t.comment || "") + "</textarea></div>" +
+    "<div class='fg'><label class='fl'>&#x2728; Zgodba traila</label><textarea class='fta' id='estory' style='min-height:100px' placeholder='Zakaj je ta pot posebna? Kaj bo kolesař doživel?'>" + escHtml(t.story || "") + "</textarea></div>" +
     "<div class='fg' style='background:rgba(41,128,185,.08);border-radius:var(--rs);padding:.7rem;border:.5px solid rgba(41,128,185,.2)'>" +
     "<div style='font-size:.7rem;color:#3498db;font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F1EC;&#x1F1E7; Angleška vsebina (neobvezno)</div>" +
     "<div class='fg' style='margin-bottom:.6rem'><label class='fl'>Trail name (EN)</label><input class='fi' id='en_name' value='" + escHtml(t.name_en || "") + "' placeholder='English trail name...'></div>" +
