@@ -182,8 +182,8 @@ nav {
 .pcard-tel { font-size: .8rem; color: var(--tx2); }
 .spons-badge { display: inline-flex; align-items: center; gap: 3px; font-size: .62rem; font-weight: 700; color: #f39c12; background: rgba(243,156,18,.12); border: .5px solid rgba(243,156,18,.3); padding: 2px 7px; border-radius: 8px; text-transform: uppercase; letter-spacing: .5px; }
 .pcard.sponsored { border-color: rgba(243,156,18,.3); }
-.disc-btn{padding:8px 16px;border-radius:20px;background:var(--bg3);border:.5px solid rgba(255,255,255,.1);color:var(--tx2);font-size:.82rem;cursor:pointer;white-space:nowrap;transition:all .2s}
-.disc-btn:hover{background:rgba(232,98,42,.15);border-color:rgba(232,98,42,.4);color:var(--acc)}
+.disc-btn{padding:8px 16px;border-radius:20px;background:var(--bg3);border:.5px solid rgba(255,255,255,.1);color:var(--tx2);font-size:.82rem;cursor:pointer;transition:all .2s;font-family:inherit}
+.disc-btn:hover,.disc-btn.on{background:rgba(232,98,42,.15);border-color:rgba(232,98,42,.4);color:var(--acc)}
 .rcard{border-radius:var(--r);overflow:hidden;background:var(--bg2);border:.5px solid rgba(255,255,255,.06);cursor:pointer;position:relative}
 .rcard-img{height:120px;overflow:hidden;background:linear-gradient(135deg,#0f1f0f,#0a140a)}
 .rcard-img img{width:100%;height:100%;object-fit:cover;display:block}
@@ -352,7 +352,6 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
       <button class="nb on" id="nb-home"      onclick="go('home')">Domov</button>
       <button class="nb"    id="nb-traili"    onclick="go('traili')">Traili</button>
       <button class="nb"    id="nb-ponudniki" onclick="go('ponudniki')">Ponudniki</button>
-      <button class="nb"    id="nb-regije"    onclick="go('regije')">Regije</button>
       <button class="nb"    id="nb-omeni"     onclick="go('omeni')">O meni</button>
     </div>
   </div>
@@ -380,16 +379,10 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
     </svg>
   </div>
 
-  <!-- QUICK DISCOVERY -->
-  <div style="background:var(--bg2);border-top:.5px solid rgba(255,255,255,.05);border-bottom:.5px solid rgba(255,255,255,.05);padding:1.2rem;overflow-x:auto;scrollbar-width:none">
-    <div style="display:flex;gap:.6rem;min-width:max-content;padding:0 .2rem">
-      <button onclick="goDiscover('gorska')" class="disc-btn">&#x26F0;&#xFE0F; Gorska</button>
-      <button onclick="goDiscover('gravel')" class="disc-btn">&#x1F6E4; Gravel</button>
-      <button onclick="goDiscover('vinska')" class="disc-btn">&#x1F377; Vinska pot</button>
-      <button onclick="goDiscover('druzinska')" class="disc-btn">&#x1F46A; Dru&#x17E;inska</button>
-      <button onclick="goDiscover('skrita')" class="disc-btn">&#x1F50D; Skrita pot</button>
-      <button onclick="goDiscover('zgodovinska')" class="disc-btn">&#x1F3F0; Zgodovinska</button>
-    </div>
+  <!-- TIP DOŽIVETJA — sekcija na domači strani -->
+  <div style="max-width:1000px;margin:0 auto;padding:1.8rem 1.2rem 0">
+    <div style="font-size:.68rem;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:.5rem">Tip do&#x17E;ivetja</div>
+    <div id="home-tip-grid" style="display:flex;flex-wrap:wrap;gap:.5rem"></div>
   </div>
 
   <!-- FEATURED EXPERIENCE -->
@@ -432,27 +425,37 @@ footer { background: var(--bg2); border-top: .5px solid rgba(255,255,255,.05); p
     <div class="sec-tag">Traili &amp; Poti</div>
     <div class="sec-title">Moji traili</div>
 
-    <!-- FILTER 1: Tip doživetja -->
-    <div class="fblock">
-      <div class="fblock-label">Tip do&#x17E;ivetja</div>
-      <div class="frow" id="frow-tip">
-        <div class="ftab on" onclick="fT('vse','tip',this)">Vsi</div>
-        <div id="tip-tabs"></div>
-      </div>
-    </div>
+    <!-- FILTRI -->
+    <div style="background:var(--bg2);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:1.3rem;border:.5px solid rgba(255,255,255,.06)">
 
-    <!-- FILTER 2: Težavnost -->
-    <div class="fblock">
-      <div class="fblock-label">Te&#x17E;avnost</div>
-      <div class="frow" id="frow-diff">
-        <div class="ftab on" onclick="fT('vse','diff',this)">Vse</div>
-        <div class="ftab" onclick="fT('zelena','diff',this)">&#x1F7E2; Zelena</div>
-        <div class="ftab" onclick="fT('modra','diff',this)">&#x1F535; Modra</div>
-        <div class="ftab" onclick="fT('rdeca','diff',this)">&#x1F534; Rde&#x10D;a</div>
-        <div class="ftab" onclick="fT('crna','diff',this)">&#x26AB; &#x10C;rna</div>
+      <div class="fblock">
+        <div class="fblock-label">Tip do&#x17E;ivetja</div>
+        <div class="frow" id="frow-tip" style="flex-wrap:wrap;gap:.35rem">
+          <div class="ftab on" onclick="fT('vse','tip',this)">Vsi</div>
+          <div id="tip-tabs" style="display:contents"></div>
+        </div>
       </div>
-    </div>
 
+      <div class="fblock" style="margin-top:.7rem">
+        <div class="fblock-label">Te&#x17E;avnost</div>
+        <div class="frow" id="frow-diff" style="flex-wrap:wrap;gap:.35rem">
+          <div class="ftab on" onclick="fT('vse','diff',this)">Vse</div>
+          <div class="ftab" onclick="fT('zelena','diff',this)">&#x1F7E2; Zelena</div>
+          <div class="ftab" onclick="fT('modra','diff',this)">&#x1F535; Modra</div>
+          <div class="ftab" onclick="fT('rdeca','diff',this)">&#x1F534; Rde&#x10D;a</div>
+          <div class="ftab" onclick="fT('crna','diff',this)">&#x26AB; &#x10C;rna</div>
+        </div>
+      </div>
+
+      <div class="fblock" style="margin-top:.7rem">
+        <div class="fblock-label">Regija</div>
+        <div class="frow" id="frow-reg" style="flex-wrap:wrap;gap:.35rem">
+          <div class="ftab on" onclick="fT('vse','reg',this)">Vse</div>
+          <div id="reg-tabs" style="display:contents"></div>
+        </div>
+      </div>
+
+    </div>
     <div class="tgrid" id="tgrid"><div class="ld"><div class="spin"></div>Nalagam...</div></div>
   </div>
 </div>
@@ -829,7 +832,7 @@ function go(page) {
   var nb = document.getElementById("nb-" + page);
   if (nb) nb.classList.add("on");
   window.scrollTo(0, 0);
-  if (page === "traili")     { activeFilter = {tip:'vse',diff:'vse'}; loadTrails(); }
+  if (page === "traili")     { activeFilter = {tip:'vse',diff:'vse',reg:'vse'}; loadTrails(); }
   if (page === "ponudniki")  loadPons();
   if (page === "zemljevid")  loadZemljevid();
   if (page === "regije")     loadRegije();
@@ -1104,6 +1107,7 @@ function loadTrails() {
     renderTrails(trails);
     renderHome();
     renderTipTabs();
+    renderRegTabs();
   });
 }
 
@@ -1120,6 +1124,7 @@ function renderHome() {
   if (!html) html = "<p style=\'color:var(--tx2)\'>Dodaj traile v admin panelu.</p>";
   document.getElementById("hfeat").innerHTML = html;
   renderHomeRegije();
+  renderHomeTipGrid();
   var sponsors = pons.filter(function(p){return p.sponsored;});
   var fsEl = document.getElementById("footer-sponsors");
   if (fsEl && sponsors.length) {
@@ -1144,6 +1149,27 @@ function renderHomeRegije(){
   }).join("");
 }
 
+function renderHomeTipGrid() {
+  var el = document.getElementById('home-tip-grid');
+  if (!el) return;
+  var tipDefs = [
+    {key:'gorska',     label:'&#x26F0;&#xFE0F; Gorska pot'},
+    {key:'gravel',     label:'&#x1F6E4;&#xFE0F; Gravel pot'},
+    {key:'vinska',     label:'&#x1F377; Vinska pot'},
+    {key:'druzinska',  label:'&#x1F46A; Družinska pot'},
+    {key:'skrita',     label:'&#x1F50D; Skrita pot'},
+    {key:'zgodovinska',label:'&#x1F3F0; Zgodovinska pot'}
+  ];
+  el.innerHTML = '';
+  tipDefs.forEach(function(td) {
+    var btn = document.createElement('button');
+    btn.className = 'disc-btn';
+    btn.innerHTML = td.label;
+    btn.onclick = function(){ goDiscover(td.key); };
+    el.appendChild(btn);
+  });
+}
+
 function goDiscover(type){
   activeFilter = {tip: type, diff: 'vse'};
   go("traili");
@@ -1157,7 +1183,7 @@ function goDiscover(type){
 }
 
 function fCard(t, lbl) {
-  var typeLbl = {gorska:"&#x26F0;&#xFE0F; Gorska",gravel:"&#x1F6E4; Gravel",vinska:"&#x1F377; Vinska",druzinska:"&#x1F46A; Družinska",skrita:"&#x1F50D; Skrita",zgodovinska:"&#x1F3F0; Zgodovinska"}[t.type] || dL(t.diff);
+  var typeLbl = {gorska:"&#x26F0;&#xFE0F; Gorska pot",gravel:"&#x1F6E4;&#xFE0F; Gravel pot",vinska:"&#x1F377; Vinska pot",druzinska:"&#x1F46A; Družinska pot",skrita:"&#x1F50D; Skrita pot",zgodovinska:"&#x1F3F0; Zgodovinska pot",gorski:"&#x26F0;&#xFE0F; Gorska pot",kolesarska:"&#x1F6E4;&#xFE0F; Gravel pot",mesani:"&#x1F6E4;&#xFE0F; Gravel pot"}[t.type] || dL(t.diff);
   return "<div class='fcard' onclick='openT("+t.id+")'>" +
     "<div class='fcard-img'>"+iT(t.main_image)+"<div class='db "+dC(t.diff)+"' style='position:absolute;top:10px;right:10px;z-index:2'>"+dL(t.diff)+"</div></div>" +
     "<div class='fcard-body'><div class='fcard-lbl'>"+lbl+"</div>" +
@@ -1172,7 +1198,7 @@ function renderTrails(list) {
     document.getElementById("tgrid").innerHTML = "<p style='color:var(--tx2)'>Ni trailov za to kategorijo.</p>";
     return;
   }
-  var typeMap = {gorska:"&#x26F0;&#xFE0F; Gorska",gravel:"&#x1F6E4; Gravel",vinska:"&#x1F377; Vinska",druzinska:"&#x1F46A; Družinska",skrita:"&#x1F50D; Skrita",zgodovinska:"&#x1F3F0; Zgodovinska"};
+  var typeMap = {gorska:"&#x26F0;&#xFE0F; Gorska pot",gravel:"&#x1F6E4;&#xFE0F; Gravel pot",vinska:"&#x1F377; Vinska pot",druzinska:"&#x1F46A; Družinska pot",skrita:"&#x1F50D; Skrita pot",zgodovinska:"&#x1F3F0; Zgodovinska pot",gorski:"&#x26F0;&#xFE0F; Gorska pot",kolesarska:"&#x1F6E4;&#xFE0F; Gravel pot",mesani:"&#x1F6E4;&#xFE0F; Gravel pot"};
   document.getElementById("tgrid").innerHTML = list.map(function(t) {
     var typeBadge = t.type && typeMap[t.type] ? "<div style='font-size:.67rem;color:var(--acc);margin-bottom:.3rem'>"+typeMap[t.type]+"</div>" : "";
     return "<div class='tcard' onclick='openT("+t.id+")'>" +
@@ -1191,12 +1217,12 @@ var activeFilter = { tip: 'vse', diff: 'vse' };
 
 // Privzeti tipi doživetja (extensible iz settings)
 var expTypes = [
-  {key:'gorska',    label:'&#x26F0;&#xFE0F; Gorska'},
-  {key:'gravel',    label:'&#x1F6E4; Gravel'},
-  {key:'vinska',    label:'&#x1F377; Vinska'},
-  {key:'druzinska', label:'&#x1F46A; Družinska'},
-  {key:'skrita',    label:'&#x1F50D; Skrita'},
-  {key:'zgodovinska',label:'&#x1F3F0; Zgodovinska'}
+  {key:'gorska',     label:'&#x26F0;&#xFE0F; Gorska pot'},
+  {key:'gravel',     label:'&#x1F6E4;&#xFE0F; Gravel pot'},
+  {key:'vinska',     label:'&#x1F377; Vinska pot'},
+  {key:'druzinska',  label:'&#x1F46A; Družinska pot'},
+  {key:'skrita',     label:'&#x1F50D; Skrita pot'},
+  {key:'zgodovinska',label:'&#x1F3F0; Zgodovinska pot'}
 ];
 
 function renderTipTabs() {
@@ -1207,7 +1233,22 @@ function renderTipTabs() {
     var btn = document.createElement('div');
     btn.className = 'ftab' + (activeFilter.tip === et.key ? ' on' : '');
     btn.innerHTML = et.label;
-    btn.onclick = (function(key){ return function(){ fT(key,'tip',this); }; })(et.key);
+    btn.onclick = (function(key){ return function(){ fT(key,'tip',btn); }; })(et.key);
+    el.appendChild(btn);
+  });
+}
+
+function renderRegTabs() {
+  var el = document.getElementById('reg-tabs');
+  if (!el) return;
+  el.innerHTML = '';
+  var regions = {};
+  trails.forEach(function(t){ var r=(t.region||'').trim(); if(r) regions[r]=1; });
+  Object.keys(regions).sort().forEach(function(reg) {
+    var btn = document.createElement('div');
+    btn.className = 'ftab' + (activeFilter.reg === reg ? ' on' : '');
+    btn.textContent = reg;
+    btn.onclick = (function(r){ return function(){ fT(r,'reg',btn); }; })(reg);
     el.appendChild(btn);
   });
 }
@@ -1226,11 +1267,19 @@ function fT(val, category, el) {
   applyFilters();
 }
 
+// Normalizacija starih type vrednosti na nove
+var typeNorm = {gorski:'gorska', kolesarska:'gravel', mesani:'gravel'};
+function normType(t) {
+  if (!t) return '';
+  return typeNorm[t] || t;
+}
+
 function applyFilters() {
   var filtered = trails.filter(function(t) {
-    var tipOk  = activeFilter.tip  === 'vse' || t.type === activeFilter.tip;
+    var tipOk  = activeFilter.tip  === 'vse' || normType(t.type) === activeFilter.tip;
     var diffOk = activeFilter.diff === 'vse' || t.diff === activeFilter.diff;
-    return tipOk && diffOk;
+    var regOk  = !activeFilter.reg || activeFilter.reg === 'vse' || (t.region||'').trim() === activeFilter.reg;
+    return tipOk && diffOk && regOk;
   });
   renderTrails(filtered);
 }
@@ -1670,7 +1719,7 @@ function aTab(tab, el) {
       "<div class='fg'><label class='fl'>Tip</label><select class='fs' id='nt'>" +
       "<option value='gorski'>Gorski trail</option><option value='kolesarska'>Kolesarska pot</option><option value='mesani'>Mešan</option></select></div></div>" +
       "<div class='fr'><div class='fg'><label class='fl'>Sezona</label><input class='fi' id='ns' placeholder='Maj-Oktober'></div>" +
-      "<div class='fg'><label class='fl'>Opis podlage</label><input class='fi' id='nsu' placeholder='npr. Zemlja, kamen...'></div></div>" +
+      "</div>" +
       "<div class='fg'><div style='font-size:.76rem;color:var(--acc);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F6E3; Sestava podlage (%)</div>" +
       "<div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem'>" +
       "<div><label class='fl'>Asfalt %</label><input class='fi' type='number' id='nsp_as' min='0' max='100' placeholder='0'></div>" +
@@ -1815,7 +1864,6 @@ function saveTrail() {
     diff:     document.getElementById("nd").value,
     type:     document.getElementById("nt").value,
     seasonal: document.getElementById("ns").value  || "",
-    surface:  document.getElementById("nsu").value || "",
     surface_pct: {
       asfalt: Number(document.getElementById("nsp_as") ? document.getElementById("nsp_as").value : 0) || 0,
       makadam: Number(document.getElementById("nsp_mk") ? document.getElementById("nsp_mk").value : 0) || 0,
@@ -1898,7 +1946,7 @@ function editT(id) {
     "<option value='false'" + (t.featured ? "" : " selected") + ">Ne</option>" +
     "<option value='true'"  + (t.featured ? " selected" : "") + ">Da - Trail meseca</option></select></div></div>" +
     "<div class='fr'><div class='fg'><label class='fl'>Sezona</label><input class='fi' id='es' value='" + escHtml(t.seasonal || "") + "' placeholder='Maj-Oktober'></div>" +
-    "<div class='fg'><label class='fl'>Opis podlage</label><input class='fi' id='esu' value='" + escHtml(t.surface || "") + "' placeholder='Zemlja, kamen...'></div></div>" +
+    "</div>" +
     "<div class='fg'><div style='font-size:.76rem;color:var(--acc);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px'>&#x1F6E3; Sestava podlage (%)</div>" +
     "<div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem'>" +
     "<div><label class='fl'>Asfalt %</label><input class='fi' type='number' id='esp_as' min='0' max='100' value='" + ((t.surface_pct&&t.surface_pct.asfalt)||0) + "'></div>" +
@@ -1958,7 +2006,6 @@ function doEditT(id) {
   if (document.getElementById("ekmt"))       data.komoot_url  = document.getElementById("ekmt").value;
   if (document.getElementById("estr"))       data.strava_url  = document.getElementById("estr").value;
   if (document.getElementById("es"))         data.seasonal    = document.getElementById("es").value;
-  if (document.getElementById("esu")) data.surface = document.getElementById("esu").value;
   data.surface_pct = {
     asfalt:  Number(document.getElementById("esp_as") ? document.getElementById("esp_as").value : 0) || 0,
     makadam: Number(document.getElementById("esp_mk") ? document.getElementById("esp_mk").value : 0) || 0,
